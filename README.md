@@ -1,7 +1,25 @@
-# MapFish 2 
+# MapFish Print 2 
 
-Please read the documentation available here:
-http://www.mapfish.org/doc/index.html
+This project is no longer actively maintained by [camptocamp](https://www.camptocamp.com/en). New projects are strongly encouragted to use [mapfish-print](https://github.com/mapfish/mapfish-print) which is at Version 3 at the time of writing.
+
+Downstream projects making use of this technology:
+
+- [core-geonetwork](http://github.com/geonetwork/core-geonetwork) - uses mapfish print for activities such as thumbnail generation
+- [GeoNode](https://github.com/geonode/) - Uses geosolutions fork described below
+- [MapStore](https://github.com/geosolutions-it/MapStore2) - Uses geosolutions fork described below
+
+
+GeoCat BC has mained this series as needed to support the core-geonetwork project:
+- Updated to migrate to OpenPDF
+
+GeoSolutions created a fork of the project in 2013:
+- https://github.com/geosolutions-it/mapfish-print
+- Some features introduced over time (see [wiki](https://github.com/geosolutions-it/mapfish-print/wiki) )
+- Updated to reflect GeoTools changes including Java 11 and Log4j changes
+
+Outdated documentation
+
+- https://www.mapfish.org/doc/index.html
 
 ## Build
 

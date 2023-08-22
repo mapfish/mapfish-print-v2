@@ -4,6 +4,8 @@ buildSrc/.gradle/
 buildSrc/build/
 deploy.sh
 *.class
+/bin
+/target
 .classpath
 .settings/org.eclipse.jdt.core.prefs
 mapfish-print.ipr
