@@ -86,15 +86,17 @@ public class XyzMapReader extends TileableMapReader {
         int tileX = (int) Math.round((minGeoX - tileCacheLayerInfo.getMinX()) / (resolution.value * w));
         int tileY = (int) Math.round((tileCacheLayerInfo.getMaxY() - minGeoY) / (resolution.value * h));
 
+        int[] tileCoords = handleWrapDateLine(tileX, tileY, resolution, -1);
+        
         StringBuilder path = new StringBuilder();
         if (!commonUri.getPath().endsWith("/")) {
             path.append('/');
         }
 
         if (this.path_format == null) {
-            path.append(String.format("%02d", resolution.index));
-            path.append('/').append(tileX);
-            path.append('/').append(tileY - 1);
+            path.append(String.format("%d", resolution.index));
+            path.append('/').append(tileCoords[0]);
+            path.append('/').append(tileCoords[1]);
             path.append('.').append(tileCacheLayerInfo.getExtension());
         } else {
             if (this.path_format.startsWith("/")) {
@@ -104,8 +106,8 @@ public class XyzMapReader extends TileableMapReader {
             }
 
              url_regex_replace("z", path, resolution.index);
-             url_regex_replace("x", path, new Integer(tileX));
-             url_regex_replace("y", path, new Integer(tileY - 1));
+             url_regex_replace("x", path, Integer.valueOf(tileCoords[0]));
+             url_regex_replace("y", path, Integer.valueOf(tileCoords[1]));
              url_regex_replace("extension", path, tileCacheLayerInfo.getExtension());
         }
 

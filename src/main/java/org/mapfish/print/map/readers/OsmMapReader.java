@@ -51,7 +51,10 @@ public class OsmMapReader extends TileableMapReader {
         this.layer = layer;
         PJsonArray maxExtent = params.getJSONArray("maxExtent");
         PJsonArray tileSize = params.getJSONArray("tileSize");
-        tileCacheLayerInfo = new OsmLayerInfo(params.getJSONArray("resolutions"), tileSize.getInt(0), tileSize.getInt(1), maxExtent.getFloat(0), maxExtent.getFloat(1), maxExtent.getFloat(2), maxExtent.getFloat(3), params.getString("extension"));
+        tileCacheLayerInfo = new OsmLayerInfo(params.getJSONArray("resolutions"),
+                tileSize.getInt(0), tileSize.getInt(1), maxExtent.getFloat(0),
+                maxExtent.getFloat(1), maxExtent.getFloat(2), maxExtent.getFloat(3),
+                params.getString("extension"));
     }
     @Override
     protected TileRenderer.Format getFormat() {
@@ -68,15 +71,18 @@ public class OsmMapReader extends TileableMapReader {
 
         int tileX = (int) Math.round((minGeoX - tileCacheLayerInfo.getMinX()) / (resolution.value * w));
         int tileY = (int) Math.round((tileCacheLayerInfo.getMaxY() - minGeoY) / (resolution.value * h));
-
+        
+        int[] tileCoords = handleWrapDateLine(tileX, tileY, resolution, -1);
+        
         StringBuilder path = new StringBuilder();
         if (!commonUri.getPath().endsWith("/")) {
             path.append('/');
         }
-        path.append(String.format("%02d", resolution.index));
-        path.append('/').append(tileX);
-        path.append('/').append(tileY-1);
+        path.append(String.format("%d", resolution.index));
+        path.append('/').append(tileCoords[0]);
+        path.append('/').append(tileCoords[1]);
         path.append('.').append(tileCacheLayerInfo.getExtension());
+        LOGGER.debug("Printing URI: " + path);
 
         return new URI(commonUri.getScheme(), commonUri.getUserInfo(), commonUri.getHost(), commonUri.getPort(), commonUri.getPath() + path, commonUri.getQuery(), commonUri.getFragment());
     }

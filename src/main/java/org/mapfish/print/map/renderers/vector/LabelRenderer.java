@@ -19,7 +19,8 @@
 
 package org.mapfish.print.map.renderers.vector;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.mapfish.print.PDFUtils;
 import org.mapfish.print.RenderingContext;
 import org.mapfish.print.config.ColorWrapper;
@@ -35,7 +36,7 @@ import java.awt.geom.AffineTransform;
 
 public class LabelRenderer {
 
-    public static final Logger LOGGER = Logger.getLogger(LabelRenderer.class);
+    public static final Logger LOGGER = LogManager.getLogger(LabelRenderer.class);
 
     static void applyStyle(RenderingContext context, PdfContentByte dc,
             PJsonObject style, Geometry geometry, AffineTransform affineTransform) {
@@ -53,15 +54,18 @@ public class LabelRenderer {
             String labelAlign = style.optString("labelAlign", "cm");
             float labelXOffset = style.optFloat("labelXOffset", (float) 0.0);
             float labelYOffset = style.optFloat("labelYOffset", (float) 0.0);
-            float labelRotation = style.optFloat("labelRotation", (float) 0.0);
+            float labelRotation = style.optFloat("rotation", (float) 0.0);
+            if (labelRotation == 0.0f) {
+                labelRotation = style.optFloat("labelRotation", (float) 0.0);
+            }
             String fontColor = style.optString("fontColor", "#000000");
-            /* Supported itext fonts: COURIER, HELVETICA, TIMES_ROMAN and registered fonts from configuration */
+            /* Supported itext fonts: COURIER, HELVETICA, TIMES_ROMAN */
             String fontFamily = style.optString("fontFamily", "HELVETICA");
             String font = style.optString("font");
             String fontEncoding = style.optString("fontEncoding");
             if (font != null && !FontFactory.isRegistered(font)) {
                 LOGGER.info("Font: '" + font +
-                		"' not registered, one of the supported fonts from 'fontFamily' will be used");            	
+                        "' not registered, one of the supported fonts from 'fontFamily' will be used");            	
             }
             else if (!"COURIER".equalsIgnoreCase(fontFamily)
                     && !"HELVETICA".equalsIgnoreCase(fontFamily)
@@ -85,21 +89,29 @@ public class LabelRenderer {
                     .toLowerCase().replaceAll("px", "")) * f;
             dc.setFontAndSize(bf, fontHeight);
             dc.setColorFill(ColorWrapper.convertColor(fontColor));
+            String outlineColor = style.optString("labelOutlineColor", null);
+            float outlineWidth = style.optFloat("labelOutlineWidth", 1);
+            if (outlineColor != null) {
+                dc.setTextRenderingMode(PdfContentByte.TEXT_RENDER_MODE_FILL_STROKE);
+                dc.setColorStroke(ColorWrapper.convertColor(outlineColor));
+                dc.setLineWidth(outlineWidth);
+            }
+           
             dc.beginText();
             dc.setTextMatrix((float) center.x + labelXOffset * f,
                 (float) center.y + labelYOffset * f);
             for (int i = 0; i < labels.length; i++){
+                float singleOffset =
+                    PDFUtils.getVerticalOffset(labelAlign, fontHeight);            
+                float offset = singleOffset - ((singleOffset+2)*i);
+                float yOffset = (float)Math.cos(labelRotation * Math.PI / 180.0) * offset;
+                float xOffset = (float)Math.sin(labelRotation * Math.PI / 180.0) * offset;
                 dc.showTextAligned(
-		                    PDFUtils.getHorizontalAlignment(labelAlign),
-		                    labels[i],
-		                    (float) center.x + labelXOffset * f,
-		                    (float) center.y
-		                            + labelYOffset
-		                            * f
-		                            - PDFUtils
-		                                    .getVerticalOffset(labelAlign, fontHeight) - ((PDFUtils.getVerticalOffset(labelAlign, fontHeight)+2)*i),
-		                    labelRotation);
-	            
+                    PDFUtils.getHorizontalAlignment(labelAlign),
+                    labels[i],
+                    (float) center.x + labelXOffset * f + xOffset,
+                    (float) center.y + labelYOffset * f - yOffset,
+                    labelRotation);
             }
             dc.endText();
         }

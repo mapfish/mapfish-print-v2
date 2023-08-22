@@ -31,6 +31,7 @@ import java.util.logging.Logger;
 import org.mapfish.print.RenderingContext;
 import org.mapfish.print.Transformer;
 import org.mapfish.print.map.ParallelMapTileLoader;
+import org.mapfish.print.map.readers.TileCacheLayerInfo.ResolutionInfo;
 import org.mapfish.print.map.renderers.TileRenderer;
 import org.mapfish.print.utils.PJsonObject;
 
@@ -104,16 +105,17 @@ public abstract class TileableMapReader extends HTTPMapReader {
             offsetY = (minGeoY - tileMinGeoY) / transformer.getResolution();
             for (float geoY = tileMinGeoY; geoY < maxGeoY; geoY += tileGeoHeight) {
                 nbTilesW = 0;
-                for (float geoX = tileMinGeoX; geoX < maxGeoX; geoX += tileGeoWidth) {
+                for (float geoX = tileMinGeoX; geoX <= maxGeoX; geoX += tileGeoWidth) {
                     nbTilesW++;
-                    if (tileCacheLayerInfo.isVisible(geoX, geoY, geoX + tileGeoWidth, geoY + tileGeoHeight)) {
-                        urls.add(getTileUri(commonUri, transformer, geoX, geoY, geoX + tileGeoWidth, geoY + tileGeoHeight, bitmapTileW, bitmapTileH));
-                    } else {
-                        if (LOGGER.isDebugEnabled()) {
-                            LOGGER.debug("Tile out of bounds: " + getTileUri(commonUri, transformer, geoX, geoY, geoX + tileGeoWidth, geoY + tileGeoHeight, bitmapTileW, bitmapTileH));
-                        }
-                        urls.add(null);
-                    }
+                    urls.add(getTileUri(commonUri, transformer, geoX, geoY, geoX + tileGeoWidth, geoY + tileGeoHeight, bitmapTileW, bitmapTileH));
+//                     if (tileCacheLayerInfo.isVisible(geoX, geoY, geoX + tileGeoWidth, geoY + tileGeoHeight)) {
+//                         urls.add(getTileUri(commonUri, transformer, geoX, geoY, geoX + tileGeoWidth, geoY + tileGeoHeight, bitmapTileW, bitmapTileH));
+//                     } else {
+//                         if (LOGGER.isDebugEnabled()) {
+//                             LOGGER.debug("Tile out of bounds: " + getTileUri(commonUri, transformer, geoX, geoY, geoX + tileGeoWidth, geoY + tileGeoHeight, bitmapTileW, bitmapTileH));
+//                         }
+//                         urls.add(null);
+//                     }
                 }
             }
 
@@ -162,6 +164,15 @@ public abstract class TileableMapReader extends HTTPMapReader {
         return transformer;
     }
 
+    protected int[] handleWrapDateLine(int tileX, int tileY, ResolutionInfo resolution,
+            int offsetY) {
+        if (tileX < 0)
+            tileX = (int) Math.pow(2, resolution.index) + tileX;
+
+        tileX = (int) Math.round(tileX % Math.pow(2, resolution.index));
+        return new int[] {tileX, tileY + offsetY};
+    }
+    
     /**
      * Adds the query parameters for the given tile.
      */

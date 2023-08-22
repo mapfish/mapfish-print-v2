@@ -19,15 +19,17 @@
 
 package org.mapfish.print.map.renderers.vector;
 
+import static java.lang.Float.parseFloat;
+import java.awt.geom.AffineTransform;
+
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.LineString;
+
 import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfGState;
 
 import org.mapfish.print.InvalidValueException;
-import org.locationtech.jts.geom.Coordinate;
-
-import static java.lang.Float.parseFloat;
 import org.mapfish.print.RenderingContext;
-import org.locationtech.jts.geom.LineString;
 import org.mapfish.print.config.ColorWrapper;
 import org.mapfish.print.utils.PJsonObject;
 
@@ -104,7 +106,25 @@ public class LineStringRenderer extends GeometriesRenderer<LineString> {
                 }
                 //assume solid!
             } else {
-                throw new InvalidValueException("strokeDashstyle", dashStyle);
+                String[] parts = dashStyle.split(" ");
+                if (parts.length < 2) {
+                    throw new InvalidValueException("strokeDashstyle", dashStyle);
+                }
+                try {
+                    // duplicate odd values
+                    final float[] def = new float[parts.length % 2 == 0 ? parts.length : parts.length * 2];
+                    for (int count = 0; count < parts.length; count++) {
+                        def[count] = Float.parseFloat(parts[count]);
+                    }
+                    if (parts.length % 2 != 0) {
+                        for (int count = 0; count < parts.length; count++) {
+                            def[count + parts.length] = Float.parseFloat(parts[count]);
+                        }
+                    }
+                    dc.setLineDash(def, 0);
+                } catch(NumberFormatException e) {
+                    throw new InvalidValueException("strokeDashstyle", dashStyle);
+                }
             }
         }
     }

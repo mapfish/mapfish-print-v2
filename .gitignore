@@ -5,9 +5,9 @@ buildSrc/build/
 deploy.sh
 *.class
 /bin
-/target
 .classpath
-.settings/org.eclipse.jdt.core.prefs
+.settings/
+target/
 mapfish-print.ipr
 mapfish-print.iws
 /.nb-gradle/private/

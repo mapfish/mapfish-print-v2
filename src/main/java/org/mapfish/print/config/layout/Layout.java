@@ -39,6 +39,10 @@ public class Layout {
 
     private MainPage mainPage;
 
+    private DynamicImagesPage dynamicImagesPage;
+
+    private DefaultExtraPage extraPage;
+
     private LastPage lastPage;
 
     private String outputFilename;
@@ -48,9 +52,10 @@ public class Layout {
             metaData.render(params, context);
         }
 
-        if (titlePage != null) {
+        if (titlePage != null && params.optBool("includeTitlePage", true)) {
             titlePage.render(params, context);
         }
+        renderExtraPages(ExtraPage.BEFORE_MAIN_PAGE, params, context);
 
         if (mainPage != null) {
             PJsonArray pages = params.getJSONArray("pages");
@@ -60,8 +65,31 @@ public class Layout {
             }
         }
 
-        if (lastPage != null) {
+        renderExtraPages(ExtraPage.BEFORE_LAST_PAGE, params, context);
+
+        if (lastPage != null && params.optBool("includeLastPage", true)) {
             lastPage.render(params, context);
+        }
+
+        renderExtraPages(ExtraPage.AFTER_LAST_PAGE, params, context);
+    }
+
+    private void renderExtraPages(String position, PJsonObject params, RenderingContext context)
+            throws DocumentException {
+        for (ExtraPage extraPage : context.getExtraPages()) {
+            if (position.equals(extraPage.getRenderOn())) {
+                extraPage.render(params, context);
+            }
+        }
+        if (this.extraPage != null && position.equals(this.extraPage.getRenderOn())
+                && params.optBool("includeExtraPage", true)) {
+            this.extraPage.render(params, context);
+        }
+        // deprecated: please, use extra pages
+        if (dynamicImagesPage != null) {
+            if (position.equals(dynamicImagesPage.getRenderOn())) {
+                dynamicImagesPage.render(params, context);
+            }
         }
     }
 
@@ -83,6 +111,34 @@ public class Layout {
 
     public void setMetaData(MetaData metaData) {
         this.metaData = metaData;
+    }
+
+    /**
+     * Taken for compatibility, please use extraPages.
+     * 
+     * @deprecated
+     * @return
+     */
+    public DynamicImagesPage getDynamicImagesPage() {
+        return dynamicImagesPage;
+    }
+
+    /**
+     * Taken for compatibility, please use extraPages.
+     * 
+     * @deprecated
+     * @return
+     */
+    public void setDynamicImagesPage(DynamicImagesPage dynamicImagesPage) {
+        this.dynamicImagesPage = dynamicImagesPage;
+    }
+
+    public DefaultExtraPage getExtraPage() {
+        return extraPage;
+    }
+
+    public void setExtraPage(DefaultExtraPage extraPage) {
+        this.extraPage = extraPage;
     }
 
     public Rectangle getFirstPageSize(RenderingContext context, PJsonObject params) {

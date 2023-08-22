@@ -21,8 +21,10 @@ package org.mapfish.print;
 
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Font;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.json.JSONObject;
 import org.junit.Test;
 import org.mapfish.print.config.Config;
@@ -47,8 +49,8 @@ public class PDFUtilsTest extends PdfTestCase {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        Logger.getLogger("org.apache.commons.httpclient").setLevel(Level.INFO);
-        Logger.getLogger("httpclient").setLevel(Level.INFO);
+        Configurator.setLevel(LogManager.getLogger("org.apache.commons.httpclient"),Level.INFO);
+        Configurator.setLevel(LogManager.getLogger("httpclient"), Level.INFO);
 
         httpd = new FakeHttpd(
                 FakeHttpd.Route.errorResponse(FIVE_HUNDRED_ROUTE, 500, "Server error"),
@@ -119,7 +121,7 @@ public class PDFUtilsTest extends PdfTestCase {
         Font font = new Font();
         context.getLayout().getMainPage().getMap(null).setWidth("300");
         context.getLayout().getMainPage().getMap(null).setHeight("600");
-        PDFUtils.renderString(context, params, "${scaleLbl}1:${format %,d scale}", font, null);
+        PDFUtils.renderString(context, params, "${scaleLbl}1:${format %,d scale}", 0, font, null, false);
 
     }
     
@@ -162,7 +164,7 @@ public class PDFUtilsTest extends PdfTestCase {
         context.getLayout().getMainPage().getMap("other").setWidth("300");
         context.getLayout().getMainPage().getMap("other").setHeight("600");
         
-        assertTrue(PDFUtils.renderString(context, params, "${scaleLbl}1:${format %,d scale.main}", font, null).getContent().contains("1:25"));
-        assertTrue(PDFUtils.renderString(context, params, "${scaleLbl}1:${format %,d scale.other}", font, null).getContent().contains("1:200"));
+        assertTrue(PDFUtils.renderString(context, params, "${scaleLbl}1:${format %,d scale.main}", 0, font, null, false).getContent().contains("1:25"));
+        assertTrue(PDFUtils.renderString(context, params, "${scaleLbl}1:${format %,d scale.other}", 0, font, null, false).getContent().contains("1:200"));
     }
 }

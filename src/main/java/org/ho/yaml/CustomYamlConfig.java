@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Camptocamp, and others
+ * Copyright (C) 2013  Camptocamp
  *
  * This file is part of MapFish Print
  *
@@ -35,7 +35,14 @@ import org.ho.yaml.wrapper.DefaultMapWrapper;
 import org.ho.yaml.wrapper.DefaultSimpleTypeWrapper;
 import org.ho.yaml.wrapper.EnumWrapper;
 import org.ho.yaml.wrapper.ObjectWrapper;
-import org.mapfish.print.config.*;
+import org.mapfish.print.config.AcceptAllMatcher;
+import org.mapfish.print.config.AddressHostMatcher;
+import org.mapfish.print.config.BasicAuthSecurity;
+import org.mapfish.print.config.ColorWrapper;
+import org.mapfish.print.config.CustomEnumWrapper;
+import org.mapfish.print.config.DnsHostMatcher;
+import org.mapfish.print.config.Key;
+import org.mapfish.print.config.LocalHostMatcher;
 import org.mapfish.print.config.layout.AttributesBlock;
 import org.mapfish.print.config.layout.ColumnDefs;
 import org.mapfish.print.config.layout.ColumnsBlock;

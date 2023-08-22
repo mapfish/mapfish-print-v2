@@ -101,8 +101,8 @@ public class KaMapCacheMapReader extends TileableMapReader {
         // top & left
         double pX = Math.round(minGeoX / resolution.value);
         double pY = Math.round(maxGeoY / resolution.value) * -1;
-        pX = Math.floor(pX / w) * new Double(w);
-        pY = Math.floor(pY / h) * new Double(h);
+        pX = Math.floor(pX / w) * (double) w;
+        pY = Math.floor(pY / h) * (double) h;
         int pX4Path = (int)pX;
         int pY4Path = (int)pY;
 

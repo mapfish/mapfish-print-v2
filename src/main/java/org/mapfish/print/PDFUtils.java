@@ -29,13 +29,17 @@ import com.lowagie.text.Element;
 import com.lowagie.text.Font;
 import com.lowagie.text.FontFactory;
 import com.lowagie.text.Image;
+import com.lowagie.text.Paragraph;
 import com.lowagie.text.Phrase;
+import com.lowagie.text.html.simpleparser.HTMLWorker;
+import com.lowagie.text.html.simpleparser.StyleSheet;
 import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfGraphics2D;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfTemplate;
+
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.DocumentLoader;
 import org.apache.batik.bridge.GVTBuilder;
@@ -50,6 +54,7 @@ import org.apache.batik.util.XMLResourceDescriptor;
 import java.io.IOException;
 import org.apache.commons.httpclient.Header;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -57,7 +62,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import org.apache.commons.httpclient.methods.GetMethod;
 import java.text.SimpleDateFormat;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import java.util.Date;
 import org.mapfish.print.config.layout.Block;
 import java.util.HashMap;
@@ -72,11 +78,13 @@ import java.util.regex.Pattern;
 import org.mapfish.print.utils.PJsonObject;
 import org.w3c.dom.svg.SVGDocument;
 
+import org.geotools.util.Base64;
+
 /**
  * Some utility functions for iText.
  */
 public class PDFUtils {
-    public static final Logger LOGGER = Logger.getLogger(PDFUtils.class);
+    public static final Logger LOGGER = LogManager.getLogger(PDFUtils.class);
     private static final Map<String, Image> placeholderCache = new HashMap<String, Image>();
 
     /**
@@ -208,6 +216,13 @@ public class PDFUtils {
             }
             path = path.replace("/", File.separator);
             return Image.getInstance(new File(path).toURI().toURL());
+        } else if ("data".equalsIgnoreCase(uri.getScheme())) {
+            String data = uri.toString().substring("data:".length());
+            String base64 = data.split(",")[1];
+            String meta = data.split(",")[0];
+            // String format = meta.split(";")[0];
+            byte[] image = Base64.decode(base64);
+            return Image.getInstance(image);
         } else {
 
             final String contentType;
@@ -417,7 +432,10 @@ public class PDFUtils {
 
     private static final Pattern VAR_REGEXP = Pattern.compile("\\$\\{([^}]+)\\}");
 
-    public static Phrase renderString(RenderingContext context, PJsonObject params, String val, com.lowagie.text.Font font, String mapName) throws BadElementException {
+    //public static Phrase renderString(RenderingContext context, PJsonObject params, String val, com.lowagie.text.Font font, String mapName, boolean asHTML) throws BadElementException {
+    public static Phrase renderString(RenderingContext context, PJsonObject params, String val, int maxLength, com.lowagie.text.Font font, String mapName, boolean asHTML) throws DocumentException {
+
+
         Phrase result = new Phrase();
         while (true) {
             Matcher matcher = VAR_REGEXP.matcher(val);
@@ -436,7 +454,26 @@ public class PDFUtils {
                 break;
             }
         }
-        result.add(val);
+        if(asHTML) {
+        	val = result.getContent();
+        	try {
+        		StyleSheet styles = new StyleSheet();
+                styles.loadTagStyle("a", "color", "blue");
+                styles.loadTagStyle("a", "text-decoration", "underline");
+				List<Element> list = HTMLWorker.parseToList(new StringReader(val), styles);
+				Paragraph p = new Paragraph();
+				for(Element element : list) {
+					p.add(element);
+				}
+				return p;
+			} catch (IOException e) {
+				throw new DocumentException(e);
+			} catch(Throwable t) {
+				result.add(val);
+			}
+        } else {
+        	result.add(val);
+        }
         return result;
     }
 

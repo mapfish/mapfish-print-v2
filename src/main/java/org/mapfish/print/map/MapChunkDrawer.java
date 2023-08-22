@@ -176,7 +176,11 @@ public class MapChunkDrawer extends ChunkDrawer {
                 parallelMapTileLoader.addTileToLoad(new MapTileTask.RenderOnly() {
                     public void renderOnPdf(PdfContentByte dc) throws DocumentException {
                         PdfLayer pdfLayer = null;
-                        pdfLayer = new PdfLayer(reader.toString(), context.getWriter());
+                        try {
+                            pdfLayer = new PdfLayer(reader.toString(), context.getWriter());
+                        } catch (Throwable unexpected) {
+                            Logger.getLogger(MapChunkDrawer.class.getName()).log(Level.SEVERE,"", unexpected);
+                        }
                         mapLayer.addChild(pdfLayer);
                         dc.beginLayer(pdfLayer);
                     }
@@ -192,6 +196,8 @@ public class MapChunkDrawer extends ChunkDrawer {
                     }
                 });
             }
+        } catch (Throwable unexpected) {
+            Logger.getLogger(MapChunkDrawer.class.getName()).log(Level.SEVERE, null, unexpected);
         } finally {
             //wait for all the tiles to be loaded
             parallelMapTileLoader.waitForCompletion();

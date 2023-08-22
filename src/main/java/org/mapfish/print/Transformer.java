@@ -21,6 +21,7 @@ package org.mapfish.print;
 
 import org.geotools.geometry.DirectPosition2D;
 import org.geotools.referencing.CRS;
+import org.mapfish.print.config.Config;
 import org.geotools.referencing.GeodeticCalculator;
 import org.mapfish.print.utils.DistanceUnit;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;

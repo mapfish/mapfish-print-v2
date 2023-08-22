@@ -20,13 +20,18 @@
 package org.mapfish.print;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.mapfish.print.config.Config;
+import org.mapfish.print.config.layout.ExtraPage;
 import org.mapfish.print.config.layout.Layout;
+import org.mapfish.print.config.layout.Page;
+import org.mapfish.print.config.layout.Page.Position;
 import org.mapfish.print.utils.PJsonObject;
 
 import com.lowagie.text.Document;
@@ -58,6 +63,9 @@ public class RenderingContext {
      *  - context: the context the parameter should be merged in (defaults to *, that is any context)
      */
     private final Map<String,Map<String,PJsonObject>> mergeableParams;
+    private final List<ExtraPage> extraPages = new ArrayList<ExtraPage>();
+    private Position currentPosition = Position.NONE;
+    private Page currentPage = null;
 
     /**
      * Current page being rendered
@@ -203,4 +211,26 @@ public class RenderingContext {
     public Object getPdfLock() {
         return pdfLock;
     }
+
+	public void setCurrentPosition(Position currentPosition) {
+		this.currentPosition = currentPosition;
+	}
+
+	public Position getCurrentPosition() {
+		return currentPosition;
+	}
+
+	public List<ExtraPage> getExtraPages() {
+		return extraPages;
+	}
+	
+	public void setCurrentPage(Page currentPage) {
+		this.currentPage = currentPage;
+	}
+
+	public Page getCurrentPage() {
+		return currentPage;
+	}
+
+	
 }

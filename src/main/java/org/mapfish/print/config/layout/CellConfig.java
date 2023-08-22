@@ -20,7 +20,6 @@
 package org.mapfish.print.config.layout;
 
 import java.awt.Color;
-import java.awt.Color;
 
 import org.mapfish.print.PDFUtils;
 import org.mapfish.print.RenderingContext;

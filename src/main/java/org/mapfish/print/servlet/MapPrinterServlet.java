@@ -21,7 +21,8 @@ package org.mapfish.print.servlet;
 
 import com.google.common.io.CharStreams;
 import com.google.common.io.Closer;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.pvalsecc.misc.FileUtilities;
 import org.mapfish.print.utils.PJsonObject;
 import org.mapfish.print.output.OutputFormat;
@@ -40,6 +41,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -61,7 +63,7 @@ import com.lowagie.text.DocumentException;
  * Main print servlet.
  */
 public class MapPrinterServlet extends BaseMapServlet {
-    public static final Logger SPEC_LOGGER = Logger.getLogger(BaseMapServlet.class.getPackage().toString() + ".spec");
+    public static final Logger SPEC_LOGGER = LogManager.getLogger(BaseMapServlet.class.getPackage().toString() + ".spec");
     private static final long serialVersionUID = -4706371598927161642L;
     private static final String CONTEXT_TEMPDIR = "javax.servlet.context.tempdir";
 
@@ -227,6 +229,7 @@ public class MapPrinterServlet extends BaseMapServlet {
         if(httpServletRequest.getParameter("spec") != null) {
             return httpServletRequest.getParameter("spec");
         }
+        BufferedReader data = new BufferedReader(new InputStreamReader(httpServletRequest.getInputStream(), StandardCharsets.UTF_8));
 
         Closer closer = Closer.create();
         try {
@@ -367,6 +370,19 @@ public class MapPrinterServlet extends BaseMapServlet {
             FileOutputStream out = null;
             try {
                 out = new FileOutputStream(tempFile);
+                if(mapPrinter.getConfig().isAddForwardedFor()) {
+                    String ipAddress = httpServletRequest.getHeader("X-FORWARDED-FOR");  
+                    if (ipAddress != null) {
+                        String[] ips = ipAddress.split(", ");
+                        ipAddress = ips[0];
+                    } else {
+                    ipAddress = httpServletRequest.getRemoteAddr();  
+                    }
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("Forwarded for: " + ipAddress);
+                    }
+                    headers.put("X-Forwarded-For", ipAddress);
+                }
                 mapPrinter.print(specJson, out, headers);
 
                 return tempFile;
@@ -467,7 +483,10 @@ public class MapPrinterServlet extends BaseMapServlet {
     protected File getTempDir() {
         if (tempDir == null) {
             String tempDirPath = getInitParameter("tempdir");
-            if (tempDirPath != null) {
+            if (tempDirPath == null) {
+            	tempDirPath = System.getProperty("MAPFISH_PDF_FOLDER");
+            }
+            if (tempDirPath != null && !"".equals(tempDirPath.trim())) {
                 tempDir = new File(tempDirPath);
             } else {
                 tempDir = (File) getServletContext().getAttribute(CONTEXT_TEMPDIR);
@@ -511,7 +530,12 @@ public class MapPrinterServlet extends BaseMapServlet {
         if (fullUrl != null) {
             return fullUrl.replaceFirst(additionalPath + "$", "");
         } else {
-            return httpServletRequest.getRequestURL().toString().replaceFirst(additionalPath + "$", "");
+            String customUrl = System.getProperty("PRINT_BASE_URL");
+            if(customUrl != null && !"".equals(customUrl.trim())) {
+                return customUrl.replaceFirst(additionalPath + "$", "");
+            } else {
+                return httpServletRequest.getRequestURL().toString().replaceFirst(additionalPath + "$", "");
+            }
         }
     }
 

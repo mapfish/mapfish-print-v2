@@ -26,5 +26,7 @@ package org.mapfish.print.config.layout;
  * See http://trac.mapfish.org/trac/mapfish/wiki/PrintModuleServer#ServersideConfiguration
  */
 public class TitlePage extends Page {
-
+	protected Position getCurrentPosition() {
+		return Position.TITLE_PAGE;
+	}
 }

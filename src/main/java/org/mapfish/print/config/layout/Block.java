@@ -41,6 +41,8 @@ public abstract class Block {
     private String condition = null;
     protected double spacingAfter = 0.0;
 
+    private boolean renderOnExtraPage;
+
     public Block() {
 
     }
@@ -146,4 +148,18 @@ public abstract class Block {
         }
         return value == 0.0 ? Float.MAX_VALUE : value;
     }
+
+	public boolean hasExtraRendering() {
+		return false;
+	}
+
+	public boolean isRenderOnExtraPage() {
+		return renderOnExtraPage;
+	}
+
+	public void setRenderOnExtraPage(boolean renderOnExtraPage) {
+		this.renderOnExtraPage = renderOnExtraPage;
+	}
+	
+	
 }
