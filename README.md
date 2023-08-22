@@ -17,48 +17,46 @@ GeoSolutions created a fork of the project in 2013:
 - Some features introduced over time (see [wiki](https://github.com/geosolutions-it/mapfish-print/wiki) )
 - Updated to reflect GeoTools changes including Java 11 and Log4j changes
 
-Outdated documentation
+Outdated documentation:
 
 - https://www.mapfish.org/doc/index.html
 
 ## Build
 
-Execute the following command:
+Standard maven build targets are available:
 ```bash
-./gradlew build
+mvn clean
+mvn compile
+mvn package
+mvn install
 ```
 
-This will build three artifacts:  ``print-servlet-xxx.war``, ``print-lib.jar``, ``print-standalone.jar``
+The `package` phase invokes ``war:war`` goal building ``print-servlet-xxx.war``, and ``print-lib.jar``, ``print-standalone.jar``
 
 ## Run from commandline
 
 The following command will run the mapfish printer.  If you do no supply any -Dxxx args then all argument options will be listed.
 
 ```bash
-./gradlew run -Dconfig=samples/config.yaml -Dspec=samples/spec.json -Doutput=/tmp/print-out.pdf
+mvn jetty:run
 ```
 ## Install
 
-To install SNAPSHOT into local maven repository:
+To install SNAPSHOT into local maven repository for integration testing:
 
 ```bash
-./gradlew install
+mvn install
 ```
 
 ## Deploy
 
-1. Create ``~/.gradle`` file based on template ``gradle.properties`` provided
-2. Use osgeo id credentials to deploy to repo.osgeo.org
-   ```
-   enablePublishing=true
-   osgeoUsername=gtbuild
-   osgeoPassword=....
-   ```
-3. The following command will build and upload all artifacts to the osgeo repository.
+Deploy to repo.osgeo.org:
 
-   ```bash
-   ./gradlew upload 
-   ```
+```bash
+mvn deploy
+```
+
+Your `~/.m2/settings.xml` requires credentials to access osgeo nexus server at repo.osgeo.org.
 
 ## Eclipse
 
@@ -66,7 +64,7 @@ To build in eclipse:
 
 1. Create eclipse project metadata:
    ```bash
-   ./gradlew eclipse
+   mvn eclipse:eclipse
    ```
    
 2. Import project into eclipse
