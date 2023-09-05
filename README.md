@@ -1,77 +1,153 @@
-# MapFish Print 2 
+# MapFish Print V2 
 
-This project is no longer actively maintained by [camptocamp](https://www.camptocamp.com/en). New projects are strongly encouragted to use [mapfish-print](https://github.com/mapfish/mapfish-print) which is at Version 3 at the time of writing.
+This project is no longer actively maintained by [camptocamp](https://www.camptocamp.com/en). New projects are strongly encouraged to use [mapfish-print](https://github.com/mapfish/mapfish-print) which is at Version 3 at the time of writing.
+
+This project is no longer fully functional, consisting of ``mapfish-print-lib.jar`` distribution used
+by downstream projects as described below.
+
+## Background
 
 Downstream projects making use of this technology:
 
-- [core-geonetwork](http://github.com/geonetwork/core-geonetwork) - uses mapfish print for activities such as thumbnail generation
+- [geoserver](https://docs.geoserver.org/latest/en/user/extensions/printing/index.html) - Uses mapfish-print-lib for gs-printing extension
+- [core-geonetwork](http://github.com/geonetwork/core-geonetwork) - uses mapfish-print-lib for activities such as thumbnail generation
 - [GeoNode](https://github.com/geonode/) - Uses geosolutions fork described below
 - [MapStore](https://github.com/geosolutions-it/MapStore2) - Uses geosolutions fork described below
 
 
-GeoCat BC has mained this series as needed to support the core-geonetwork project:
+GeoCat BV has mained this series as needed to support the core-geonetwork project:
+
 - Updated to migrate to OpenPDF
 
 GeoSolutions created a fork of the project in 2013:
+
 - https://github.com/geosolutions-it/mapfish-print
 - Some features introduced over time (see [wiki](https://github.com/geosolutions-it/mapfish-print/wiki) )
 - Updated to reflect GeoTools changes including Java 11 and Log4j changes
+- This work has been incorporated back into mapfish-print-lib
 
 Outdated documentation:
 
-- https://www.mapfish.org/doc/index.html
+- http://www.mapfish.org/doc/print/index.html
 
-## Build
+## Maven Build
 
 Standard maven build targets are available:
-```bash
-mvn clean
-mvn compile
-mvn package
-mvn install
-```
 
-The `package` phase invokes ``war:war`` goal building ``print-servlet-xxx.war``, and ``print-lib.jar``, ``print-standalone.jar``
+1. To clean the ``target/`` folder:
 
-## Run from commandline
+   ```bash
+   mvn clean
+   ```
 
-The following command will run the mapfish printer.  If you do no supply any -Dxxx args then all argument options will be listed.
+2. To compile:
 
-```bash
-mvn jetty:run
-```
-## Install
+   ```bash
+   mvn compile
+   ```
 
-To install SNAPSHOT into local maven repository for integration testing:
+3. To create a ``print-lib-2.3-SNAPSHOT.jar`` jar:
 
-```bash
-mvn install
-```
+   ```bash
+   mvn package
+   ```
+
+4. To install SNAPSHOT jar into ``~/.m2/repository`` local maven repository:
+  
+   ```bash
+   mvn install
+   ```
+  
+   The use of a local maven repository allows for integration testing with other builds.
+
+## IDE Build
+
+To build in IntelliJ:
+
+1. Open as a maven project.
+
+To build in Eclipse:
+
+1. Open as maven project.
+
+To build in Eclipse as a Java project:
+
+1. Create eclipse project ``.classpath`` and ``.project`` files:
+   ```bash
+   mvn eclipse:eclipse
+   ```
+   
+2. Import project into Eclipse as a Java project.
+
+When running in an IDE:
+
+1. Main class is ``org.mapfish.print.ShellMapPrinter``
+
+2. Program arguments: ``--config=samples/config.yaml --spec=samples/spec.json --output=$HOME/print.pdf``
 
 ## Deploy
 
-Deploy to repo.osgeo.org:
+To deploy SNAPSHOT to repo.osgeo.org:
 
 ```bash
 mvn deploy
 ```
 
-Your `~/.m2/settings.xml` requires credentials to access osgeo nexus server at repo.osgeo.org.
+Your `~/.m2/settings.xml` requires credentials to access osgeo ``nexus`` server at repo.osgeo.org.
+See https://wiki.osgeo.org/wiki/SAC:Repo to obtain credentials:
 
-## Eclipse
+```xml
+  <servers>
+    <server>
+      <username>OSGEO_ID</username>
+      <password>OSGEO_PASSWORD</password>
+      <id>nexus</id>
+    </server>
+  </servers>
+```
 
-To build in eclipse:
+## Release
 
-1. Create eclipse project metadata:
-   ```bash
-   mvn eclipse:eclipse
+To create a release:
+
+1. Update version in ``pom.xml``:
+  
+   ```xml
+   <groupId>org.mapfish.print</groupId>
+   <artifactId>print-lib</artifactId>
+   <version>2.3.0</version>
    ```
    
-2. Import project into eclipse
+2. Build confirming creation of ``print-lib-2.3.0.jar``
 
+   ```bash
+   mvn clean install
+   ```
 
-To run in eclipse:
+3. Commit the change to ``pom.xml``
 
-1. Create new Java Run Configuration
-2. Main class is ``org.mapfish.print.ShellMapPrinter``
-3. Program arguments: ``--config=samples/config.yaml --spec=samples/spec.json --output=$HOME/print.pdf``
+   ```bash
+   git add pom.xml
+   git commit -m "Release 2.3.0"
+   ```
+
+4. Deploy to osgeo nexus
+
+   ```bash
+   mvn deploy -DskipTests
+   ```
+
+5. Push and tag the change:
+   
+   ```bash
+   git push
+   git tag -a release/2.3.0 -m "Release 2.3.0"
+   git push origin release/2.3.0
+   ```
+
+6. Check the release in github:
+   
+   * https://github.com/mapfish/mapfish-print-v2/tags
+   
+7. Add any release-notes to the tag in GitHub.
+

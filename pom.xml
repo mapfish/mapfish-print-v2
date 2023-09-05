@@ -1,9 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+  
   <groupId>org.mapfish.print</groupId>
   <artifactId>print-lib</artifactId>
   <version>2.3-SNAPSHOT</version>
+
+  <description>
+    MapFish Print Version 2 has reached end-of-life and is no longer under active development.
+    New projects should make use of MapFish Print v3.
+  </description>
+  <inceptionYear>2007</inceptionYear>
+  <organization>
+    <name>MapFish</name>
+    <url>http://www.mapfish.org</url>
+  </organization>
+  
+  <licenses>
+    <license>
+      <name>GPL-3.0-or-later</name>
+      <url>https://www.gnu.org/licenses/gpl-3.0-standalone.html</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  
+  <scm>
+    <connection>scm:git:git@github.com:mapfish/mapfish-print-v2.git</connection>
+    <developerConnection>scm:git:git@github.com:mapfish/mapfish-print-v2.git</developerConnection>
+    <tag>main</tag>
+    <url>https://github.com/mapfish/mapfish-print-v2</url>
+  </scm>
+
+  <issueManagement>
+    <system>github</system>
+    <url>https://github.com/mapfish/mapfish-print-v2/issues</url>
+  </issueManagement>
+  
+  <!--
+  <prerequisites>
+    <maven>3.8.0</maven>
+  </prerequisites>
+  -->
+
+  
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <log4j-version>2.19.0</log4j-version>
@@ -12,6 +51,7 @@
     <pdfbox-version>2.0.26</pdfbox-version>
     <metrics-version>4.2.12</metrics-version>
   </properties>
+  
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -178,6 +218,7 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
+  
   <dependencies>
     <dependency>
       <groupId>org.geotools</groupId>
@@ -378,5 +419,24 @@
      </releases>
     </repository>
   </repositories>
+
+  <!-- ================================================================== -->
+  <!-- Deploy to OSGeo repository for downstream projects.                -->
+  <!-- Instructions: https://wiki.osgeo.org/wiki/SAC:Repo                 -->
+  <!-- ================================================================== -->
+  <distributionManagement>
+    <repository>
+      <uniqueVersion>false</uniqueVersion>
+      <id>nexus</id>
+      <name>OSGeo Release Repository</name>
+      <url>https://repo.osgeo.org/repository/Geoserver-releases/</url>
+    </repository>
+    <snapshotRepository>
+      <uniqueVersion>false</uniqueVersion>
+      <id>nexus</id>
+      <name>OSGeo Snapshot Repository</name>
+      <url>https://repo.osgeo.org/repository/geoserver-snapshots/</url>
+    </snapshotRepository>
+  </distributionManagement>
   
 </project>
