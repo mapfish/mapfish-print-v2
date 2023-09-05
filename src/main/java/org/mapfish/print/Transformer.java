@@ -19,12 +19,12 @@
 
 package org.mapfish.print;
 
-import org.geotools.geometry.DirectPosition2D;
+import org.geotools.geometry.Position2D;
 import org.geotools.referencing.CRS;
 import org.mapfish.print.config.Config;
 import org.geotools.referencing.GeodeticCalculator;
 import org.mapfish.print.utils.DistanceUnit;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 
 import com.lowagie.text.pdf.PdfContentByte;
 
@@ -160,7 +160,7 @@ public class Transformer implements Cloneable {
                 crs = CRS.decode(srsCode, !strictEpsg4326);
             }
             GeodeticCalculator calc = new GeodeticCalculator(crs);
-            DirectPosition2D directPosition2D = new DirectPosition2D(centerX,
+            Position2D directPosition2D = new Position2D(centerX,
                     centerY);
             directPosition2D.setCoordinateReferenceSystem(crs);
             calc.setStartingPosition(directPosition2D);

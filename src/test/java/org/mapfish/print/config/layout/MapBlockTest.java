@@ -25,7 +25,7 @@ import org.mapfish.print.utils.PJsonObject;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 import org.pvalsecc.misc.FileUtilities;
 
 import java.io.File;
