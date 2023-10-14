@@ -1,0 +1,261 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Installation &#8212; MapFish Print 2.3-SNAPSHOT documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mapfish.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Configuration" href="configuration.html" />
+    <link rel="prev" title="MapFish Print" href="index.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="configuration.html" title="Configuration"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="MapFish Print"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">MapFish Print 2.3-SNAPSHOT documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Installation</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this heading">¶</a></h1>
+<section id="compilation">
+<h2>Compilation<a class="headerlink" href="#compilation" title="Permalink to this heading">¶</a></h2>
+<p>To build this project, you need:</p>
+<ul>
+<li><p>JDK &gt;= 11, OpenJDK tested</p></li>
+<li><p>Download MapFish Print from GitHub</p>
+<ul>
+<li><p>On systems with git installed:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Go</span> <span class="n">to</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">mapfish</span><span class="o">/</span><span class="n">mapfish</span><span class="o">-</span><span class="nb">print</span><span class="o">-</span><span class="n">v2</span>
+<span class="n">Click</span> <span class="n">the</span> <span class="s2">&quot;Fork&quot;</span> <span class="n">button</span> <span class="n">to</span> <span class="n">fork</span> <span class="n">a</span> <span class="n">version</span> <span class="n">to</span> <span class="n">your</span> <span class="n">user</span>
+<span class="n">Assuming</span> <span class="n">your</span> <span class="n">username</span> <span class="ow">is</span> <span class="n">myuser</span> <span class="nb">type</span>
+
+<span class="n">git</span> <span class="n">clone</span> <span class="n">git</span><span class="nd">@github</span><span class="o">.</span><span class="n">com</span><span class="p">:</span><span class="n">myuser</span><span class="o">/</span><span class="n">mapfish</span><span class="o">-</span><span class="nb">print</span><span class="o">-</span><span class="n">v2</span><span class="o">.</span><span class="n">git</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</li>
+</ul>
+<p>The other external libs are taken care of by maven.</p>
+<p>The build command to use is:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>mapfish-print-v2
+mvn<span class="w"> </span>install
+</pre></div>
+</div>
+<p>For detailed instructions please see [README.md](<a class="reference external" href="https://github.com/mapfish/mapfish-print-v2/blob/main/README.md">https://github.com/mapfish/mapfish-print-v2/blob/main/README.md</a>)</p>
+</section>
+<section id="included-print-lib-in-web-application">
+<h2>Included print-lib in web application<a class="headerlink" href="#included-print-lib-in-web-application" title="Permalink to this heading">¶</a></h2>
+<p>If you are developping a web application, you can include the print module in it. This explanation works only if you use Maven to build your project. For others, you’ll have to include the print-lib JAR file and all its dependencies.</p>
+<ol class="arabic">
+<li><p>Add the print-lib dependency to your WAR project by adding these two elements to your <code class="file docutils literal notranslate"><span class="pre">pom.xml</span></code> file (adjust the version)</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;dependency&gt;</span>
+<span class="w">  </span>
+<span class="w">  </span><span class="nt">&lt;groupId&gt;</span>org.mapfish.print<span class="nt">&lt;/groupId&gt;</span>
+<span class="w">  </span><span class="nt">&lt;artifactId&gt;</span>print-lib<span class="nt">&lt;/artifactId&gt;</span>
+<span class="w">  </span><span class="nt">&lt;version&gt;</span>2.3-SNAPSHOT<span class="nt">&lt;/version&gt;</span>
+
+<span class="nt">&lt;/dependency&gt;</span>
+</pre></div>
+</div>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;dependency&gt;</span>
+<span class="w">  </span><span class="nt">&lt;groupId&gt;</span>org.mapfish.print<span class="nt">&lt;/groupId&gt;</span>
+<span class="w">  </span><span class="nt">&lt;artifactId&gt;</span>print-lib<span class="nt">&lt;/artifactId&gt;</span>
+<span class="w">  </span><span class="nt">&lt;version&gt;</span>%RELEASE%<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</pre></div>
+</div>
+</li>
+<li><p>The jar is available from OSGeo repository:</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="w">  </span><span class="nt">&lt;repositories&gt;</span>
+<span class="w">    </span><span class="nt">&lt;repository&gt;</span>
+<span class="w">     </span><span class="nt">&lt;id&gt;</span>osgeo-releases<span class="nt">&lt;/id&gt;</span>
+<span class="w">     </span><span class="nt">&lt;name&gt;</span>OSGeo<span class="w"> </span>Nexus<span class="w"> </span>Release<span class="w"> </span>Repository<span class="nt">&lt;/name&gt;</span>
+<span class="w">     </span><span class="nt">&lt;url&gt;</span>https://repo.osgeo.org/repository/release/<span class="nt">&lt;/url&gt;</span>
+<span class="w">     </span><span class="cm">&lt;!-- contains release (including third-party-dependences)                            --&gt;</span>
+<span class="w">     </span><span class="cm">&lt;!-- ucar (https://artifacts.unidata.ucar.edu/content/repositories/unidata-releases) --&gt;</span>
+<span class="w">     </span><span class="cm">&lt;!-- geosolutions (http://maven.geo-solutions.it/)                                   --&gt;</span>
+<span class="w">     </span><span class="nt">&lt;snapshots&gt;</span>
+<span class="w">       </span><span class="nt">&lt;enabled&gt;</span>false<span class="nt">&lt;/enabled&gt;</span>
+<span class="w">     </span><span class="nt">&lt;/snapshots&gt;</span>
+<span class="w">     </span><span class="nt">&lt;releases&gt;</span>
+<span class="w">       </span><span class="nt">&lt;enabled&gt;</span>true<span class="nt">&lt;/enabled&gt;</span>
+<span class="w">     </span><span class="nt">&lt;/releases&gt;</span>
+<span class="w">    </span><span class="nt">&lt;/repository&gt;</span>
+
+<span class="w">    </span><span class="nt">&lt;repository&gt;</span>
+<span class="w">     </span><span class="nt">&lt;id&gt;</span>osgeo-snapshots<span class="nt">&lt;/id&gt;</span>
+<span class="w">     </span><span class="nt">&lt;name&gt;</span>OSGeo<span class="w"> </span>Nexus<span class="w"> </span>Snapshot<span class="w"> </span>Repository<span class="nt">&lt;/name&gt;</span>
+<span class="w">     </span><span class="nt">&lt;url&gt;</span>https://repo.osgeo.org/repository/snapshot/<span class="nt">&lt;/url&gt;</span>
+<span class="w">     </span><span class="nt">&lt;snapshots&gt;</span>
+<span class="w">      </span><span class="nt">&lt;enabled&gt;</span>true<span class="nt">&lt;/enabled&gt;</span>
+<span class="w">     </span><span class="nt">&lt;/snapshots&gt;</span>
+<span class="w">     </span><span class="nt">&lt;releases&gt;</span>
+<span class="w">      </span><span class="nt">&lt;enabled&gt;</span>false<span class="nt">&lt;/enabled&gt;</span>
+<span class="w">     </span><span class="nt">&lt;/releases&gt;</span>
+<span class="w">    </span><span class="nt">&lt;/repository&gt;</span>
+<span class="w">  </span><span class="nt">&lt;/repositories&gt;</span>
+</pre></div>
+</div>
+</li>
+<li><p>Add these three sections (correct the paths and URLs in function of your needs) to your <code class="file docutils literal notranslate"><span class="pre">WEB-INF/web.xml</span></code> file:</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span>...
+<span class="nt">&lt;listener&gt;</span>
+<span class="w">  </span><span class="nt">&lt;listener-class&gt;</span>org.springframework.web.context.ContextLoaderListener<span class="nt">&lt;/listener-class&gt;</span>
+<span class="nt">&lt;/listener&gt;</span>
+<span class="nt">&lt;context-param&gt;</span>
+<span class="w">    </span><span class="nt">&lt;param-name&gt;</span>contextConfigLocation<span class="nt">&lt;/param-name&gt;</span>
+<span class="w">    </span><span class="nt">&lt;param-value&gt;</span>classpath:mapfish-spring-application-context.xml,classpath:*-mapfish-spring-application-context-override.xml<span class="nt">&lt;/param-value&gt;</span>
+<span class="nt">&lt;/context-param&gt;</span>
+...
+<span class="nt">&lt;servlet&gt;</span>
+<span class="w">  </span><span class="nt">&lt;servlet-name&gt;</span>mapfish.print<span class="nt">&lt;/servlet-name&gt;</span>
+<span class="w">  </span><span class="nt">&lt;servlet-class&gt;</span>org.mapfish.print.servlet.MapPrinterServlet<span class="nt">&lt;/servlet-class&gt;</span>
+<span class="w">  </span><span class="nt">&lt;init-param&gt;</span>
+<span class="w">    </span><span class="nt">&lt;param-name&gt;</span>config<span class="nt">&lt;/param-name&gt;</span>
+<span class="w">    </span><span class="nt">&lt;param-value&gt;</span>config.yaml<span class="nt">&lt;/param-value&gt;</span>
+<span class="w">  </span><span class="nt">&lt;/init-param&gt;</span>
+<span class="nt">&lt;/servlet&gt;</span>
+<span class="nt">&lt;servlet-mapping&gt;</span>
+<span class="w">  </span><span class="nt">&lt;servlet-name&gt;</span>mapfish.print<span class="nt">&lt;/servlet-name&gt;</span>
+<span class="w">  </span><span class="nt">&lt;url-pattern&gt;</span>/pdf/*<span class="nt">&lt;/url-pattern&gt;</span>
+<span class="nt">&lt;/servlet-mapping&gt;</span>
+<span class="w"> </span>...
+</pre></div>
+</div>
+</li>
+<li><p>Add a <code class="file docutils literal notranslate"><span class="pre">config.yaml</span></code> file (from the <a class="reference external" href="hhttps://github.com/mapfish/mapfish-print-v2/blob/main/samples">samples</a>, for example) to the root of your web application.</p></li>
+</ol>
+<section id="configuring-servlet-temp-directory">
+<h3>Configuring Servlet Temp Directory<a class="headerlink" href="#configuring-servlet-temp-directory" title="Permalink to this heading">¶</a></h3>
+<p>By default the default servlet temporary directory will be used but that behaviour can be overridden setting the init-param <em>tempdir</em>.  If this parameter is set the servlet must have write access to the directory.</p>
+</section>
+</section>
+<section id="command-line">
+<h2>Command line<a class="headerlink" href="#command-line" title="Permalink to this heading">¶</a></h2>
+<p>For debugging or calling from other environments, you can run the print module from the command line.</p>
+<p>Examples are assumed to be ran from the directory %MAPFISHDIR%/server/java/print.</p>
+<p>If you have previously built you can run the existing jar using the following commands:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">java</span><span class="w"> </span><span class="o">-</span><span class="n">Djava</span><span class="p">.</span><span class="na">awt</span><span class="p">.</span><span class="na">headless</span><span class="o">=</span><span class="kc">true</span><span class="w"> </span><span class="o">-</span><span class="n">cp</span><span class="w"> </span><span class="n">build</span><span class="o">/</span><span class="n">libs</span><span class="o">/</span><span class="n">print</span><span class="o">-</span><span class="n">standalone</span><span class="o">-%</span><span class="n">VERSION</span><span class="o">%</span><span class="p">.</span><span class="na">jar</span><span class="w"> </span><span class="n">org</span><span class="p">.</span><span class="na">mapfish</span><span class="p">.</span><span class="na">print</span><span class="p">.</span><span class="na">ShellMapPrinter</span><span class="w"> </span><span class="o">--</span><span class="n">config</span><span class="o">=</span><span class="n">samples</span><span class="o">/</span><span class="n">config</span><span class="p">.</span><span class="na">yaml</span><span class="w"> </span><span class="o">--</span><span class="n">spec</span><span class="o">=</span><span class="n">samples</span><span class="o">/</span><span class="n">spec</span><span class="p">.</span><span class="na">json</span><span class="w"> </span><span class="o">--</span><span class="n">output</span><span class="o">=</span><span class="n">$HOME</span><span class="o">/</span><span class="n">print</span><span class="p">.</span><span class="na">pdf</span>
+</pre></div>
+</div>
+<p>Help about the command line’s option can be obtained like that:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">java</span><span class="w"> </span><span class="o">-</span><span class="n">Djava</span><span class="p">.</span><span class="na">awt</span><span class="p">.</span><span class="na">headless</span><span class="o">=</span><span class="kc">true</span><span class="w"> </span><span class="o">-</span><span class="n">cp</span><span class="w"> </span><span class="n">build</span><span class="o">/</span><span class="n">libs</span><span class="o">/</span><span class="n">print</span><span class="o">-</span><span class="n">standalone</span><span class="o">-%</span><span class="n">VERSION</span><span class="o">%</span><span class="p">.</span><span class="na">jar</span><span class="w"> </span><span class="n">org</span><span class="p">.</span><span class="na">mapfish</span><span class="p">.</span><span class="na">print</span><span class="p">.</span><span class="na">ShellMapPrinter</span>
+</pre></div>
+</div>
+</section>
+<section id="with-image-output-line">
+<h2>With Image output line<a class="headerlink" href="#with-image-output-line" title="Permalink to this heading">¶</a></h2>
+<p>At the moment to have robust image (png, gif, etc…) output options the image magick command line tool must be used.  The tool is cross platform and available on linux, windows and mac osx.  Before installing mapfish print first install both:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>ImageMagick (specifically ensure that the convert tool has been installed)</p></li>
+<li><p>Ghostscript</p></li>
+</ul>
+</div></blockquote>
+<p>Once ImageMagick is installed (and Ghostscript) then the spring configuration needs to be updated so that org.mapfish.print.output.NativeProcessOutputFactory object will be used as an option for creating output files.  This OutputFactory uses native commandline processes for converting a PDF to an alternate format. The mapfish-spring-application-context.xml can be directly edited to configure the OutputFactory or the file <a class="reference external" href="https://github.com/mapfish/mapfish-print/blob/master/sample-spring/imagemagick/WEB-INF/classes/imagemagick-spring-application-context-override.xml">https://github.com/mapfish/mapfish-print/blob/master/sample-spring/imagemagick/WEB-INF/classes/imagemagick-spring-application-context-override.xml</a> can be copied into the mapfish-print/WEB-INF/classes folder (if a servlet is being used).</p>
+<p>Since the ImageMagick support is a commonly requested configuration there is an IMAGEMAGICK artifact prebuild with the correct configuration.  To use this artifact change your maven dependency from: print-servlet-1.2-SNAPSHOT to print-servlet-1.2-SNAPSHOT-IMG-MAGICK (you will likely have to change the 1.2-SNAPSHOT portion to the version of mapfish that you are using).</p>
+<p>By default ImageMagick will try to find the convert tool in /usr/bin/convert.  You will want to find the path to your convert tool and update imagemagick-spring-application-context-override.xml if that file is included in your build, or mapfish-spring-application-context.xml if you manually changed the mapfish-spring-application-context.xml file to include the imagemagick configuration.</p>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Installation</a><ul>
+<li><a class="reference internal" href="#compilation">Compilation</a></li>
+<li><a class="reference internal" href="#included-print-lib-in-web-application">Included print-lib in web application</a><ul>
+<li><a class="reference internal" href="#configuring-servlet-temp-directory">Configuring Servlet Temp Directory</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#command-line">Command line</a></li>
+<li><a class="reference internal" href="#with-image-output-line">With Image output line</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="index.html"
+                          title="previous chapter">MapFish Print</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="configuration.html"
+                          title="next chapter">Configuration</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/installation.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="configuration.html" title="Configuration"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="MapFish Print"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">MapFish Print 2.3-SNAPSHOT documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Installation</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2023, Camptocamp and others.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.2.1.
+    </div>
+  </body>
+</html>

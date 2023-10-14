@@ -1,0 +1,134 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>FAQ &#8212; MapFish Print 2.3-SNAPSHOT documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mapfish.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Upgrade" href="upgrade.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="upgrade.html" title="Upgrade"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">MapFish Print 2.3-SNAPSHOT documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">FAQ</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="faq">
+<h1>FAQ<a class="headerlink" href="#faq" title="Permalink to this heading">¶</a></h1>
+<dl>
+<dt><strong>All I get in my PDF is: “ERROR: infinite table loop”. What’s wrong?</strong></dt><dd><p>Something in your page is too big. For example, the width or the height of your !map block.</p>
+</dd>
+<dt><strong>I tried to print (pylons mode) and I get a “Java error”. What’s next?</strong></dt><dd><p>Look in the apache error log, you’ll find more information.</p>
+</dd>
+<dt><strong>What are the limitations of the type 2 layers?</strong></dt><dd><p>It depends mostly on the map server you use. For the moment, GeoServer has not been extensively tested. With MapServer:</p>
+<ul class="simple">
+<li><p>The PDF output must be enabled when you compile and doesn’t work in WMS mode, only in native MapServer mode. There are some limitations. on the styling. And you must use truetype fonts.</p></li>
+<li><p>The SVG output is limited regarding the stylings you can use. For example only plain polygon fillings are supported by MapServer. If a complex styling is used, your features may appear plain black.</p></li>
+</ul>
+</dd>
+<dt><strong>I tried to change the layout and half the Map is printed off the page on the right. Or I have an empty page added. Is it a bug?</strong></dt><dd><p>It’s mostly a feature ;-) . This kind of behavior can be seen in iText, when adding a block that is too big for the page size. Try to reduce the size of your map block.</p>
+</dd>
+<dt><strong>When I look at my generated PDF in Acrobat Reader, it looks good. But, when I print it, it misses some tiles/layers, some bitmaps are just weird or there are no page printed. What’s wrong?</strong></dt><dd><p>There are three possible explanations:</p>
+<ul class="simple">
+<li><p>Your printer has not enough memory: in Acrobat’s print dialog, select “Save printer memory”</p></li>
+<li><p>Your printer firmware is buggy: upgrade it</p></li>
+<li><p>Your printer driver is buggy: upgrade it</p></li>
+</ul>
+</dd>
+<dt><strong>The module needs to go through a proxy to acces the map services.</strong></dt><dd><p>It’s so 90s… you should hire some fresh guys for your IT team. ;-)</p>
+<p>You need to set some system properties (http.proxy*) when you start your java programs.</p>
+</dd>
+<dt><strong>On the browser, the scale is displayed with spaces to separate thousands and it’s against my religion. How do I put my sacred separator?</strong></dt><dd><p>By default, the browser’s configured locale is used. You can force another locale in the print widget configuration:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">{</span>
+<span class="w">  </span><span class="nv">...</span>
+<span class="w">  </span><span class="nv">configUrl</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&#39;print/info.json&#39;</span><span class="p p-Indicator">,</span>
+<span class="nt">  serviceParams</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> locale</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;fr_CH&#39;</span><span class="w"> </span><span class="p p-Indicator">},</span>
+<span class="w">  </span><span class="nv">...</span>
+<span class="p p-Indicator">}</span>
+</pre></div>
+</div>
+</dd>
+<dt><strong>I copied the examples and the print widgets are not working.</strong></dt><dd><p>First edit the client/examples/examples.js file and make sure the URLs are correct.</p>
+<ol class="arabic simple">
+<li><p>If you don’t want to install the server side, make sure you installed a proxy (see Configure Proxy). For example, test (must return a JSON content, not the proxy.cgi script’s content) it with an URL like that (adapt the hostname, port and path): <cite>http://localhost/cgi-bin/proxy.cgi?url=http://demo.mapfish.org/mapfishsample/trunk/print/info.json</cite></p></li>
+<li><p>If you installed the server side, make sure it works by calling the URL specified in the mapfish.SERVER_BASE_URL variable (must be the hostname/port your page is accessed through) added with <cite>/print/info.json</cite>. For example, if you have <cite>mapfish.SERVER_BASE_URL=”http://localhost/mapfish”: http://localhost/mapfish/print/info.json</cite></p></li>
+</ol>
+<p>If it still doesn’t work, use firefox, install firebug and check in the console panel that the AJAX request made by the print widget works fine.</p>
+</dd>
+</dl>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="upgrade.html"
+                          title="previous chapter">Upgrade</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/faq.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="upgrade.html" title="Upgrade"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">MapFish Print 2.3-SNAPSHOT documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">FAQ</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2023, Camptocamp and others.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.2.1.
+    </div>
+  </body>
+</html>

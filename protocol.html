@@ -1,0 +1,573 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Protocol &#8212; MapFish Print 2.3-SNAPSHOT documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mapfish.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Upgrade" href="upgrade.html" />
+    <link rel="prev" title="Configuration" href="configuration.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="upgrade.html" title="Upgrade"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="configuration.html" title="Configuration"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">MapFish Print 2.3-SNAPSHOT documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Protocol</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="protocol">
+<span id="print-protocol"></span><h1>Protocol<a class="headerlink" href="#protocol" title="Permalink to this heading">¶</a></h1>
+<p>Four commands are available and are documented in the next sections.</p>
+<p>Every command uses the HTTP status code to notify errors.</p>
+<section id="info-json">
+<h2>info.json<a class="headerlink" href="#info-json" title="Permalink to this heading">¶</a></h2>
+<p>HTTP command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET {PRINT_URL}/info.json?url={PRINT_URL}%2Finfo.json&amp;var=printConfig
+</pre></div>
+</div>
+<p>Returns a JSON structure as such:</p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="kd">var</span><span class="w"> </span><span class="nx">printConfig</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="s2">&quot;scales&quot;</span><span class="o">:</span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="o">:</span><span class="s2">&quot;25000&quot;</span><span class="p">},</span>
+<span class="w">        </span><span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="o">:</span><span class="s2">&quot;50000&quot;</span><span class="p">},</span>
+<span class="w">        </span><span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="o">:</span><span class="s2">&quot;100000&quot;</span><span class="p">}</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="s2">&quot;dpis&quot;</span><span class="o">:</span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="o">:</span><span class="s2">&quot;190&quot;</span><span class="p">},</span>
+<span class="w">        </span><span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="o">:</span><span class="s2">&quot;254&quot;</span><span class="p">}</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="s2">&quot;outputFormats&quot;</span><span class="o">:</span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="o">:</span><span class="s2">&quot;pdf&quot;</span><span class="p">},</span>
+<span class="w">        </span><span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="o">:</span><span class="s2">&quot;png&quot;</span><span class="p">}</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="s2">&quot;layouts&quot;</span><span class="o">:</span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="s2">&quot;name&quot;</span><span class="o">:</span><span class="s2">&quot;A4 portrait&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;map&quot;</span><span class="o">:</span><span class="p">{</span>
+<span class="w">                </span><span class="s2">&quot;width&quot;</span><span class="o">:</span><span class="mf">440</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">&quot;height&quot;</span><span class="o">:</span><span class="mf">483</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="s2">&quot;printURL&quot;</span><span class="o">:</span><span class="s2">&quot;http:\/\/localhost:5000\/print\/print.pdf&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;createURL&quot;</span><span class="o">:</span><span class="s2">&quot;http:\/\/localhost:5000\/print\/create.json&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>This can be loaded through an HTML script tag like that:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">script</span> <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;text/javascript&quot;</span>
+      <span class="n">src</span><span class="o">=</span><span class="s2">&quot;http://localhost:5000/print/info.json?var=printConfig&quot;</span><span class="o">&gt;&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>or through an AJAX request, in this case the <code class="docutils literal notranslate"><span class="pre">var</span></code> query parameter will be
+omitted.</p>
+<p>The “url” query parameter is here to help the print servlet to know what URL is used by the browser to access the servlet. This parameter is here because the servlet can be behind a proxy, hiding the real URL.</p>
+</section>
+<section id="print-pdf">
+<h2>print.pdf<a class="headerlink" href="#print-pdf" title="Permalink to this heading">¶</a></h2>
+<p>HTTP command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET {PRINT_URL}/print.pdf?spec={SPEC}
+   or
+POST {PRINT_URL}/print.pdf    with {SPEC} in the request body
+</pre></div>
+</div>
+<p>The “SPEC” parameter is a JSON structure like that:</p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nx">layout</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;A4 portrait&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="p">...</span><span class="nx">CUSTOM_PARAMS</span><span class="p">...</span>
+<span class="w">    </span><span class="nx">srs</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;EPSG:4326&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">units</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;degrees&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">geodetic</span><span class="o">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">outputFilename</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;political-boundaries&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">outputFormat</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;pdf&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">mergeableParams</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">cql_filter</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nx">defaultValue</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;INCLUDE&#39;</span><span class="p">,</span>
+<span class="w">            </span><span class="nx">separator</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;;&#39;</span><span class="p">,</span>
+<span class="w">            </span><span class="nx">context</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;http://labs.metacarta.com/wms/vmap0&#39;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nx">layers</span><span class="o">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nx">type</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;WMS&#39;</span><span class="p">,</span>
+<span class="w">            </span><span class="nx">layers</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="s1">&#39;basic&#39;</span><span class="p">],</span>
+<span class="w">            </span><span class="nx">baseURL</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;http://labs.metacarta.com/wms/vmap0&#39;</span><span class="p">,</span>
+<span class="w">            </span><span class="nx">format</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;image/jpeg&#39;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nx">pages</span><span class="o">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nx">center</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="mf">6</span><span class="p">,</span><span class="w"> </span><span class="mf">45.5</span><span class="p">],</span>
+<span class="w">            </span><span class="nx">scale</span><span class="o">:</span><span class="w"> </span><span class="mf">4000000</span><span class="p">,</span>
+<span class="w">            </span><span class="nx">dpi</span><span class="o">:</span><span class="w"> </span><span class="mf">190</span><span class="p">,</span>
+<span class="w">            </span><span class="nx">geodetic</span><span class="o">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">            </span><span class="nx">strictEpsg4326</span><span class="o">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">            </span><span class="p">...</span><span class="nx">CUSTOM_PARAMS</span><span class="p">...</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nx">legends</span><span class="o">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nx">classes</span><span class="o">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="p">{</span>
+<span class="w">                    </span><span class="nx">icons</span><span class="o">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                        </span><span class="s1">&#39;full url to the image&#39;</span>
+<span class="w">                    </span><span class="p">],</span>
+<span class="w">                    </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;an icon name&#39;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nx">iconBeforeName</span><span class="o">:</span><span class="w"> </span><span class="kc">true</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">],</span>
+<span class="w">            </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;a class name&#39;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The location to show on the map can be specified with a <strong>center</strong> and a <strong>scale</strong> as show or with a <strong>bbox</strong> like that:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">bbox</span><span class="p">:</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">46</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>The print module will use the nearest scale and will make sure the aspect ratio stays correct.</p>
+<p>The geodetic parameter can be set to true so the scale of geodetic layers can correctly be calculated.  Certain projections (Google and Latlong for example) are based on a spheroid and therefore require <strong>geodetic: true</strong> in order to correctly calculate the scale.  If the geodetic parameter is not present it will be assumed to be false.</p>
+<p>The _optional_ strictEpsg4326 parameter can be set to true to control how EPSG:4326 is interpreted. This needs to be true for WMS version 1.3.0 GetMap requests. See https://www.google.ch/search?q=epsg+4326+latitude+longitude+order&amp;oq=epsg+4326+&amp;aqs=chrome.3.69i57j0l5.5996j0j4&amp;sourceid=chrome&amp;espv=210&amp;es_sm=93&amp;ie=UTF-8 for some links to the history and mess that is EPSG:4326.</p>
+<p>The outputFilename parameter is optional and if omitted the values used in the server’s configuration will be used instead.  If it is present it will be the name of the downloaded file.  The suffix will be added if not left off in the parameter.  The date can be substituted into the filename as well if desired.  See configuration’s outputFilename for more information and examples</p>
+<p>The outputFormat parameter is optional and if omitted the value ‘pdf’ will be used.  Only the formats returned in the info are permitted.</p>
+<p>There are two locations where custom parameters can be added. Those will be ignored by the web service but, will be accessible from the layout templates.</p>
+<p>Some layer types support merging more layers request into one, when the server is the same (for example WMS). For those, a mergeableParams section can be used to define merging strategies for some custom parameters.
+The default rule is to merge layers with identical custom parameters. Using mergeableParams, defined parameters values can be joined using a given separator and a default value if some of the layers miss the parameter.
+Mergeable parameters can have a context, that is the baseURL they can be used for (if not defined they will be used for every layer).</p>
+<p>For the format of the <strong>layers</strong> section, please look at the implementations pointed by mapfish.PrintProtocol.SUPPORTED_TYPES.</p>
+<p>This command returns the PDF file directly.</p>
+</section>
+<section id="create-json">
+<h2>create.json<a class="headerlink" href="#create-json" title="Permalink to this heading">¶</a></h2>
+<p>HTTP command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>POST {PRINT_URL}/create.json?url={PRINT_URL}%2Fcreate.json
+</pre></div>
+</div>
+<p>The spec defined in the “print.pdf” command must be included in the POST body.</p>
+<p>Returns a JSON structure like that:</p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nx">getURL</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;http:\/\/localhost:5000\/print\/56723.pdf&#39;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The URL returned can be used to retrieve the PDF file. See the next section.</p>
+</section>
+<section id="id-pdf">
+<h2>{ID}.pdf<a class="headerlink" href="#id-pdf" title="Permalink to this heading">¶</a></h2>
+<p>This command’s URL is returned by the “create.json” command.</p>
+<p>HTTP command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="p">{</span><span class="n">PRINT_URL</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">ID</span><span class="p">}</span><span class="o">.</span><span class="n">pdf</span>
+</pre></div>
+</div>
+<p>Returns the PDF. Can be called only during a limited time since the server side temporary file is deleted afterwards.</p>
+</section>
+</section>
+<section id="multiple-maps-on-a-single-page">
+<h1>Multiple maps on a single page<a class="headerlink" href="#multiple-maps-on-a-single-page" title="Permalink to this heading">¶</a></h1>
+<dl class="simple">
+<dt>To print more than one map on a single page you need to:</dt><dd><ul class="simple">
+<li><p>specify several map blocks in a page of the yaml file, each with a distinct name property value</p></li>
+<li><p>use a particular syntax in the spec to bind different rendering properties to each map block</p></li>
+</ul>
+</dd>
+</dl>
+<p>This is possible specifying a _maps_ object in spec root object with a distinct key - object pair for each map. The
+key will refer the map block name as defined in yaml file. The object will contain layers and srs for the named map.
+Another _maps_ object has to be specified inside the page object to describe positioning, scale and so on.</p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="p">...</span>
+<span class="w">    </span><span class="nx">maps</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="s2">&quot;main&quot;</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nx">layers</span><span class="o">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="p">...</span>
+<span class="w">            </span><span class="p">],</span>
+<span class="w">            </span><span class="nx">srs</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;EPSG:4326&#39;</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="s2">&quot;other&quot;</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nx">layers</span><span class="o">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="p">...</span>
+<span class="w">            </span><span class="p">],</span>
+<span class="w">            </span><span class="nx">srs</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;EPSG:4326&#39;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="p">...</span>
+<span class="w">    </span><span class="nx">pages</span><span class="o">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nx">maps</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="s2">&quot;main&quot;</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nx">center</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="mf">6</span><span class="p">,</span><span class="w"> </span><span class="mf">45.5</span><span class="p">],</span>
+<span class="w">                    </span><span class="nx">scale</span><span class="o">:</span><span class="w"> </span><span class="mf">4000000</span><span class="p">,</span>
+<span class="w">                    </span><span class="nx">dpi</span><span class="o">:</span><span class="w"> </span><span class="mf">190</span><span class="p">,</span>
+<span class="w">                    </span><span class="nx">geodetic</span><span class="o">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">                    </span><span class="nx">strictEpsg4326</span><span class="o">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">                    </span><span class="p">...</span><span class="nx">CUSTOM_PARAMS</span><span class="p">...</span>
+<span class="w">                </span><span class="p">},</span>
+<span class="w">                </span><span class="s2">&quot;other&quot;</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nx">center</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="mf">7.2</span><span class="p">,</span><span class="w"> </span><span class="mf">38.6</span><span class="p">],</span>
+<span class="w">                    </span><span class="nx">scale</span><span class="o">:</span><span class="w"> </span><span class="mf">1000000</span><span class="p">,</span>
+<span class="w">                    </span><span class="nx">dpi</span><span class="o">:</span><span class="w"> </span><span class="mf">300</span><span class="p">,</span>
+<span class="w">                    </span><span class="nx">geodetic</span><span class="o">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">                    </span><span class="nx">strictEpsg4326</span><span class="o">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">                    </span><span class="p">...</span><span class="nx">CUSTOM_PARAMS</span><span class="p">...</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">}</span>
+
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="p">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Other config blocks have been enabled to multiple maps usage.
+The scalebar block can be bound to a specific map, specifying a name property that matches the map
+name.
+Also, in text blocks you can use the ${scale.&lt;mapname&gt;} placeholder to print the scale of the map
+whose name is &lt;mapname&gt;.</p>
+</section>
+<section id="layers-params">
+<h1>Layers Params<a class="headerlink" href="#layers-params" title="Permalink to this heading">¶</a></h1>
+<section id="vector">
+<h2>Vector<a class="headerlink" href="#vector" title="Permalink to this heading">¶</a></h2>
+<p>Type: vector</p>
+<p>Render vector layers. The geometries and the styling comes directly from the spec JSON.</p>
+<ul class="simple">
+<li><p>opacity (Defaults to <code class="docutils literal notranslate"><span class="pre">1.0</span></code>)</p></li>
+<li><p>geoJson (Required) the geoJson to render</p></li>
+<li><p>styleProperty (Defaults to ‘_style’) Name of the property within the features to use as style name. The given property may contain a style object directly.</p></li>
+<li><p>styles (Optional) dictonary of styles. One style is defined as in OpenLayers.Feature.Vector.style.</p></li>
+<li><p>name (Defaults to <code class="docutils literal notranslate"><span class="pre">vector</span></code>) the layer name.</p></li>
+</ul>
+</section>
+<section id="wms">
+<h2>WMS<a class="headerlink" href="#wms" title="Permalink to this heading">¶</a></h2>
+<p>Type: wms</p>
+<p>Support for the WMS protocol with possibilities to go through a WMS-C service (TileCache).</p>
+<ul class="simple">
+<li><p>opacity (Defaults to <code class="docutils literal notranslate"><span class="pre">1.0</span></code>)</p></li>
+<li><p>baseURL (Required) Service URL</p></li>
+<li><p>customParams (Optional) Map, additional URL arguments</p></li>
+<li><p>layers (Required)</p></li>
+<li><p>styles (Optional)</p></li>
+<li><p>format (Required)</p></li>
+<li><p>version (Defaults to <code class="docutils literal notranslate"><span class="pre">1.1.1</span></code>)</p></li>
+<li><p>useNativeAngle (Defaults to false) it true transform the map angle to customParams.angle for GeoServer, and customParams.map_angle for MapServer.</p></li>
+</ul>
+</section>
+<section id="wmts">
+<h2>WMTS<a class="headerlink" href="#wmts" title="Permalink to this heading">¶</a></h2>
+<p>Type: wmts</p>
+<p>Support for the protocol using directly the content of a WMTS tiled layer, support REST or KVP.</p>
+<p>Two possible mode, standard or simple, the simple mode imply that all the topLeftCorner are identical.</p>
+<p>Standard mode:</p>
+<ul class="simple">
+<li><p>opacity (Defaults to 1.0)</p></li>
+<li><p>baseURL the ‘ResourceURL’ available in the WMTS capabilities.</p></li>
+<li><p>customParams (Optional) Map, additional URL arguments</p></li>
+<li><p>layer (Required) the layer name</p></li>
+<li><p>version (Defaults to <code class="docutils literal notranslate"><span class="pre">1.0.0</span></code>) WMTS protocol version</p></li>
+<li><p>requestEncoding (Defaults to <code class="docutils literal notranslate"><span class="pre">REST</span></code>) <code class="docutils literal notranslate"><span class="pre">REST</span></code> or <code class="docutils literal notranslate"><span class="pre">KVP</span></code></p></li>
+<li><p>style (Optional) the style name</p></li>
+<li><p>dimensions (Optional) list of dimensions names</p></li>
+<li><p>params (Optional) dictionary of dimensions name (capital) =&gt; value</p></li>
+<li><p>matrixSet (Required) the name of the matrix set</p></li>
+<li><p>matrixIds (Required) array of matrix ids e.g.:</p></li>
+</ul>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">[{</span>
+<span class="w">    </span><span class="s2">&quot;identifier&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;0&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;matrixSize&quot;</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">1</span><span class="p">],</span>
+<span class="w">    </span><span class="s2">&quot;resolution&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">4000</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;tileSize&quot;</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="mf">256</span><span class="p">,</span><span class="w"> </span><span class="mf">256</span><span class="p">],</span>
+<span class="w">    </span><span class="s2">&quot;topLeftCorner&quot;</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="mf">420000</span><span class="p">,</span><span class="w"> </span><span class="mf">350000</span><span class="p">]</span>
+<span class="p">},</span><span class="w"> </span><span class="p">...]</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>format (Optional, Required id requestEncoding is <code class="docutils literal notranslate"><span class="pre">KVP</span></code>)</p></li>
+</ul>
+<p>Simple mode:</p>
+<ul class="simple">
+<li><p>baseURL base URL without the version.</p></li>
+<li><p>layer (Required)</p></li>
+<li><p>version (Required)</p></li>
+<li><p>requestEncoding (Required) <code class="docutils literal notranslate"><span class="pre">REST</span></code></p></li>
+<li><p>tileOrigin (Required)</p></li>
+<li><p>tileSize (Required)</p></li>
+<li><p>extension (Required)</p></li>
+<li><p>resolutions (Required)</p></li>
+<li><p>style (Required)</p></li>
+<li><p>tileFullExtent (Required)</p></li>
+<li><p>zoomOffset (Required)</p></li>
+<li><p>dimensions (Optional)</p></li>
+<li><p>params (Optional)</p></li>
+<li><p>formatSuffix (Required)</p></li>
+</ul>
+</section>
+<section id="tms">
+<h2>Tms<a class="headerlink" href="#tms" title="Permalink to this heading">¶</a></h2>
+<p>Type: tms</p>
+<p>Support the TMS tile layout.</p>
+<ul class="simple">
+<li><p>opacity (Defaults to 1.0)</p></li>
+<li><p>baseURL (Required) Service URL</p></li>
+<li><p>customParams (Optional) Map, additional URL arguments</p></li>
+<li><p>maxExtent (Required) Array, extent coordinates <code class="docutils literal notranslate"><span class="pre">[420000,</span> <span class="pre">30000,</span> <span class="pre">900000,</span> <span class="pre">350000]</span></code></p></li>
+<li><p>tileSize (Required) Array, tile size e.g. <code class="docutils literal notranslate"><span class="pre">[256,</span> <span class="pre">256]</span></code></p></li>
+<li><p>format (Required)</p></li>
+<li><p>layer (Required)</p></li>
+<li><p>resolutions (Required) Array of resolutions</p></li>
+<li><p>tileOrigin (Optional) Object, tile origin.  Defaults to <code class="docutils literal notranslate"><span class="pre">0,0</span></code></p></li>
+</ul>
+<p>Resources:</p>
+<ul class="simple">
+<li><p>Quick intro to TMS requests: <a class="reference external" href="http://geowebcache.org/docs/current/services/tms.html">http://geowebcache.org/docs/current/services/tms.html</a></p></li>
+<li><p>TMS Spec (Not an Official Standard): <a class="reference external" href="http://wiki.osgeo.org/wiki/Tile_Map_Service_Specification">http://wiki.osgeo.org/wiki/Tile_Map_Service_Specification</a></p></li>
+</ul>
+</section>
+<section id="xyz">
+<h2>Xyz<a class="headerlink" href="#xyz" title="Permalink to this heading">¶</a></h2>
+<p>Type: xyz</p>
+<p>Support the tile layout z/x/y.&lt;extension&gt;.</p>
+<ul class="simple">
+<li><p>opacity (Defaults to 1.0)</p></li>
+<li><p>baseURL (Required) Service URL</p></li>
+<li><p>customParams (Optional) Map, additional URL arguments</p></li>
+<li><p>maxExtent (Required) Array, extent coordinates <code class="docutils literal notranslate"><span class="pre">[420000,</span> <span class="pre">30000,</span> <span class="pre">900000,</span> <span class="pre">350000]</span></code></p></li>
+<li><p>tileSize (Required) Array, tile size e.g. <code class="docutils literal notranslate"><span class="pre">[256,</span> <span class="pre">256]</span></code></p></li>
+<li><p>resolutions (Required) Array of resolutions (Required) Array of resolutions</p></li>
+<li><p>extension (Required) file extension (Required) file extension</p></li>
+<li><p>tileOrigin (Optional) Array, tile origine e.g. <code class="docutils literal notranslate"><span class="pre">[420000,</span> <span class="pre">350000]</span></code></p></li>
+<li><p>tileOriginCorner <code class="docutils literal notranslate"><span class="pre">tl</span></code> or <code class="docutils literal notranslate"><span class="pre">bl</span></code> (Defaults to <code class="docutils literal notranslate"><span class="pre">bl</span></code>)</p></li>
+<li><p>path_format (Optional) url fragment used to construct the tile location. Can support variable replacement of <code class="docutils literal notranslate"><span class="pre">${x}</span></code>, <code class="docutils literal notranslate"><span class="pre">${y}</span></code>, <code class="docutils literal notranslate"><span class="pre">${z}</span></code> and <code class="docutils literal notranslate"><span class="pre">${extension}</span></code>. Defaults to zz/x/y.extension format.  You can use multiple “letters” to indicate a replacable pattern (aka, <code class="docutils literal notranslate"><span class="pre">${zzzz}</span></code> will ensure the z variable is 0 padded to have a length of AT LEAST 4 characters).</p></li>
+</ul>
+</section>
+<section id="osm">
+<h2>Osm<a class="headerlink" href="#osm" title="Permalink to this heading">¶</a></h2>
+<p>Type: osm</p>
+<p>Support the OSM tile layout.</p>
+<ul class="simple">
+<li><p>opacity (Defaults to <code class="docutils literal notranslate"><span class="pre">1.0</span></code>)</p></li>
+<li><p>baseURL (Required) Service URL</p></li>
+<li><p>customParams (Optional) Map, additional URL arguments</p></li>
+<li><p>maxExtent (Required) Array, extent coordinates <code class="docutils literal notranslate"><span class="pre">[420000,</span> <span class="pre">30000,</span> <span class="pre">900000,</span> <span class="pre">350000]</span></code></p></li>
+<li><p>tileSize (Required) Array, tile size e.g. <code class="docutils literal notranslate"><span class="pre">[256,</span> <span class="pre">256]</span></code></p></li>
+<li><p>resolutions (Required) Array of resolutions</p></li>
+<li><p>extension (Required) file extension</p></li>
+</ul>
+</section>
+<section id="tilecache">
+<h2>TileCache<a class="headerlink" href="#tilecache" title="Permalink to this heading">¶</a></h2>
+<p>Type: tileCache</p>
+<p>Support for the protocol using directly the content of a TileCache directory.</p>
+<ul class="simple">
+<li><p>opacity (Defaults to <code class="docutils literal notranslate"><span class="pre">1.0</span></code>)</p></li>
+<li><p>baseURL (Required) Service URL</p></li>
+<li><p>customParams (Optional) Map, additional URL arguments</p></li>
+<li><p>layer (Required)</p></li>
+<li><p>maxExtent (Required) Array, extent coordinates <code class="docutils literal notranslate"><span class="pre">[420000,</span> <span class="pre">30000,</span> <span class="pre">900000,</span> <span class="pre">350000]</span></code></p></li>
+<li><p>tileSize (Required) Array, tile size e.g. <code class="docutils literal notranslate"><span class="pre">[256,</span> <span class="pre">256]</span></code></p></li>
+<li><p>resolutions (Required) Array of resolutions</p></li>
+<li><p>extension (Required) file extension</p></li>
+</ul>
+</section>
+<section id="image">
+<h2>Image<a class="headerlink" href="#image" title="Permalink to this heading">¶</a></h2>
+<p>Type: image</p>
+<ul class="simple">
+<li><p>opacity (Defaults to <code class="docutils literal notranslate"><span class="pre">1.0</span></code>)</p></li>
+<li><p>name (Required)</p></li>
+<li><p>baseURL (Required) Service URL</p></li>
+<li><p>extent (Required)</p></li>
+</ul>
+</section>
+<section id="mapserver">
+<h2>MapServer<a class="headerlink" href="#mapserver" title="Permalink to this heading">¶</a></h2>
+<p>Type: mapServer</p>
+<p>Support mapserver WMS server.</p>
+<ul class="simple">
+<li><p>opacity (Defaults to <code class="docutils literal notranslate"><span class="pre">1.0</span></code>)</p></li>
+<li><p>baseURL (Required) Service URL</p></li>
+<li><p>customParams (Optional) Map, additional URL arguments</p></li>
+<li><p>layers (Required)</p></li>
+<li><p>format (Required)</p></li>
+</ul>
+</section>
+<section id="kamap">
+<h2>KaMap<a class="headerlink" href="#kamap" title="Permalink to this heading">¶</a></h2>
+<p>Type: kaMap</p>
+<p>Support for the protocol using the KaMap tiling method</p>
+<ul class="simple">
+<li><p>opacity (Defaults to <code class="docutils literal notranslate"><span class="pre">1.0</span></code>)</p></li>
+<li><p>baseURL (Required) Service URL</p></li>
+<li><p>customParams (Optional) Map, additional URL arguments</p></li>
+<li><p>map</p></li>
+<li><p>group</p></li>
+<li><p>maxExtent (Required) Array, extent coordinates <code class="docutils literal notranslate"><span class="pre">[420000,</span> <span class="pre">30000,</span> <span class="pre">900000,</span> <span class="pre">350000]</span></code></p></li>
+<li><p>tileSize (Required) Array, tile size e.g. <code class="docutils literal notranslate"><span class="pre">[256,</span> <span class="pre">256]</span></code></p></li>
+<li><p>resolutions (Required) Array of resolutions</p></li>
+<li><p>extension (Required) file extension</p></li>
+</ul>
+</section>
+<section id="kamapcache">
+<h2>KaMapCache<a class="headerlink" href="#kamapcache" title="Permalink to this heading">¶</a></h2>
+<p>Type: kaMapCache</p>
+<p>Support for the protocol talking direclty to a web-accessible ka-Map cache generated by the precache2.php script.</p>
+<ul class="simple">
+<li><p>opacity (Defaults to <code class="docutils literal notranslate"><span class="pre">1.0</span></code>)</p></li>
+<li><p>baseURL (Required) Service URL</p></li>
+<li><p>customParams (Optional) Map, additional URL arguments</p></li>
+<li><p>map (Required)</p></li>
+<li><p>group (Required)</p></li>
+<li><p>metaTileWidth (Required)</p></li>
+<li><p>metaTileHeight (Required)</p></li>
+<li><p>units (Required)</p></li>
+<li><p>maxExtent (Required) Array, extent coordinates <code class="docutils literal notranslate"><span class="pre">[420000,</span> <span class="pre">30000,</span> <span class="pre">900000,</span> <span class="pre">350000]</span></code></p></li>
+<li><p>tileSize (Required) Array, tile size e.g. <code class="docutils literal notranslate"><span class="pre">[256,</span> <span class="pre">256]</span></code></p></li>
+<li><p>resolutions (Required) Array of resolutions</p></li>
+<li><p>extension (Required) file extension</p></li>
+</ul>
+</section>
+<section id="google">
+<h2>Google<a class="headerlink" href="#google" title="Permalink to this heading">¶</a></h2>
+<p>Type: google or tiledGoogle</p>
+<p>They used the Google Map Static API, tiledGoogle will create tiles and google only one image.</p>
+<p>The google map reader has several custom parameters that can be added to the request they are:</p>
+<ul class="simple">
+<li><p>opacity (Optional, Defaults to <code class="docutils literal notranslate"><span class="pre">1.0</span></code>)</p></li>
+<li><p>baseURL (Required, should be ‘<a class="reference external" href="http://maps.google.com/maps/api/staticmap">http://maps.google.com/maps/api/staticmap</a>’)</p></li>
+<li><p>customParams (Optional) Map, additional URL arguments</p></li>
+<li><p>maxExtent (Required, should be <code class="docutils literal notranslate"><span class="pre">[-20037508.34,</span> <span class="pre">-20037508.34,</span> <span class="pre">20037508.34,</span> <span class="pre">20037508.34]</span></code>)</p></li>
+<li><p>resolutions (Required, should be <code class="docutils literal notranslate"><span class="pre">[156543.03390625,</span> <span class="pre">78271.516953125,</span> <span class="pre">39135.7584765625,</span> <span class="pre">19567.87923828125,</span> <span class="pre">9783.939619140625,</span> <span class="pre">4891.9698095703125,</span> <span class="pre">2445.9849047851562,</span> <span class="pre">1222.9924523925781,</span> <span class="pre">611.4962261962891,</span> <span class="pre">305.74811309814453,</span> <span class="pre">152.87405654907226,</span> <span class="pre">76.43702827453613,</span> <span class="pre">38.218514137268066,</span> <span class="pre">19.109257068634033,</span> <span class="pre">9.554628534317017,</span> <span class="pre">4.777314267158508,</span> <span class="pre">2.388657133579254,</span> <span class="pre">1.194328566789627,</span> <span class="pre">0.5971642833948135,</span> <span class="pre">0.29858214169740677,</span> <span class="pre">0.14929107084870338,</span> <span class="pre">0.07464553542435169]</span></code>)</p></li>
+<li><p>extension (Required, should be <code class="docutils literal notranslate"><span class="pre">png</span></code>)</p></li>
+<li><p>client (Optional)</p></li>
+<li><p>format (Optional)</p></li>
+<li><p>maptype (Required) - type of map to display: <a class="reference external" href="http://code.google.com/apis/maps/documentation/staticmaps/#MapTypes">http://code.google.com/apis/maps/documentation/staticmaps/#MapTypes</a></p></li>
+<li><p>sensor  (Optional) - specifies whether the application requesting the static map is using a sensor to determine the user’s location</p></li>
+<li><p>language (Optional) - language of labels.</p></li>
+<li><p>markers (Optional) - add markers to the map: <a class="reference external" href="http://code.google.com/apis/maps/documentation/staticmaps/#Markers">http://code.google.com/apis/maps/documentation/staticmaps/#Markers</a></p></li>
+</ul>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="nx">markers</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="s1">&#39;color:blue|label:S|46.5195933305192,6.566684726913701&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>path (Optional) - add a path to the map: <a class="reference external" href="http://code.google.com/apis/maps/documentation/staticmaps/#Paths">http://code.google.com/apis/maps/documentation/staticmaps/#Paths</a></p></li>
+</ul>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="nx">path</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;color:0x0000ff|weight:5|46.5095933305192,6.506684726913701|46.5195933305192,6.526684726913701|46.5395933305192,6.536684726913701|46.5695933305192,6.576684726913701&#39;</span><span class="p">,</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Protocol</a><ul>
+<li><a class="reference internal" href="#info-json">info.json</a></li>
+<li><a class="reference internal" href="#print-pdf">print.pdf</a></li>
+<li><a class="reference internal" href="#create-json">create.json</a></li>
+<li><a class="reference internal" href="#id-pdf">{ID}.pdf</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#multiple-maps-on-a-single-page">Multiple maps on a single page</a></li>
+<li><a class="reference internal" href="#layers-params">Layers Params</a><ul>
+<li><a class="reference internal" href="#vector">Vector</a></li>
+<li><a class="reference internal" href="#wms">WMS</a></li>
+<li><a class="reference internal" href="#wmts">WMTS</a></li>
+<li><a class="reference internal" href="#tms">Tms</a></li>
+<li><a class="reference internal" href="#xyz">Xyz</a></li>
+<li><a class="reference internal" href="#osm">Osm</a></li>
+<li><a class="reference internal" href="#tilecache">TileCache</a></li>
+<li><a class="reference internal" href="#image">Image</a></li>
+<li><a class="reference internal" href="#mapserver">MapServer</a></li>
+<li><a class="reference internal" href="#kamap">KaMap</a></li>
+<li><a class="reference internal" href="#kamapcache">KaMapCache</a></li>
+<li><a class="reference internal" href="#google">Google</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="configuration.html"
+                          title="previous chapter">Configuration</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="upgrade.html"
+                          title="next chapter">Upgrade</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/protocol.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="upgrade.html" title="Upgrade"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="configuration.html" title="Configuration"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">MapFish Print 2.3-SNAPSHOT documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Protocol</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2023, Camptocamp and others.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.2.1.
+    </div>
+  </body>
+</html>
