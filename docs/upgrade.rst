@@ -13,7 +13,7 @@ Release notes:
 Functionality from geosolutions `mapfish-print 2.3-SNAPSHOT <https://github.com/mapfish/mapfish-print-v2>`__ incorporated to foster collaboration:
 
 * LabelRenderer supports `rotation` and if this is 0 it checks `labelRotation`
-* LabelRenderer supports `labelOutlineColor` and `labelOutlineWidth
+* LabelRenderer supports `labelOutlineColor` and `labelOutlineWidth`
 * LegendRenderer has considerable new functionality 
 * LineStringRenderer supports dash-array
 

@@ -9,11 +9,10 @@ by downstream projects as described below.
 
 Downstream projects making use of this technology:
 
-- [geoserver](https://docs.geoserver.org/latest/en/user/extensions/printing/index.html) - Uses mapfish-print-lib for gs-printing extension
+- [geoserver](https://docs.geoserver.org/latest/en/user/extensions/printing/index.html) - Uses ``mapfish-print-lib`` for gs-printing extension
 - [core-geonetwork](http://github.com/geonetwork/core-geonetwork) - uses mapfish-print-lib for activities such as thumbnail generation
-- [GeoNode](https://github.com/geonode/) - Uses geosolutions fork described below
-- [MapStore](https://github.com/geosolutions-it/MapStore2) - Uses geosolutions fork described below
-
+- [GeoNode](https://github.com/geonode/) - ``mapfish-print-lib`` via geoserver printing extension
+- [MapStore](https://github.com/geosolutions-it/MapStore2) - ``mapfish-print-lib`` via geoserver printing extension
 
 GeoCat BV has mained this series as needed to support the core-geonetwork project:
 
@@ -24,7 +23,8 @@ GeoSolutions created a fork of the project in 2013:
 - https://github.com/geosolutions-it/mapfish-print
 - Some features introduced over time (see [wiki](https://github.com/geosolutions-it/mapfish-print/wiki) )
 - Updated to reflect GeoTools changes including Java 11 and Log4j changes
-- This work has been incorporated back into mapfish-print-lib
+- This work has been incorporated back into `mapfish-print-lib` for 2.3.0 release
+- With ``GeoNode`` and ``MapStore`` successfully migrating to ``mapfish-print-lib`` this fork has concluded.
 
 Outdated documentation:
 
@@ -46,7 +46,7 @@ Standard maven build targets are available:
    mvn compile
    ```
 
-3. To create a ``print-lib-2.3-SNAPSHOT.jar`` jar:
+3. To create a ``print-lib-2.x-SNAPSHOT.jar`` jar:
 
    ```bash
    mvn package
@@ -104,6 +104,22 @@ See https://wiki.osgeo.org/wiki/SAC:Repo to obtain credentials:
       <id>nexus</id>
     </server>
   </servers>
+```
+## Docs
+
+Uses Python3 environment for ***sphinx-build* documentation:
+```
+pip3 install -r requirements.txt
+```
+
+Build with Makefile:
+```
+make html
+```
+
+Or command line:
+```
+sphinx-build 
 ```
 
 ## Release
