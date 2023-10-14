@@ -108,18 +108,19 @@ See https://wiki.osgeo.org/wiki/SAC:Repo to obtain credentials:
 ## Docs
 
 Uses Python3 environment for ***sphinx-build* documentation:
+
 ```
-pip3 install -r requirements.txt
+pip3 install -r docs/requirements.txt
+sphinx-build -b html -d docs/_build/doctrees docs docs/_build/html
+open _build/html/index.html
 ```
 
-Build with Makefile:
-```
-make html
-```
+Docs are created in ``docs/_build/html`` folder.
 
-Or command line:
+Maven `docs` profile will assemble the docs into a zip bundle if ``docs/_build/html/index.html`` exists.
+
 ```
-sphinx-build 
+mvn package
 ```
 
 ## Release

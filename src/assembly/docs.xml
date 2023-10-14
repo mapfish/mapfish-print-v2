@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ======================================================================
+       Assembly descriptor for binaries. This descriptor is a modified
+       copy of the Maven "bin" predefined descriptor published there:
+
+       http://maven.apache.org/plugins/maven-assembly-plugin/descriptor-refs.html#bin
+
+       It will creates a "mapfish-print-${project.version}-docs.zip" file.
+
+       $Id$
+       $URL$
+     ====================================================================== -->
+<assembly>
+  <id>docs</id>
+  <formats>
+    <format>zip</format>
+  </formats>
+  <fileSets>
+    <fileSet>
+      <useDefaultExcludes>true</useDefaultExcludes>
+      <directory>docs/_build/html</directory>
+      <outputDirectory></outputDirectory>
+    </fileSet>
+  </fileSets>
+  <files>
+    <file>
+      <source>LICENSE.md</source>
+      <destName>LICENSE.txt</destName>
+    </file>
+  </files>
+</assembly>

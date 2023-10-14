@@ -932,7 +932,7 @@ Every matching overrides is applied in order and will override the values define
 
 For example, if you want to draw an attribute block like that:
 
-.. image:: _static/tableConfig.png
+.. image:: images/tableConfig.png
 
 You define that:
 

@@ -432,4 +432,39 @@
     </snapshotRepository>
   </distributionManagement>
   
+  <profiles>
+    <!-- build docs first, and this profile -->
+    <!-- will assemble into a zip download -->
+    <profile>
+      <id>doc</id>
+      <activation>
+        <file>
+          <exists>docs/_build/html/index.html</exists>
+        </file>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <version>3.6.0</version>
+            <configuration>
+              <descriptors>
+                <descriptor>src/assembly/docs.xml</descriptor>
+              </descriptors>
+            </configuration>
+            <executions>
+              <execution>
+                <id>make-assembly</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>single</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
 </project>

@@ -1,8 +1,34 @@
 # Mapfish Print 2 Release notes
 
-## Release 2.2.0
+## Release 2.3.0
 
-* TBD
+Release notes:
+
+* Update to GeoTools 30.0 which requires Java 11
+* Changed to maven build for Java 11 compatibility 
+* Massive influx of new functionality from GeoSolutions
+  * Max number of columns configuration for multi column legends
+  * Simple colored box icon in legends
+  * Explicit support of Geoserver CQL_FILTER parameter (also with layers merge support)
+  * Legend fitting
+  * Don't break legend items
+  * Reorder legends block in columns
+  * Images content
+  * Dynamic images page
+  * Multipage legends
+  * Custom intervals in ScalebarBlock
+  * Clustering Support
+  * HTML rendering in text blocks
+  * Extra Pages
+  * Group Rendering in attribute blocks
+  * Skip rendering of pages
+  * Automatic X-Forwarded-For
+  * Parsing of Base64 encoded images
+* Release is focused on ``print-lib`` required for MapStore, GeoNode and GeoServer projects
+* Deploy to OSGeo repository
+* Updated docs to reflect new functionality
+* Added user-doc bundle and publication to *
+
 
 ## Release 2.2.0
 
