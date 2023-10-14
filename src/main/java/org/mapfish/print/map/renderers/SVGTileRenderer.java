@@ -57,6 +57,9 @@ import com.lowagie.text.pdf.PdfGraphics2D;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfGState;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.XMLConstants;
 
 public class SVGTileRenderer extends TileRenderer {
     public static final Logger LOGGER = LogManager.getLogger(SVGTileRenderer.class);
@@ -168,7 +171,16 @@ public class SVGTileRenderer extends TileRenderer {
 
                 Document doc;
                 try {
-                    xslt.transform(new StreamSource(inputStream), transformedSvg);
+                    DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+                    dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+                    dbf.setValidating(false);
+                    dbf.setExpandEntityReferences(false);
+
+                    DocumentBuilder db = dbf.newDocumentBuilder();
+
+                    Document docParse = db.parse(inputStream);
+                    xslt.transform(new DOMSource(docParse), transformedSvg);
+
                     doc = (Document) transformedSvg.getNode();
 
                     if (LOGGER.isDebugEnabled()) {
