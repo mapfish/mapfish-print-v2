@@ -1,21 +1,7 @@
 package org.mapfish.print.map.readers;
 
-import org.apache.xerces.util.DOMUtil;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.EntityResolver;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-
-import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringReader;
-import java.util.HashMap;
 
 /**
  * Represents data loaded from a server that describes the service
@@ -26,7 +12,21 @@ public class ServiceInfo {
 
     protected final static DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
 
+    // Features to disable for protection against external entity injection
+    private final static String[] featuresToDisable = {
+            "http://xml.org/sax/features/external-general-entities",
+            "http://xml.org/sax/features/external-parameter-entities",
+            "http://apache.org/xml/features/nonvalidating/load-external-dtd"
+    };
+
     {
+        for (String feature : featuresToDisable) {
+            try {
+                documentBuilderFactory.setFeature(feature, false);
+            } catch (ParserConfigurationException exception) {
+                new RuntimeException("Failed to set feature " + feature + " for document object factory");
+            }
+        }
         documentBuilderFactory.setValidating(false);  //doesn't work?!?!?
     }
 
