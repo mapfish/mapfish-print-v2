@@ -72,16 +72,18 @@ public class WMSMapReader extends TileableMapReader {
     public static class Factory implements MapReaderFactory {
         @Override
         public List<MapReader> create(String type, RenderingContext context, PJsonObject params) {
-            ArrayList<MapReader> target = new ArrayList<MapReader>();
+            ArrayList<MapReader> target = new ArrayList<>();
+            String layerName = params.has("name") ? params.getString("name") : null;
             PJsonArray layers = params.getJSONArray("layers");
             PJsonArray styles = params.optJSONArray("styles");
             for (int i = 0; i < layers.size(); i++) {
+                String lName = layerName != null ? layerName : layers.getString(i);
                 String layer = layers.getString(i);
                 String style = "";
                 if (styles != null && i < styles.size()) {
                     style = styles.getString(i);
                 }
-                target.add(new WMSMapReader(layer, style, context, params));
+                target.add(new WMSMapReader(lName, layer, style, context, params));
             }
 
             return target;
@@ -90,13 +92,13 @@ public class WMSMapReader extends TileableMapReader {
 
     public static final Logger LOGGER = LogManager.getLogger(WMSMapReader.class);
     private final String format;
-    protected final List<String> layers = new ArrayList<String>();
+    protected final List<String> layers = new ArrayList<>();
     private WMSVersion version;
-    private final List<String> styles = new ArrayList<String>();
+    private final List<String> styles = new ArrayList<>();
 
-    private WMSMapReader(String layer, String style, RenderingContext context, PJsonObject params) {
+    private WMSMapReader(String layerName, String layer, String style, RenderingContext context, PJsonObject params) {
         super(context, params);
-        layers.add(layer);
+        layers.add(layerName);
         if (!context.getConfig().isIgnoreCapabilities()) {
             tileCacheLayerInfo = WMSServiceInfo.getInfo(baseUrl, context).getTileCacheLayer(layer);
         }
@@ -114,7 +116,7 @@ public class WMSMapReader extends TileableMapReader {
             strictEpsg4326 = true;
         }
     }
-    
+
     @Override
     @SuppressWarnings("deprecation")
     protected String getMergeableValue(PJsonObject customParams,
@@ -140,7 +142,7 @@ public class WMSMapReader extends TileableMapReader {
             return super.getMergeableValue(customParams, toBeSkipped, key);
         }
     }
-    
+
     @Override
     protected TileRenderer.Format getFormat() {
         if (format.equals("image/svg+xml")) {
