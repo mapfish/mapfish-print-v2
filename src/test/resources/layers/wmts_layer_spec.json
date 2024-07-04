@@ -3,6 +3,7 @@
     "opacity": 1,
     "singleTile": false,
     "layer": "test",
+    "pdfLayerName": "pdfLayer1",
     "maxExtent": [-20037508.342789, -20037508.342789, 20037508.342789, 20037508.342789],
     "tileSize": [256, 256],
     "tileOriginCorner": "tl",

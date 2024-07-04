@@ -9,6 +9,7 @@
          "baseURL":"@@baseURL@@",
          "opacity":1,
          "type":"WMS",
+         "pdfLayerName": "pdfLayer1",
          "layers":[
             "layerName"
          ],

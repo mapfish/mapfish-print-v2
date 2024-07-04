@@ -37,7 +37,6 @@ import com.lowagie.text.DocumentException;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfLayer;
-import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -177,7 +176,7 @@ public class MapChunkDrawer extends ChunkDrawer {
                     public void renderOnPdf(PdfContentByte dc) throws DocumentException {
                         PdfLayer pdfLayer = null;
                         try {
-                            pdfLayer = new PdfLayer(reader.toString(), context.getWriter());
+                            pdfLayer = new PdfLayer(reader.getPdfLayerName(), context.getWriter());
                         } catch (Throwable unexpected) {
                             Logger.getLogger(MapChunkDrawer.class.getName()).log(Level.SEVERE,"", unexpected);
                         }

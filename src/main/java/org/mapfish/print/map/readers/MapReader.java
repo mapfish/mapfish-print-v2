@@ -28,9 +28,11 @@ import org.mapfish.print.utils.PJsonObject;
  */
 public abstract class MapReader {
     protected final float opacity;
+    protected String pdfLayerName;
 
     public MapReader(PJsonObject params) {
         opacity = params.optFloat("opacity", 1.0F);
+        pdfLayerName = params.optString("pdfLayerName","");
     }
 
     /**
@@ -51,5 +53,8 @@ public abstract class MapReader {
     }
 
     public abstract String toString();
+    public String getPdfLayerName() {
+        return pdfLayerName.isEmpty() || pdfLayerName.isBlank() ? toString() : pdfLayerName;
+    }
 
 }
