@@ -229,6 +229,8 @@ public class MapPrinterServlet extends BaseMapServlet {
         if(httpServletRequest.getParameter("spec") != null) {
             return httpServletRequest.getParameter("spec");
         }
+        BufferedReader data = new BufferedReader(new InputStreamReader(httpServletRequest.getInputStream(), StandardCharsets.UTF_8));
+
         Closer closer = Closer.create();
         try {
             final InputStreamReader reader = closer.register(new InputStreamReader(httpServletRequest.getInputStream(), getEncoding()));
