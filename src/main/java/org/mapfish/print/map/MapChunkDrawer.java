@@ -176,7 +176,7 @@ public class MapChunkDrawer extends ChunkDrawer {
                     public void renderOnPdf(PdfContentByte dc) throws DocumentException {
                         PdfLayer pdfLayer = null;
                         try {
-                            pdfLayer = new PdfLayer(reader.getPdfLayerName(), context.getWriter());
+                            pdfLayer = new PdfLayer(reader.getPDFLayerName(), context.getWriter());
                         } catch (Throwable unexpected) {
                             Logger.getLogger(MapChunkDrawer.class.getName()).log(Level.SEVERE,"", unexpected);
                         }

@@ -53,8 +53,11 @@ public abstract class MapReader {
     }
 
     public abstract String toString();
-    public String getPdfLayerName() {
-        return pdfLayerName.isEmpty() || pdfLayerName.isBlank() ? toString() : pdfLayerName;
+    public String getPDFLayerName() {
+        return pdfLayerName;
     }
 
+    public void setPDFLayerName(String pdfLayerName) {
+        this.pdfLayerName = pdfLayerName;
+    }
 }
