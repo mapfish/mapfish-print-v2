@@ -31,46 +31,32 @@ public class ColorWrapperTest extends PrintTestCase {
 
     @Test
     public void testHexa() {
-        ColorWrapper wrapper = new ColorWrapper(Color.class);
+        assertEquals(new Color(0x12, 0x56, 0xA8), ColorWrapper.convertColor("#1256A8"));
 
-        wrapper.setObject("#1256A8");
-        assertEquals(new Color(0x12, 0x56, 0xA8), wrapper.getObject());
-
-        wrapper.setObject("#1256b8");
-        assertEquals(new Color(0x12, 0x56, 0xb8), wrapper.getObject());
+        assertEquals(new Color(0x12, 0x56, 0xb8), ColorWrapper.convertColor("#1256b8"));
     }
 
     @Test
     public void testHexaAlpha() {
-        ColorWrapper wrapper = new ColorWrapper(Color.class);
 
-        wrapper.setObject("#1256b8");
-        assertEquals(new Color(0x12, 0x56, 0xb8), wrapper.getObject());
+        assertEquals(new Color(0x12, 0x56, 0xb8), ColorWrapper.convertColor("#1256b8"));
 
-        wrapper.setObject("#FF56b8");
-        assertEquals(new Color(0xFF, 0x56, 0xb8), wrapper.getObject());
+        assertEquals(new Color(0xFF, 0x56, 0xb8), ColorWrapper.convertColor("#FF56b8"));
 
-        wrapper.setObject("#FFF");
-        assertEquals(new Color(0xFF, 0xFF, 0xFF), wrapper.getObject());
+        assertEquals(new Color(0xFF, 0xFF, 0xFF), ColorWrapper.convertColor("#FFF"));
     }
 
     @Test
     public void testText() {
-        ColorWrapper wrapper = new ColorWrapper(Color.class);
 
-        wrapper.setObject("white");
-        assertEquals(Color.WHITE, wrapper.getObject());
+        assertEquals(Color.WHITE, ColorWrapper.convertColor("white"));
 
-        wrapper.setObject("Red");
-        assertEquals(Color.RED, wrapper.getObject());
+        assertEquals(Color.RED, ColorWrapper.convertColor("Red"));
 
-        wrapper.setObject("Silver");
-        assertEquals(Color.LIGHT_GRAY, wrapper.getObject());
+        assertEquals(Color.LIGHT_GRAY, ColorWrapper.convertColor("Silver"));
 
-        wrapper.setObject("BLACK");
-        assertEquals(Color.BLACK, wrapper.getObject());
+        assertEquals(Color.BLACK, ColorWrapper.convertColor("BLACK"));
 
-        wrapper.setObject("yellow");
-        assertEquals(Color.YELLOW, wrapper.getObject());
+        assertEquals(Color.YELLOW, ColorWrapper.convertColor("yellow"));
     }
 }

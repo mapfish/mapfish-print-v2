@@ -45,4 +45,3 @@ layouts:
           spacingAfter: 30
           width: 440
           height: 483
-      footer: *commonFooter

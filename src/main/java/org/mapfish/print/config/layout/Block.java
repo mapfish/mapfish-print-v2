@@ -23,6 +23,8 @@ import java.awt.Color;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.mapfish.print.InvalidValueException;
 import org.mapfish.print.PDFUtils;
 import org.mapfish.print.RenderingContext;
@@ -31,6 +33,20 @@ import org.mapfish.print.utils.PJsonObject;
 
 import com.lowagie.text.DocumentException;
 
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.NAME,
+        include = JsonTypeInfo.As.PROPERTY,
+        property = "type"
+)
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = TextBlock.class, name = "text"),
+        @JsonSubTypes.Type(value = ImageBlock.class, name = "image"),
+        @JsonSubTypes.Type(value = ColumnsBlock.class, names = {"columns", "table"}),
+        @JsonSubTypes.Type(value = MapBlock.class, name = "map"),
+        @JsonSubTypes.Type(value = AttributesBlock.class, name = "attributes"),
+        @JsonSubTypes.Type(value = ScalebarBlock.class, name = "scalebar"),
+        @JsonSubTypes.Type(value = LegendsBlock.class, name = "legends")
+})
 /**
  * Base class for blocks that can be found in "items" arrays.
  */

@@ -105,6 +105,42 @@ public class ConfigTest extends PrintTestCase {
 
     }
 
+    @Test
+    public void testLargeConfigFile() throws Exception {
+        File configFile = getConfigLarge();
+        StringBuilder errorString = new StringBuilder("The following errors occurred while parsing yaml config file: \n");
+        boolean error = false;
+        ThreadResources threadResources = new ThreadResources();
+        threadResources.init();
+        try {
+            final ConfigFactory configFactory = new ConfigFactory(threadResources);
+            try {
+                final Config config = configFactory.fromYaml(configFile);
+                config.getBestScale(1000);
+                JSONWriter json = new JSONWriter(new StringWriter());
+                json.object();
+                config.printClientConfig(json);
+
+                if (!config.getDpis().isEmpty()) {
+                    final Integer next = config.getDpis().iterator().next();
+                    assertNotNull(next);
+                }
+            } catch (Throwable e) {
+                error = true;
+                StringWriter trace = new StringWriter();
+                e.printStackTrace(new PrintWriter(trace));
+                errorString.append("\t" + configFile.getPath() + ": " + e.getMessage() + "\n");
+                errorString.append(trace.toString().replace("\n", "\n\t\t") + "\n\n");
+            }
+            assertFalse(errorString.toString(), error);
+        } finally {
+            threadResources.destroy();
+        }
+
+    }
+
+
+
     public static Map<String, File> getSampleConfigFiles() {
         final String configTestClassFile = ConfigTest.class.getResource(ConfigTest.class.getSimpleName() + ".class").getFile();
         final File[] sample_config_yamls = new File(new File(configTestClassFile).getParentFile(), "sample_config_yaml").listFiles();
@@ -114,5 +150,10 @@ public class ConfigTest extends PrintTestCase {
             nameToFileMap.put(file.getName(), file);
         }
         return nameToFileMap;
+    }
+
+    public static File getConfigLarge() {
+        final String configTestClassFile = ConfigTest.class.getResource(ConfigTest.class.getSimpleName() + ".class").getFile();
+        return new File(new File(configTestClassFile).getParentFile(), "sample_config_yaml" + File.separator + "specific_samples" + File.separator + "configLarge.yaml");
     }
 }

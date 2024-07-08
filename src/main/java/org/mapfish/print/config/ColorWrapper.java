@@ -22,11 +22,6 @@ package org.mapfish.print.config;
 import java.awt.Color;
 import com.lowagie.text.html.WebColors;
 
-import org.ho.yaml.wrapper.AbstractWrapper;
-import org.ho.yaml.wrapper.SimpleObjectWrapper;
-
-import java.awt.*;
-
 /**
  * Yaml wrapper for allowing color fields. The supported formats are:
  * <ul>
@@ -34,26 +29,7 @@ import java.awt.*;
  * <li> strings like (in fact all the constants declared in the Color class): white, black, red, ...
  * </ul>
  */
-public class ColorWrapper extends AbstractWrapper implements SimpleObjectWrapper {
-    public ColorWrapper(Class<?> type) {
-        super(type);
-    }
-
-    public void setObject(Object obj) {
-        if (obj instanceof String) {
-            super.setObject(convertColor((String) obj));
-        } else {
-            super.setObject(obj);
-        }
-    }
-
-    public Class<?> expectedArgType() {
-        return String.class;
-    }
-
-    public Object getOutputValue() {
-        return getObject().toString();
-    }
+public class ColorWrapper {
 
     public static Color convertColor(String color) throws IllegalArgumentException {
         if (color == null) {

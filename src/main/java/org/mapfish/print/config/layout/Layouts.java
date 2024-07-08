@@ -21,7 +21,6 @@ package org.mapfish.print.config.layout;
 
 import java.util.HashMap;
 
-import org.ho.yaml.wrapper.DefaultMapWrapper;
 import org.mapfish.print.InvalidValueException;
 
 /**
@@ -32,16 +31,6 @@ public class Layouts extends HashMap<String, Layout> {
      *
      */
     private static final long serialVersionUID = 1L;
-
-    public static class Wrapper extends DefaultMapWrapper {
-        public Wrapper(Class<Layout> type) {
-            super(type);
-        }
-
-        public Class<Layout> getExpectedType(Object key) {
-            return Layout.class;
-        }
-    }
 
     /**
      * Called just after the config has been loaded to check it is valid.

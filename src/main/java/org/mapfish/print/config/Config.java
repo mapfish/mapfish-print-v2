@@ -87,7 +87,7 @@ public class Config implements Closeable {
     private List<String> overlayLayers = null;
 
     private TreeSet<String> fonts = null;
-    private List<HostMatcher> hosts = new ArrayList<HostMatcher>();
+    private List<HostMatcher> hosts = new ArrayList<>();
     private HashMap localHostForward;
     private TreeSet<String> headers;
     private TreeSet<Key> keys;

@@ -48,9 +48,9 @@ brokenUrlPlaceholder: http://upload.wikimedia.org/wikipedia/commons/c/ce/Transpa
 security:
   - !basicAuth
     matcher: !dnsMatch
-      host: @shared.server.name@
-    username: @shared.privileged.geoserver.user@
-    password: @shared.privileged.geoserver.pass@
+      host: shared.server.name@
+    username: shared.privileged.geoserver.user
+    password: shared.privileged.geoserver.pass
     preemptive: true
 
 #===========================================================================
@@ -60,8 +60,8 @@ hosts:
   - !localMatch
     dummy: true
   - !ipMatch
-    ip:0.0.0.0
-    mask:0.0.0.0
+    ip: 0.0.0.0
+    mask: 0.0.0.0
 
 
 layouts:

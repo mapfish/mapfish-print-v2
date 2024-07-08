@@ -19,6 +19,9 @@
 
 package org.mapfish.print.config;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 import java.net.MalformedURLException;
 import java.net.SocketException;
 import java.net.URI;
@@ -29,6 +32,17 @@ import java.util.regex.Pattern;
 /**
  * Used to validate the access to a map service host
  */
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.NAME,
+        include = JsonTypeInfo.As.PROPERTY,
+        property = "type"
+)
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = LocalHostMatcher.class, name = "localMatch"),
+        @JsonSubTypes.Type(value = DnsHostMatcher.class, name = "dnsMatch"),
+        @JsonSubTypes.Type(value = AddressHostMatcher.class, name = "ipMatch"),
+        @JsonSubTypes.Type(value = AcceptAllMatcher.class, name = "acceptAll")
+})
 public abstract class HostMatcher {
     public final static HostMatcher ACCEPT_ALL = new AcceptAllMatcher();
 

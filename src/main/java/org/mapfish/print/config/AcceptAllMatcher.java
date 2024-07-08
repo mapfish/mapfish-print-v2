@@ -19,4 +19,7 @@ public class AcceptAllMatcher extends HostMatcher {
         return "Accept All";
     }
 
+    public void setDummy(boolean dummy) {
+        //YAML parser always need some content
+    }
 }

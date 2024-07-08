@@ -19,6 +19,8 @@
 
 package org.mapfish.print.scalebar;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * Type of scale bar to render.
  */
@@ -37,5 +39,6 @@ public enum Type {
      * A bar with alternating black and white zones marking the sub-intervals.
      * Intervals have small additional ticks.
      */
+    @JsonProperty("bar sub")
     BAR_SUB
 }

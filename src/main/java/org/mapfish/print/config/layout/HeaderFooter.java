@@ -21,6 +21,8 @@ package org.mapfish.print.config.layout;
 
 import java.util.ArrayList;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.mapfish.print.InvalidValueException;
 import org.mapfish.print.PDFUtils;
 import org.mapfish.print.RenderingContext;
@@ -34,9 +36,22 @@ import com.lowagie.text.pdf.PdfPTable;
 /**
  * Config and logic to render a header or a footer.
  */
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 public class HeaderFooter {
+
+    private String id;
+
     private int height = 0;
     private ArrayList<Block> items = new ArrayList<Block>();
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public void setHeight(int height) {
         this.height = height;

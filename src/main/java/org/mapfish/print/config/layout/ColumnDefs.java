@@ -21,7 +21,6 @@ package org.mapfish.print.config.layout;
 
 import java.util.HashMap;
 
-import org.ho.yaml.wrapper.DefaultMapWrapper;
 import org.mapfish.print.InvalidValueException;
 
 /**
@@ -50,13 +49,4 @@ public class ColumnDefs extends HashMap<String, ColumnDef> {
         }
     }
 
-    public static class Wrapper extends DefaultMapWrapper {
-        public Wrapper(Class<ColumnDef> type) {
-            super(type);
-        }
-
-        public Class<ColumnDef> getExpectedType(Object key) {
-            return ColumnDef.class;
-        }
-    }
 }

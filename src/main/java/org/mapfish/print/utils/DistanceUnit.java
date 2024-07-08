@@ -26,8 +26,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.ho.yaml.wrapper.EnumWrapper;
-
 /**
  * An enum for expressing distance units. Contains everything needed for
  * convertions and others.
@@ -177,19 +175,5 @@ public enum DistanceUnit {
             }
         }
         return translations;
-    }
-
-    public static class Wrapper extends EnumWrapper {
-        public Wrapper(Class<?> type) { // do not "fix" this eclipse warning, because it breaks things, Tim
-            super(type);
-        }
-
-        public void setObject(Object obj) {
-            if (obj instanceof String) {
-                super.setObject(DistanceUnit.fromString((String) obj));
-            } else {
-                super.setObject(obj);
-            }
-        }
     }
 }

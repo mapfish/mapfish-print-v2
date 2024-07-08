@@ -21,8 +21,6 @@ package org.mapfish.print.config.layout;
 
 import java.util.ArrayList;
 
-import org.ho.yaml.wrapper.DefaultCollectionWrapper;
-
 /**
  * Just to make sure the values of the hash have the good type.
  */
@@ -32,18 +30,4 @@ public class Exceptions extends ArrayList<CellException> {
      *
      */
     private static final long serialVersionUID = 1L;
-
-    public static class Wrapper extends DefaultCollectionWrapper {
-        public Wrapper(Class<?> type) {
-            super(type);
-        }
-
-        public Class<CellException> componentType() {
-            return CellException.class;
-        }
-
-        public boolean isTyped() {
-            return true;
-        }
-    }
 }
