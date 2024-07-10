@@ -75,7 +75,7 @@ public class VectorMapReader extends MapReader {
         } catch (JSONException e) {
             throw new InvalidJsonValueException(params, "geoJson", geoJson.toString(), e);
         }
-        pdfLayerName = params.optString("name", params.optString("pdfLayerName", "vector"));
+        pdfLayerName = params.optString("pdfLayerName", params.optString("name", "vector"));
     }
 
     public void render(final Transformer transformer, ParallelMapTileLoader parallelMapTileLoader, String srs, boolean first) {
