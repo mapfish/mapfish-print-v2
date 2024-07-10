@@ -32,7 +32,7 @@ public abstract class MapReader {
 
     public MapReader(PJsonObject params) {
         opacity = params.optFloat("opacity", 1.0F);
-        pdfLayerName = params.optString("pdfLayerName","");
+        pdfLayerName = params.optString("pdfLayerName", "");
     }
 
     /**
@@ -54,7 +54,7 @@ public abstract class MapReader {
 
     public abstract String toString();
     public String getPDFLayerName() {
-        return pdfLayerName;
+        return pdfLayerName.isEmpty() || pdfLayerName.isBlank() ? toString() : pdfLayerName;
     }
 
     public void setPDFLayerName(String pdfLayerName) {
