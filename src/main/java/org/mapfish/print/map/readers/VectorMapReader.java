@@ -60,7 +60,6 @@ public class VectorMapReader extends MapReader {
 
     private final MfGeo geo;
     private final RenderingContext context;
-    private final String name;
 
     public VectorMapReader(RenderingContext context, PJsonObject params) {
         super(params);
@@ -76,7 +75,7 @@ public class VectorMapReader extends MapReader {
         } catch (JSONException e) {
             throw new InvalidJsonValueException(params, "geoJson", geoJson.toString(), e);
         }
-        name = params.optString("name", "vector");
+        pdfLayerName = params.optString("pdfLayerName", params.optString("name", "vector"));
     }
 
     public void render(final Transformer transformer, ParallelMapTileLoader parallelMapTileLoader, String srs, boolean first) {
@@ -92,6 +91,6 @@ public class VectorMapReader extends MapReader {
     }
 
     public String toString() {
-        return name;
+        return pdfLayerName;
     }
 }

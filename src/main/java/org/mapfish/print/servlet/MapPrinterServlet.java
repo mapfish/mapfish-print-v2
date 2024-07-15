@@ -149,7 +149,7 @@ public class MapPrinterServlet extends BaseMapServlet {
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
-        if (httpServletRequest.getMethod() == "POST") {
+        if ("POST".equalsIgnoreCase(httpServletRequest.getMethod())) {
             try {
                 spec = getSpecFromPostBody(httpServletRequest);
             } catch (IOException e) {
