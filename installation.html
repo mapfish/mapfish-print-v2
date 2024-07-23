@@ -1,17 +1,16 @@
-
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="./">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>Installation &#8212; MapFish Print 2.3-SNAPSHOT documentation</title>
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="_static/mapfish.css" />
-    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-    <script src="_static/doctools.js"></script>
-    <script src="_static/sphinx_highlight.js"></script>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/mapfish.css?v=1c0ae0b7" />
+    <script src="_static/documentation_options.js?v=42aa45cd"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Configuration" href="configuration.html" />
@@ -40,9 +39,9 @@
           <div class="body" role="main">
             
   <section id="installation">
-<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this heading">¶</a></h1>
+<h1>Installation<a class="headerlink" href="#installation" title="Link to this heading">¶</a></h1>
 <section id="compilation">
-<h2>Compilation<a class="headerlink" href="#compilation" title="Permalink to this heading">¶</a></h2>
+<h2>Compilation<a class="headerlink" href="#compilation" title="Link to this heading">¶</a></h2>
 <p>To build this project, you need:</p>
 <ul>
 <li><p>JDK &gt;= 11, OpenJDK tested</p></li>
@@ -69,7 +68,7 @@ mvn<span class="w"> </span>install
 <p>For detailed instructions please see [README.md](<a class="reference external" href="https://github.com/mapfish/mapfish-print-v2/blob/main/README.md">https://github.com/mapfish/mapfish-print-v2/blob/main/README.md</a>)</p>
 </section>
 <section id="included-print-lib-in-web-application">
-<h2>Included print-lib in web application<a class="headerlink" href="#included-print-lib-in-web-application" title="Permalink to this heading">¶</a></h2>
+<h2>Included print-lib in web application<a class="headerlink" href="#included-print-lib-in-web-application" title="Link to this heading">¶</a></h2>
 <p>If you are developping a web application, you can include the print module in it. This explanation works only if you use Maven to build your project. For others, you’ll have to include the print-lib JAR file and all its dependencies.</p>
 <ol class="arabic">
 <li><p>Add the print-lib dependency to your WAR project by adding these two elements to your <code class="file docutils literal notranslate"><span class="pre">pom.xml</span></code> file (adjust the version)</p>
@@ -151,12 +150,12 @@ mvn<span class="w"> </span>install
 <li><p>Add a <code class="file docutils literal notranslate"><span class="pre">config.yaml</span></code> file (from the <a class="reference external" href="hhttps://github.com/mapfish/mapfish-print-v2/blob/main/samples">samples</a>, for example) to the root of your web application.</p></li>
 </ol>
 <section id="configuring-servlet-temp-directory">
-<h3>Configuring Servlet Temp Directory<a class="headerlink" href="#configuring-servlet-temp-directory" title="Permalink to this heading">¶</a></h3>
+<h3>Configuring Servlet Temp Directory<a class="headerlink" href="#configuring-servlet-temp-directory" title="Link to this heading">¶</a></h3>
 <p>By default the default servlet temporary directory will be used but that behaviour can be overridden setting the init-param <em>tempdir</em>.  If this parameter is set the servlet must have write access to the directory.</p>
 </section>
 </section>
 <section id="command-line">
-<h2>Command line<a class="headerlink" href="#command-line" title="Permalink to this heading">¶</a></h2>
+<h2>Command line<a class="headerlink" href="#command-line" title="Link to this heading">¶</a></h2>
 <p>For debugging or calling from other environments, you can run the print module from the command line.</p>
 <p>Examples are assumed to be ran from the directory %MAPFISHDIR%/server/java/print.</p>
 <p>If you have previously built you can run the existing jar using the following commands:</p>
@@ -169,7 +168,7 @@ mvn<span class="w"> </span>install
 </div>
 </section>
 <section id="with-image-output-line">
-<h2>With Image output line<a class="headerlink" href="#with-image-output-line" title="Permalink to this heading">¶</a></h2>
+<h2>With Image output line<a class="headerlink" href="#with-image-output-line" title="Link to this heading">¶</a></h2>
 <p>At the moment to have robust image (png, gif, etc…) output options the image magick command line tool must be used.  The tool is cross platform and available on linux, windows and mac osx.  Before installing mapfish print first install both:</p>
 <blockquote>
 <div><ul class="simple">
@@ -254,8 +253,8 @@ mvn<span class="w"> </span>install
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2023, Camptocamp and others.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.2.1.
+    &#169; Copyright 2024, Camptocamp and others.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
     </div>
   </body>
 </html>

@@ -1,6 +1,27 @@
 Upgrade
 *******
 
+Version 2.3.1
+-------------
+
+Release notes:
+
+* Bump org.jyaml.jyaml 1.3 to com.fasterxml.jackson.dataformat.jackson-dataformat-yaml 2.17.2
+
+Breaking Changes
+================
+
+* Deprecated `org.jyaml` in favour of `com.fasterxml.jackson.dataformat`
+
+Migration Guide
+===============
+
+Update the `config.yaml` according to the following rules:
+
+* Make sure the properties have a space between the name and value, e.g. `mask:0.0.0.0` 👎  - `mask: 0.0.0.0` 👍 
+* Remove `@` from references, e.g. `username: @shared.privileged.geoserver.user@` 👎 - `username: shared.privileged.geoserver.user` 👍 
+* Remove any reference to common properties or inherited sections, e.g. `footer: *commonFooter` 👎 
+
 Version 2.3.0
 -------------
 

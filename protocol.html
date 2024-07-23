@@ -1,17 +1,16 @@
-
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="./">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>Protocol &#8212; MapFish Print 2.3-SNAPSHOT documentation</title>
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="_static/mapfish.css" />
-    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-    <script src="_static/doctools.js"></script>
-    <script src="_static/sphinx_highlight.js"></script>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/mapfish.css?v=1c0ae0b7" />
+    <script src="_static/documentation_options.js?v=42aa45cd"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Upgrade" href="upgrade.html" />
@@ -40,11 +39,11 @@
           <div class="body" role="main">
             
   <section id="protocol">
-<span id="print-protocol"></span><h1>Protocol<a class="headerlink" href="#protocol" title="Permalink to this heading">¶</a></h1>
+<span id="print-protocol"></span><h1>Protocol<a class="headerlink" href="#protocol" title="Link to this heading">¶</a></h1>
 <p>Four commands are available and are documented in the next sections.</p>
 <p>Every command uses the HTTP status code to notify errors.</p>
 <section id="info-json">
-<h2>info.json<a class="headerlink" href="#info-json" title="Permalink to this heading">¶</a></h2>
+<h2>info.json<a class="headerlink" href="#info-json" title="Link to this heading">¶</a></h2>
 <p>HTTP command:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET {PRINT_URL}/info.json?url={PRINT_URL}%2Finfo.json&amp;var=printConfig
 </pre></div>
@@ -88,7 +87,7 @@ omitted.</p>
 <p>The “url” query parameter is here to help the print servlet to know what URL is used by the browser to access the servlet. This parameter is here because the servlet can be behind a proxy, hiding the real URL.</p>
 </section>
 <section id="print-pdf">
-<h2>print.pdf<a class="headerlink" href="#print-pdf" title="Permalink to this heading">¶</a></h2>
+<h2>print.pdf<a class="headerlink" href="#print-pdf" title="Link to this heading">¶</a></h2>
 <p>HTTP command:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>GET {PRINT_URL}/print.pdf?spec={SPEC}
    or
@@ -163,7 +162,7 @@ Mergeable parameters can have a context, that is the baseURL they can be used fo
 <p>This command returns the PDF file directly.</p>
 </section>
 <section id="create-json">
-<h2>create.json<a class="headerlink" href="#create-json" title="Permalink to this heading">¶</a></h2>
+<h2>create.json<a class="headerlink" href="#create-json" title="Link to this heading">¶</a></h2>
 <p>HTTP command:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>POST {PRINT_URL}/create.json?url={PRINT_URL}%2Fcreate.json
 </pre></div>
@@ -178,7 +177,7 @@ Mergeable parameters can have a context, that is the baseURL they can be used fo
 <p>The URL returned can be used to retrieve the PDF file. See the next section.</p>
 </section>
 <section id="id-pdf">
-<h2>{ID}.pdf<a class="headerlink" href="#id-pdf" title="Permalink to this heading">¶</a></h2>
+<h2>{ID}.pdf<a class="headerlink" href="#id-pdf" title="Link to this heading">¶</a></h2>
 <p>This command’s URL is returned by the “create.json” command.</p>
 <p>HTTP command:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GET</span> <span class="p">{</span><span class="n">PRINT_URL</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">ID</span><span class="p">}</span><span class="o">.</span><span class="n">pdf</span>
@@ -188,7 +187,7 @@ Mergeable parameters can have a context, that is the baseURL they can be used fo
 </section>
 </section>
 <section id="multiple-maps-on-a-single-page">
-<h1>Multiple maps on a single page<a class="headerlink" href="#multiple-maps-on-a-single-page" title="Permalink to this heading">¶</a></h1>
+<h1>Multiple maps on a single page<a class="headerlink" href="#multiple-maps-on-a-single-page" title="Link to this heading">¶</a></h1>
 <dl class="simple">
 <dt>To print more than one map on a single page you need to:</dt><dd><ul class="simple">
 <li><p>specify several map blocks in a page of the yaml file, each with a distinct name property value</p></li>
@@ -250,9 +249,9 @@ Also, in text blocks you can use the ${scale.&lt;mapname&gt;} placeholder to pri
 whose name is &lt;mapname&gt;.</p>
 </section>
 <section id="layers-params">
-<h1>Layers Params<a class="headerlink" href="#layers-params" title="Permalink to this heading">¶</a></h1>
+<h1>Layers Params<a class="headerlink" href="#layers-params" title="Link to this heading">¶</a></h1>
 <section id="vector">
-<h2>Vector<a class="headerlink" href="#vector" title="Permalink to this heading">¶</a></h2>
+<h2>Vector<a class="headerlink" href="#vector" title="Link to this heading">¶</a></h2>
 <p>Type: vector</p>
 <p>Render vector layers. The geometries and the styling comes directly from the spec JSON.</p>
 <ul class="simple">
@@ -260,11 +259,12 @@ whose name is &lt;mapname&gt;.</p>
 <li><p>geoJson (Required) the geoJson to render</p></li>
 <li><p>styleProperty (Defaults to ‘_style’) Name of the property within the features to use as style name. The given property may contain a style object directly.</p></li>
 <li><p>styles (Optional) dictonary of styles. One style is defined as in OpenLayers.Feature.Vector.style.</p></li>
-<li><p>name (Defaults to <code class="docutils literal notranslate"><span class="pre">vector</span></code>) the layer name.</p></li>
+<li><p>name (Defaults to <code class="docutils literal notranslate"><span class="pre">vector</span></code>) the layer name. (deprecated: use pdfLayerName instead)</p></li>
+<li><p>pdfLayerName (Defaults to <code class="docutils literal notranslate"><span class="pre">vector</span></code>) PDF layer name.</p></li>
 </ul>
 </section>
 <section id="wms">
-<h2>WMS<a class="headerlink" href="#wms" title="Permalink to this heading">¶</a></h2>
+<h2>WMS<a class="headerlink" href="#wms" title="Link to this heading">¶</a></h2>
 <p>Type: wms</p>
 <p>Support for the WMS protocol with possibilities to go through a WMS-C service (TileCache).</p>
 <ul class="simple">
@@ -276,10 +276,11 @@ whose name is &lt;mapname&gt;.</p>
 <li><p>format (Required)</p></li>
 <li><p>version (Defaults to <code class="docutils literal notranslate"><span class="pre">1.1.1</span></code>)</p></li>
 <li><p>useNativeAngle (Defaults to false) it true transform the map angle to customParams.angle for GeoServer, and customParams.map_angle for MapServer.</p></li>
+<li><p>pdfLayerName (Defaults to stringify layers field comma separated) PDF layer name.</p></li>
 </ul>
 </section>
 <section id="wmts">
-<h2>WMTS<a class="headerlink" href="#wmts" title="Permalink to this heading">¶</a></h2>
+<h2>WMTS<a class="headerlink" href="#wmts" title="Link to this heading">¶</a></h2>
 <p>Type: wmts</p>
 <p>Support for the protocol using directly the content of a WMTS tiled layer, support REST or KVP.</p>
 <p>Two possible mode, standard or simple, the simple mode imply that all the topLeftCorner are identical.</p>
@@ -296,6 +297,7 @@ whose name is &lt;mapname&gt;.</p>
 <li><p>params (Optional) dictionary of dimensions name (capital) =&gt; value</p></li>
 <li><p>matrixSet (Required) the name of the matrix set</p></li>
 <li><p>matrixIds (Required) array of matrix ids e.g.:</p></li>
+<li><p>pdfLayerName (Defaults to layer field) PDF layer name.</p></li>
 </ul>
 <div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">[{</span>
 <span class="w">    </span><span class="s2">&quot;identifier&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;0&quot;</span><span class="p">,</span>
@@ -328,7 +330,7 @@ whose name is &lt;mapname&gt;.</p>
 </ul>
 </section>
 <section id="tms">
-<h2>Tms<a class="headerlink" href="#tms" title="Permalink to this heading">¶</a></h2>
+<h2>Tms<a class="headerlink" href="#tms" title="Link to this heading">¶</a></h2>
 <p>Type: tms</p>
 <p>Support the TMS tile layout.</p>
 <ul class="simple">
@@ -341,6 +343,7 @@ whose name is &lt;mapname&gt;.</p>
 <li><p>layer (Required)</p></li>
 <li><p>resolutions (Required) Array of resolutions</p></li>
 <li><p>tileOrigin (Optional) Object, tile origin.  Defaults to <code class="docutils literal notranslate"><span class="pre">0,0</span></code></p></li>
+<li><p>pdfLayerName (Defaults to layer field) PDF layer name.</p></li>
 </ul>
 <p>Resources:</p>
 <ul class="simple">
@@ -349,7 +352,7 @@ whose name is &lt;mapname&gt;.</p>
 </ul>
 </section>
 <section id="xyz">
-<h2>Xyz<a class="headerlink" href="#xyz" title="Permalink to this heading">¶</a></h2>
+<h2>Xyz<a class="headerlink" href="#xyz" title="Link to this heading">¶</a></h2>
 <p>Type: xyz</p>
 <p>Support the tile layout z/x/y.&lt;extension&gt;.</p>
 <ul class="simple">
@@ -363,10 +366,11 @@ whose name is &lt;mapname&gt;.</p>
 <li><p>tileOrigin (Optional) Array, tile origine e.g. <code class="docutils literal notranslate"><span class="pre">[420000,</span> <span class="pre">350000]</span></code></p></li>
 <li><p>tileOriginCorner <code class="docutils literal notranslate"><span class="pre">tl</span></code> or <code class="docutils literal notranslate"><span class="pre">bl</span></code> (Defaults to <code class="docutils literal notranslate"><span class="pre">bl</span></code>)</p></li>
 <li><p>path_format (Optional) url fragment used to construct the tile location. Can support variable replacement of <code class="docutils literal notranslate"><span class="pre">${x}</span></code>, <code class="docutils literal notranslate"><span class="pre">${y}</span></code>, <code class="docutils literal notranslate"><span class="pre">${z}</span></code> and <code class="docutils literal notranslate"><span class="pre">${extension}</span></code>. Defaults to zz/x/y.extension format.  You can use multiple “letters” to indicate a replacable pattern (aka, <code class="docutils literal notranslate"><span class="pre">${zzzz}</span></code> will ensure the z variable is 0 padded to have a length of AT LEAST 4 characters).</p></li>
+<li><p>pdfLayerName (Defaults to “t”) PDF layer name.</p></li>
 </ul>
 </section>
 <section id="osm">
-<h2>Osm<a class="headerlink" href="#osm" title="Permalink to this heading">¶</a></h2>
+<h2>Osm<a class="headerlink" href="#osm" title="Link to this heading">¶</a></h2>
 <p>Type: osm</p>
 <p>Support the OSM tile layout.</p>
 <ul class="simple">
@@ -377,10 +381,11 @@ whose name is &lt;mapname&gt;.</p>
 <li><p>tileSize (Required) Array, tile size e.g. <code class="docutils literal notranslate"><span class="pre">[256,</span> <span class="pre">256]</span></code></p></li>
 <li><p>resolutions (Required) Array of resolutions</p></li>
 <li><p>extension (Required) file extension</p></li>
+<li><p>pdfLayerName (Defaults to “t”) PDF layer name.</p></li>
 </ul>
 </section>
 <section id="tilecache">
-<h2>TileCache<a class="headerlink" href="#tilecache" title="Permalink to this heading">¶</a></h2>
+<h2>TileCache<a class="headerlink" href="#tilecache" title="Link to this heading">¶</a></h2>
 <p>Type: tileCache</p>
 <p>Support for the protocol using directly the content of a TileCache directory.</p>
 <ul class="simple">
@@ -392,20 +397,22 @@ whose name is &lt;mapname&gt;.</p>
 <li><p>tileSize (Required) Array, tile size e.g. <code class="docutils literal notranslate"><span class="pre">[256,</span> <span class="pre">256]</span></code></p></li>
 <li><p>resolutions (Required) Array of resolutions</p></li>
 <li><p>extension (Required) file extension</p></li>
+<li><p>pdfLayerName (Defaults to layer field) PDF layer name.</p></li>
 </ul>
 </section>
 <section id="image">
-<h2>Image<a class="headerlink" href="#image" title="Permalink to this heading">¶</a></h2>
+<h2>Image<a class="headerlink" href="#image" title="Link to this heading">¶</a></h2>
 <p>Type: image</p>
 <ul class="simple">
 <li><p>opacity (Defaults to <code class="docutils literal notranslate"><span class="pre">1.0</span></code>)</p></li>
 <li><p>name (Required)</p></li>
 <li><p>baseURL (Required) Service URL</p></li>
 <li><p>extent (Required)</p></li>
+<li><p>pdfLayerName (Defaults to name field) PDF layer name.</p></li>
 </ul>
 </section>
 <section id="mapserver">
-<h2>MapServer<a class="headerlink" href="#mapserver" title="Permalink to this heading">¶</a></h2>
+<h2>MapServer<a class="headerlink" href="#mapserver" title="Link to this heading">¶</a></h2>
 <p>Type: mapServer</p>
 <p>Support mapserver WMS server.</p>
 <ul class="simple">
@@ -414,10 +421,11 @@ whose name is &lt;mapname&gt;.</p>
 <li><p>customParams (Optional) Map, additional URL arguments</p></li>
 <li><p>layers (Required)</p></li>
 <li><p>format (Required)</p></li>
+<li><p>pdfLayerName (Defaults to stringify layers field comma separated) PDF layer name.</p></li>
 </ul>
 </section>
 <section id="kamap">
-<h2>KaMap<a class="headerlink" href="#kamap" title="Permalink to this heading">¶</a></h2>
+<h2>KaMap<a class="headerlink" href="#kamap" title="Link to this heading">¶</a></h2>
 <p>Type: kaMap</p>
 <p>Support for the protocol using the KaMap tiling method</p>
 <ul class="simple">
@@ -430,10 +438,11 @@ whose name is &lt;mapname&gt;.</p>
 <li><p>tileSize (Required) Array, tile size e.g. <code class="docutils literal notranslate"><span class="pre">[256,</span> <span class="pre">256]</span></code></p></li>
 <li><p>resolutions (Required) Array of resolutions</p></li>
 <li><p>extension (Required) file extension</p></li>
+<li><p>pdfLayerName (Defaults to map field) PDF layer name.</p></li>
 </ul>
 </section>
 <section id="kamapcache">
-<h2>KaMapCache<a class="headerlink" href="#kamapcache" title="Permalink to this heading">¶</a></h2>
+<h2>KaMapCache<a class="headerlink" href="#kamapcache" title="Link to this heading">¶</a></h2>
 <p>Type: kaMapCache</p>
 <p>Support for the protocol talking direclty to a web-accessible ka-Map cache generated by the precache2.php script.</p>
 <ul class="simple">
@@ -449,10 +458,11 @@ whose name is &lt;mapname&gt;.</p>
 <li><p>tileSize (Required) Array, tile size e.g. <code class="docutils literal notranslate"><span class="pre">[256,</span> <span class="pre">256]</span></code></p></li>
 <li><p>resolutions (Required) Array of resolutions</p></li>
 <li><p>extension (Required) file extension</p></li>
+<li><p>pdfLayerName (Defaults to map field) PDF layer name.</p></li>
 </ul>
 </section>
 <section id="google">
-<h2>Google<a class="headerlink" href="#google" title="Permalink to this heading">¶</a></h2>
+<h2>Google<a class="headerlink" href="#google" title="Link to this heading">¶</a></h2>
 <p>Type: google or tiledGoogle</p>
 <p>They used the Google Map Static API, tiledGoogle will create tiles and google only one image.</p>
 <p>The google map reader has several custom parameters that can be added to the request they are:</p>
@@ -468,6 +478,7 @@ whose name is &lt;mapname&gt;.</p>
 <li><p>maptype (Required) - type of map to display: <a class="reference external" href="http://code.google.com/apis/maps/documentation/staticmaps/#MapTypes">http://code.google.com/apis/maps/documentation/staticmaps/#MapTypes</a></p></li>
 <li><p>sensor  (Optional) - specifies whether the application requesting the static map is using a sensor to determine the user’s location</p></li>
 <li><p>language (Optional) - language of labels.</p></li>
+<li><p>pdfLayerName (Defaults to “t”) PDF layer name.</p></li>
 <li><p>markers (Optional) - add markers to the map: <a class="reference external" href="http://code.google.com/apis/maps/documentation/staticmaps/#Markers">http://code.google.com/apis/maps/documentation/staticmaps/#Markers</a></p></li>
 </ul>
 <div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="nx">markers</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="s1">&#39;color:blue|label:S|46.5195933305192,6.566684726913701&#39;</span><span class="p">]</span>
@@ -566,8 +577,8 @@ whose name is &lt;mapname&gt;.</p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2023, Camptocamp and others.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.2.1.
+    &#169; Copyright 2024, Camptocamp and others.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
     </div>
   </body>
 </html>
