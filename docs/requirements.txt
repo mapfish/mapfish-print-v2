@@ -1,2 +1,2 @@
-sphinx-build
+sphinx
 myst-parser

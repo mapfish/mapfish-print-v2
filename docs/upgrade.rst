@@ -1,6 +1,11 @@
 Upgrade
 *******
 
+Version 2.3.2
+-------------
+
+Under development.
+
 Version 2.3.1
 -------------
 

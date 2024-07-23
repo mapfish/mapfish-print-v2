@@ -1,5 +1,9 @@
 # Mapfish Print 2 Release notes
 
+## Release 2.3.2
+
+Under development.
+
 ## Release 2.3.1
 
 Security considerations:

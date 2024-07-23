@@ -1,4 +1,4 @@
-name: Linux QA GitHub CI
+name: build
 
 on: [pull_request]
 

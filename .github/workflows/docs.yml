@@ -8,11 +8,11 @@ concurrency:
 
 jobs:
   build:
-    runs-on: [ubuntu-20.04]
+    runs-on: ubuntu-22.04
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: Setup python for docs
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: '3.x'
         cache: 'pip' # caching pip dependencies from requirements.txt below
@@ -21,7 +21,6 @@ jobs:
       run: |
         pip install -r requirements.txt
     - name: builds docs
-      shell: bash
       working-directory: docs
       run: |
         sphinx-build -b html -d _build/doctrees . _build/html
