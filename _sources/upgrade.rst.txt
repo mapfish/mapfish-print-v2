@@ -1,12 +1,22 @@
 Upgrade
 *******
 
+Version 2.3.2
+-------------
+
+Under development.
+
 Version 2.3.1
 -------------
 
 Release notes:
 
+* Fix for external entity injection (XXE)
 * Bump org.jyaml.jyaml 1.3 to com.fasterxml.jackson.dataformat.jackson-dataformat-yaml 2.17.2
+* Support custom pdf layer name (sent in request JSON parameter "pdfLayerName")
+* Upgrade to GeoTools 31.3
+* Bump Xalan from 2.7.0 to 2.7.3
+* Update batik version to 1.17
 
 Breaking Changes
 ================
