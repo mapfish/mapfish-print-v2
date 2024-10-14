@@ -4,7 +4,9 @@ Upgrade
 Version 2.3.2
 -------------
 
-Under development.
+* Support for printing in a cloud environment and in an environment without sticky sessions : generates a requested printout metadata json file and stores it in the tempDir. With this information persisted, there is no need for sticky sessions and printing module can be used in a cloud environment with shared volume.
+In case of cloud environment a pvc(persistence volume claim) or a shared volume mount can be used to sync this data between multiple instances of server, where as in case of non-cloud environment the tempDir can be shared between muiltiple instances running on the same machine. This path can be passed by setting the environment variable MAPFISH_PDF_FOLDER.
+
 
 Version 2.3.1
 -------------

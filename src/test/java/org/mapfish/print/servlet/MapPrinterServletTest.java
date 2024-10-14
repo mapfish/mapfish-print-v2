@@ -1,7 +1,7 @@
 package org.mapfish.print.servlet;
 
 import static org.junit.Assert.assertEquals;
-import static org.mapfish.print.servlet.MapPrinterServlet.TempFile.cleanUpName;
+import static org.mapfish.print.servlet.MapPrinterServlet.TempFileMetadata.cleanUpName;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -46,7 +46,7 @@ public class MapPrinterServletTest {
     }
 
     private void assertExpectedFormat(Date date, String expected, String fileName, String suffix) {
-        assertEquals(expected, MapPrinterServlet.TempFile.formatFileName(suffix, fileName, date));
+        assertEquals(expected, MapPrinterServlet.TempFileMetadata.formatFileName(suffix, fileName, date));
     }
 
 }

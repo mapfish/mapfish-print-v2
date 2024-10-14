@@ -19,20 +19,12 @@
 
 package org.mapfish.print.servlet;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.CharStreams;
 import com.google.common.io.Closer;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
-import org.pvalsecc.misc.FileUtilities;
-import org.mapfish.print.utils.PJsonObject;
-import org.mapfish.print.output.OutputFormat;
-import org.mapfish.print.MapPrinter;
-import org.mapfish.print.Constants;
-import org.json.JSONWriter;
-
-import org.json.JSONException;
-
+import com.lowagie.text.DocumentException;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -43,6 +35,10 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.FileTime;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -50,44 +46,52 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.lowagie.text.DocumentException;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.json.JSONException;
+import org.json.JSONWriter;
+import org.mapfish.print.Constants;
+import org.mapfish.print.MapPrinter;
+import org.mapfish.print.output.OutputFormat;
+import org.mapfish.print.utils.PJsonObject;
+import org.pvalsecc.misc.FileUtilities;
 
 /**
  * Main print servlet.
  */
 public class MapPrinterServlet extends BaseMapServlet {
     public static final Logger SPEC_LOGGER = LogManager.getLogger(BaseMapServlet.class.getPackage().toString() + ".spec");
+    protected static final String TEMP_FILE_PREFIX = "mapfish-print";
+    protected static final String TEMP_FILE_METADATA_PREFIX = "mapfish-print-metadata";
     private static final long serialVersionUID = -4706371598927161642L;
     private static final String CONTEXT_TEMPDIR = "javax.servlet.context.tempdir";
-
     private static final String INFO_URL = "/info.json";
     private static final String PRINT_URL = "/print.pdf";
     private static final String CREATE_URL = "/create.json";
-    protected static final String TEMP_FILE_PREFIX = "mapfish-print";
     private static final String TEMP_FILE_SUFFIX = ".printout";
-
-    private String app = null;
-
     private static final int TEMP_FILE_PURGE_SECONDS = 10 * 60;
-
+    /**
+     * Map of temporary files.
+     */
+    private final ObjectMapper objectMapper = new ObjectMapper();
+    /**
+     * Map of temporary files.
+     */
+    private String app = null;
     private File tempDir = null;
     private String encoding = null;
     /**
      * Tells if a thread is alread purging the old temporary files or not.
      */
     private AtomicBoolean purging = new AtomicBoolean(false);
-    /**
-     * Map of temporary files.
-     */
-    private final Map<String, TempFile> tempFiles = new HashMap<String, TempFile>();
 
     protected void doGet(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException {
         //do the routing in function of the actual URL
@@ -123,17 +127,24 @@ public class MapPrinterServlet extends BaseMapServlet {
         File dir = getTempDir();
         File[] files = dir.listFiles();
         for (File file : files) {
-            deleteFile(file);
+            try {
+                if (shouldFileBeDelete(file)) {
+                    deleteFile(file);
+                }
+            } catch (IOException e) {
+                LOGGER.debug("Unable to handle file :: ", e);
+            }
         }
     }
 
+    public boolean shouldFileBeDelete(File file) throws IOException {
+        BasicFileAttributes attr = Files.readAttributes(Path.of(file.getPath()), BasicFileAttributes.class);
+        FileTime creationTime = attr.creationTime();
+        final long minTime = System.currentTimeMillis() - TEMP_FILE_PURGE_SECONDS * 1000L;
+        return creationTime.toMillis() < minTime && (file.getName().startsWith(TEMP_FILE_PREFIX) || file.getName().startsWith(TEMP_FILE_METADATA_PREFIX)) && file.isFile();
+    }
+
     public void destroy() {
-        synchronized (tempFiles) {
-            for (File file : tempFiles.values()) {
-                deleteFile(file);
-            }
-            tempFiles.clear();
-        }
         super.destroy();
     }
 
@@ -143,7 +154,7 @@ public class MapPrinterServlet extends BaseMapServlet {
      */
     protected void createAndGetPDF(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         //get the spec from the query
-        TempFile tempFile = null;
+        TempFileMetadata tempFileMetadata = null;
         String spec = null;
         try {
             httpServletRequest.setCharacterEncoding("UTF-8");
@@ -166,12 +177,12 @@ public class MapPrinterServlet extends BaseMapServlet {
         }
 
         try {
-            tempFile = doCreatePDFFile(spec, httpServletRequest);
-            sendPdfFile(httpServletResponse, tempFile, Boolean.parseBoolean(httpServletRequest.getParameter("inline")));
+            tempFileMetadata = doCreatePDFFile(spec, httpServletRequest);
+            sendPdfFile(httpServletResponse, tempFileMetadata, Boolean.parseBoolean(httpServletRequest.getParameter("inline")));
         } catch (Throwable e) {
             error(httpServletResponse, e);
         } finally {
-            deleteFile(tempFile);
+            deleteFile(tempFileMetadata.tempFile);
         }
     }
 
@@ -179,23 +190,23 @@ public class MapPrinterServlet extends BaseMapServlet {
      * Create the PDF and returns to the client (in JSON) the URL to get the PDF.
      */
     protected void createPDF(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, String basePath) throws ServletException {
-        TempFile tempFile = null;
+        TempFileMetadata tempFileMetadata = null;
         try {
             purgeOldTemporaryFiles();
 
             String spec = getSpecFromPostBody(httpServletRequest);
-            tempFile = doCreatePDFFile(spec, httpServletRequest);
-            if (tempFile == null) {
+            tempFileMetadata = doCreatePDFFile(spec, httpServletRequest);
+            if (tempFileMetadata == null) {
                 error(httpServletResponse, "Missing 'spec' parameter", 500);
                 return;
             }
         } catch (Throwable e) {
-            deleteFile(tempFile);
+            deleteFile(tempFileMetadata.tempFile);
             error(httpServletResponse, e);
             return;
         }
 
-        final String id = generateId(tempFile);
+        final String id = generateId(tempFileMetadata.tempFile);
         httpServletResponse.setContentType("application/json; charset=utf-8");
         PrintWriter writer = null;
         try {
@@ -207,27 +218,35 @@ public class MapPrinterServlet extends BaseMapServlet {
             }
             json.endObject();
         } catch (JSONException e) {
-            deleteFile(tempFile);
+            deleteFile(tempFileMetadata.tempFile);
             throw new ServletException(e);
         } catch (IOException e) {
-            deleteFile(tempFile);
+            deleteFile(tempFileMetadata.tempFile);
             throw new ServletException(e);
         } finally {
-            if(writer != null) {
+            if (writer != null) {
                 writer.close();
             }
         }
-        addTempFile(tempFile, id);
+        addTempFileMetaData(tempFileMetadata, id);
     }
 
-    protected void addTempFile(TempFile tempFile, String id) {
-        synchronized (tempFiles) {
-            tempFiles.put(id, tempFile);
+    /**
+     * Creates a json file to hold the meta-data for the temp file.
+     * @param tempFileMetadata Object holding the information regarding the file to be printed
+     * @param id identifier for the temp file and is being used to identify the meta data file
+     */
+    protected void addTempFileMetaData(TempFileMetadata tempFileMetadata, String id) {
+        try {
+            objectMapper.writeValue(File.createTempFile(TEMP_FILE_METADATA_PREFIX + id + "_",
+                    ".json", getTempDir()), tempFileMetadata);
+        } catch (IOException e) {
+            LOGGER.debug("Unable to persist tempFileMetadata", e);
         }
     }
 
     protected String getSpecFromPostBody(HttpServletRequest httpServletRequest) throws IOException {
-        if(httpServletRequest.getParameter("spec") != null) {
+        if (httpServletRequest.getParameter("spec") != null) {
             return httpServletRequest.getParameter("spec");
         }
         BufferedReader data = new BufferedReader(new InputStreamReader(httpServletRequest.getInputStream(), StandardCharsets.UTF_8));
@@ -242,14 +261,14 @@ public class MapPrinterServlet extends BaseMapServlet {
             closer.close();
         }
     }
-    
+
     /**
      * Get and cache the used Encoding.
      */
     protected String getEncoding() {
         if (encoding == null) {
-        	encoding = getInitParameter("encoding");
-        	LOGGER.debug("Using '" + encoding + "' to encode Inputcontent.");
+            encoding = getInitParameter("encoding");
+            LOGGER.debug("Using '" + encoding + "' to encode Inputcontent.");
         }
         if (encoding == null) {
             return "UTF-8";
@@ -262,15 +281,33 @@ public class MapPrinterServlet extends BaseMapServlet {
      * To get the PDF created previously.
      */
     protected void getFile(HttpServletRequest req, HttpServletResponse httpServletResponse, String id) throws IOException, ServletException {
-        final TempFile file;
-        synchronized (tempFiles) {
-            file = tempFiles.get(id);
-        }
-        if (file == null) {
+        TempFileMetadata tempFileMetadata = getTempFileMetadata(id);
+        if (tempFileMetadata == null) {
             error(httpServletResponse, "File with id=" + id + " unknown", 404);
             return;
         }
-        sendPdfFile(httpServletResponse, file, Boolean.parseBoolean(req.getParameter("inline")));
+        sendPdfFile(httpServletResponse, tempFileMetadata, Boolean.parseBoolean(req.getParameter("inline")));
+    }
+
+    /**
+     *
+     * @param id identifier to fetch the meta-data json file from the disk.
+     * @return
+     */
+    private TempFileMetadata getTempFileMetadata(String id) {
+        TempFileMetadata tempFileMetadata = null;
+            // get from disk
+            File[] files = getTempDir().listFiles(file -> file.getName().startsWith(TEMP_FILE_METADATA_PREFIX + id + "_"));
+            if (0 != files.length) {
+                try {
+                    tempFileMetadata = objectMapper.readValue(files[0], TempFileMetadata.class);
+                } catch (IOException e) {
+                    // could be deleted while the reading has not started
+                    LOGGER.info("File requested for the id ::" + id + " has been deleted");
+                    tempFileMetadata = null;
+                }
+            }
+        return tempFileMetadata;
     }
 
     /**
@@ -325,12 +362,11 @@ public class MapPrinterServlet extends BaseMapServlet {
         }
     }
 
-
     /**
      * Do the actual work of creating the PDF temporary file.
      * @throws InterruptedException
      */
-    protected TempFile doCreatePDFFile(String spec, HttpServletRequest httpServletRequest) throws IOException, DocumentException, ServletException, InterruptedException {
+    protected TempFileMetadata doCreatePDFFile(String spec, HttpServletRequest httpServletRequest) throws IOException, DocumentException, ServletException, InterruptedException {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Generating PDF for spec=" + spec);
         }
@@ -355,7 +391,7 @@ public class MapPrinterServlet extends BaseMapServlet {
                 configHeaders.add("Referer");
                 configHeaders.add("Cookie");
             }
-            for (Iterator<String> header_iter = configHeaders.iterator(); header_iter.hasNext();) {
+            for (Iterator<String> header_iter = configHeaders.iterator(); header_iter.hasNext(); ) {
                 String header = header_iter.next();
                 if (httpServletRequest.getHeader(header) != null) {
                     headers.put(header, httpServletRequest.getHeader(header));
@@ -366,18 +402,18 @@ public class MapPrinterServlet extends BaseMapServlet {
             // create a temporary file that will contain the PDF
             final File tempJavaFile = File.createTempFile(TEMP_FILE_PREFIX,
                     "." + outputFormat.getFileSuffix() + TEMP_FILE_SUFFIX, getTempDir());
-            TempFile tempFile = new TempFile(tempJavaFile, specJson, outputFormat);
+            TempFileMetadata tempFileMetadata = new TempFileMetadata(tempJavaFile, specJson, outputFormat);
 
             FileOutputStream out = null;
             try {
-                out = new FileOutputStream(tempFile);
-                if(mapPrinter.getConfig().isAddForwardedFor()) {
-                    String ipAddress = httpServletRequest.getHeader("X-FORWARDED-FOR");  
+                out = new FileOutputStream(tempFileMetadata.tempFile);
+                if (mapPrinter.getConfig().isAddForwardedFor()) {
+                    String ipAddress = httpServletRequest.getHeader("X-FORWARDED-FOR");
                     if (ipAddress != null) {
                         String[] ips = ipAddress.split(", ");
                         ipAddress = ips[0];
                     } else {
-                    ipAddress = httpServletRequest.getRemoteAddr();  
+                        ipAddress = httpServletRequest.getRemoteAddr();
                     }
                     if (LOGGER.isDebugEnabled()) {
                         LOGGER.debug("Forwarded for: " + ipAddress);
@@ -386,15 +422,15 @@ public class MapPrinterServlet extends BaseMapServlet {
                 }
                 mapPrinter.print(specJson, out, headers);
 
-                return tempFile;
+                return tempFileMetadata;
             } catch (IOException e) {
-                deleteFile(tempFile);
+                deleteFile(tempFileMetadata.tempFile);
                 throw e;
             } catch (DocumentException e) {
-                deleteFile(tempFile);
+                deleteFile(tempFileMetadata.tempFile);
                 throw e;
             } catch (InterruptedException e) {
-                deleteFile(tempFile);
+                deleteFile(tempFileMetadata.tempFile);
                 throw e;
             } finally {
                 if (out != null) {
@@ -411,14 +447,14 @@ public class MapPrinterServlet extends BaseMapServlet {
     /**
      * copy the PDF into the output stream
      */
-    protected void sendPdfFile(HttpServletResponse httpServletResponse, TempFile tempFile, boolean inline) throws IOException, ServletException {
-        FileInputStream pdf = new FileInputStream(tempFile);
+    protected void sendPdfFile(HttpServletResponse httpServletResponse, TempFileMetadata tempFileMetadata, boolean inline) throws IOException, ServletException {
+        FileInputStream pdf = new FileInputStream(tempFileMetadata.tempFile);
         final OutputStream response = httpServletResponse.getOutputStream();
         MapPrinter mapPrinter = getMapPrinter(app);
         try {
-            httpServletResponse.setContentType(tempFile.contentType());
+            httpServletResponse.setContentType(tempFileMetadata.contentType());
             if (!inline) {
-                final String fileName = tempFile.getOutputFileName(mapPrinter);
+                final String fileName = tempFileMetadata.getOutputFileName(mapPrinter);
                 httpServletResponse.setHeader("Content-disposition", "attachment; filename=" + fileName);
             }
             FileUtilities.copyStream(pdf, response);
@@ -485,7 +521,7 @@ public class MapPrinterServlet extends BaseMapServlet {
         if (tempDir == null) {
             String tempDirPath = getInitParameter("tempdir");
             if (tempDirPath == null) {
-            	tempDirPath = System.getProperty("MAPFISH_PDF_FOLDER");
+                tempDirPath = System.getProperty("MAPFISH_PDF_FOLDER");
             }
             if (tempDirPath != null && !"".equals(tempDirPath.trim())) {
                 tempDir = new File(tempDirPath);
@@ -532,7 +568,7 @@ public class MapPrinterServlet extends BaseMapServlet {
             return fullUrl.replaceFirst(additionalPath + "$", "");
         } else {
             String customUrl = System.getProperty("PRINT_BASE_URL");
-            if(customUrl != null && !"".equals(customUrl.trim())) {
+            if (customUrl != null && !"".equals(customUrl.trim())) {
                 return customUrl.replaceFirst(additionalPath + "$", "");
             } else {
                 return httpServletRequest.getRequestURL().toString().replaceFirst(additionalPath + "$", "");
@@ -545,73 +581,71 @@ public class MapPrinterServlet extends BaseMapServlet {
      */
     protected void purgeOldTemporaryFiles() {
         if (!purging.getAndSet(true)) {
-            final long minTime = System.currentTimeMillis() - TEMP_FILE_PURGE_SECONDS * 1000L;
-            synchronized (tempFiles) {
-                Iterator<Map.Entry<String, TempFile>> it = tempFiles.entrySet().iterator();
-                while (it.hasNext()) {
-                    Map.Entry<String, TempFile> entry = it.next();
-                    if (entry.getValue().creationTime < minTime) {
-                        deleteFile(entry.getValue());
-                        it.remove();
+            File[] tempDirFiles = getTempDir().listFiles();
+            for (File file : tempDirFiles) {
+                try {
+                    if (shouldFileBeDelete(file)) {
+                        deleteFile(file);
                     }
+                } catch (IOException e) {
+                    LOGGER.warn("Unable to delete file :: ", e);
                 }
             }
-            purging.set(false);
         }
+        purging.set(false);
     }
 
-    static class TempFile extends File {
+    static class TempFileMetadata {
         private static final long serialVersionUID = 455104129549002361L;
-        private final long creationTime;
         public final String printedLayoutName;
         public final String outputFileName;
-        private final String contentType;
-        private String suffix;
+        public final String contentType;
+        public final File tempFile;
+        public String suffix;
 
-        public TempFile(File tempFile, PJsonObject jsonSpec, OutputFormat format) {
-            super(tempFile.getAbsolutePath());
-            creationTime = System.currentTimeMillis();
+        public TempFileMetadata(File tempFile, PJsonObject jsonSpec, OutputFormat format) {
             this.outputFileName = jsonSpec.optString(Constants.OUTPUT_FILENAME_KEY);
             this.printedLayoutName = jsonSpec.optString(Constants.JSON_LAYOUT_KEY, null);
-
+            this.tempFile = tempFile;
             this.suffix = format.getFileSuffix();
             this.contentType = format.getContentType();
         }
 
-        public String getOutputFileName(MapPrinter mapPrinter) {
-            if(outputFileName != null) {
-                return formatFileName(suffix, outputFileName, new Date());
-            } else {
-                return formatFileName(suffix, mapPrinter.getOutputFilename(printedLayoutName, getName()), new Date());
-            }
+        @JsonCreator
+        public TempFileMetadata(@JsonProperty("tempFile") File tempFile, @JsonProperty("outputFileName") String outputFileName, @JsonProperty("printedLayoutName") String printedLayoutName,
+                @JsonProperty("suffix") String suffix, @JsonProperty("contentType") String contentType) {
+            this.outputFileName = outputFileName;
+            this.printedLayoutName = printedLayoutName;
+            this.tempFile = tempFile;
+            this.suffix = suffix;
+            this.contentType = contentType;
         }
-
 
         public static String formatFileName(String suffix, String startingName, Date date) {
             Matcher matcher = Pattern.compile("\\$\\{(.+?)\\}").matcher(startingName);
-            HashMap<String,String> replacements = new HashMap<String,String>();
-            while(matcher.find()) {
+            HashMap<String, String> replacements = new HashMap<String, String>();
+            while (matcher.find()) {
                 String pattern = matcher.group(1);
-                String key = "${"+pattern+"}";
+                String key = "${" + pattern + "}";
                 replacements.put(key, findReplacement(pattern, date));
             }
             String result = startingName;
-            for(Map.Entry<String,String> entry: replacements.entrySet()) {
+            for (Map.Entry<String, String> entry : replacements.entrySet()) {
                 result = result.replace(entry.getKey(), entry.getValue());
             }
 
-            while(suffix.startsWith(".")) {
+            while (suffix.startsWith(".")) {
                 suffix = suffix.substring(1);
             }
-            if(suffix.isEmpty() || result.toLowerCase().endsWith("."+suffix.toLowerCase())) {
+            if (suffix.isEmpty() || result.toLowerCase().endsWith("." + suffix.toLowerCase())) {
                 return result;
             } else {
-                return result+"."+suffix;
+                return result + "." + suffix;
             }
         }
 
         public static String cleanUpName(String original) {
-            return original.replace(",","").replaceAll("\\s+", "_");
+            return original.replace(",", "").replaceAll("\\s+", "_");
         }
 
         private static String findReplacement(String pattern, Date date) {
@@ -625,9 +659,17 @@ public class MapPrinterServlet extends BaseMapServlet {
                 try {
                     return new SimpleDateFormat(pattern).format(date);
                 } catch (Exception e) {
-                    LOGGER.log(Level.WARN,String.format("Unable to format timestamp according to pattern: ${%s}",pattern), e);
-                    return "${"+pattern+"}";
+                    LOGGER.log(Level.WARN, String.format("Unable to format timestamp according to pattern: ${%s}", pattern), e);
+                    return "${" + pattern + "}";
                 }
+            }
+        }
+
+        public String getOutputFileName(MapPrinter mapPrinter) {
+            if (outputFileName != null) {
+                return formatFileName(suffix, outputFileName, new Date());
+            } else {
+                return formatFileName(suffix, mapPrinter.getOutputFilename(printedLayoutName, tempFile.getName()), new Date());
             }
         }
 
