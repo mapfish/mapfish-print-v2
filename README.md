@@ -134,10 +134,10 @@ To create a release:
    ```xml
    <groupId>org.mapfish.print</groupId>
    <artifactId>print-lib</artifactId>
-   <version>2.3.0</version>
+   <version>2.3.2</version>
    ```
 
-2. Double `ReleaseNotes.md` change-log and update if ndded.
+2. Double check `ReleaseNotes.md` change-log and update if ndded.
 
 3. Build docs:
    
@@ -155,7 +155,7 @@ To create a release:
 
    ```bash
    git add pom.xml
-   git commit -m "Release 2.3.0"
+   git commit -m "Release 2.3.2"
    ```
 
 4. Deploy to osgeo nexus
