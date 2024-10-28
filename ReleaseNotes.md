@@ -2,7 +2,10 @@
 
 ## Release 2.3.2
 
-Under development.
+Release notes:
+
+* Upgrade to GeoTools 31.4
+* Adding support for printing to work with a shared volume (cloud environment)
 
 ## Release 2.3.1
 
