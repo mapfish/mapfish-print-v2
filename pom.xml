@@ -4,7 +4,7 @@
   
   <groupId>org.mapfish.print</groupId>
   <artifactId>print-lib</artifactId>
-  <version>2.3.2</version>
+  <version>2.3-SNAPSHOT</version>
 
   <description>
     MapFish Print Version 2 has reached end-of-life and is no longer under active development.

@@ -168,7 +168,7 @@ To create a release:
    
    ```bash
    git push
-   git tag -a release/2.3.0 -m "Release 2.3.0"
+   git tag -a release/2.3.2 -m "Release 2.3.2"
    git push origin release/2.3.0
    ```
 
