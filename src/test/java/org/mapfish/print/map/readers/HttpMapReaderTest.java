@@ -20,7 +20,9 @@
 package org.mapfish.print.map.readers;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.net.URI;
@@ -32,6 +34,7 @@ import org.json.JSONException;
 import org.junit.Test;
 import org.mapfish.print.FakeHttpd;
 import org.mapfish.print.MapTestBasic;
+import org.mapfish.print.RenderingContext;
 import org.mapfish.print.Transformer;
 import org.mapfish.print.map.ParallelMapTileLoader;
 import org.mapfish.print.map.renderers.TileRenderer;
@@ -57,7 +60,17 @@ public class HttpMapReaderTest extends MapTestBasic {
         assertEquals(""+commonURI, "ATTRIBUTE1=1;INCLUDE", parameters.get("CQL_FILTER").get(0));        
         assertCommonParams(commonURI, parameters, "TRUE");
     }
-    
+
+    @Test
+    public void testMergeSomeLayersWithCQLParam() throws Exception {
+        assertFalse(canBeMerged(loadJson("mergeable/test8.json")));
+    }
+
+    @Test
+    public void testMergeSomeLayersWithoutCQLParam() throws Exception {
+        assertTrue(canBeMerged(loadJson("mergeable/test9.json")));
+    }
+
     @Test
     public void testMergeNoLayersWithParam() throws Exception {    	
         URI commonURI = createUri(loadJson("mergeable/test3.json"))[0];
@@ -118,7 +131,7 @@ public class HttpMapReaderTest extends MapTestBasic {
             PJsonObject layer = layers.getJSONObject(count);
             PJsonArray layersInt = layer.getJSONArray("layers");
             for(int countInt = 0; countInt < layersInt.size(); countInt++) {
-                currentReader = createMapReader(layer);
+                currentReader = createMapReader(layer, context);
                 if (mapReader == null) {
                     mapReader = currentReader;
                 } else {
@@ -131,8 +144,28 @@ public class HttpMapReaderTest extends MapTestBasic {
                 currentReader.createCommonURI(null, "", true) };
 
     }
+
+    private boolean canBeMerged(PJsonObject jsonParams, FakeHttpd.Route... routes)
+            throws JSONException {
+
+        PJsonArray layers = jsonParams.getJSONArray("layers");
+        HTTPMapReader mapReader = null;
+        HTTPMapReader currentReader = null;
+        for (int count = 0; count < layers.size(); count++) {
+            PJsonObject layer = layers.getJSONObject(count);
+            PJsonArray layersInt = layer.getJSONArray("layers");
+            for(int countInt = 0; countInt < layersInt.size(); countInt++) {
+                currentReader = createMapReader(layer, emptyContext);
+                if (mapReader == null) {
+                    mapReader = currentReader;
+                }
+            }
+        }
+
+        return mapReader.testMerge(currentReader);
+    }
 	
-    private HTTPMapReader createMapReader(PJsonObject layer) {
+    private HTTPMapReader createMapReader(PJsonObject layer, RenderingContext context) {
         final HTTPMapReader mapReader = new HTTPMapReader(context, layer) {
 
             @Override

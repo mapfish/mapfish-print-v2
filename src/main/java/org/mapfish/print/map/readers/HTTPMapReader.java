@@ -209,8 +209,14 @@ public abstract class HTTPMapReader extends MapReader {
             HTTPMapReader http = (HTTPMapReader) other;
             PJsonObject customParams = params.optJSONObject("customParams");
             PJsonObject customParamsOther = http.params.optJSONObject("customParams");
-            return baseUrl.equals(http.baseUrl) &&
-                    (customParams != null ? customParams.equals(customParamsOther) : customParamsOther == null);
+            if (!baseUrl.equals(http.baseUrl)) {
+                return false;
+            }
+            if (customParams != null) {
+                // Do not merge if CQL_FILTER is present because having request for 2 layers with 1 filter is invalid
+                return customParams.equals(customParamsOther) && !customParams.has("CQL_FILTER");
+            }
+            return customParamsOther == null;
         } else {
             return false;
         }

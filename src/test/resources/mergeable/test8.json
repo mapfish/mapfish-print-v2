@@ -1,0 +1,44 @@
+{      
+   "layers":[
+      {
+         "baseURL":"@@baseURL@@",
+         "opacity":1,
+         "type":"WMS",
+         "layers":[
+            "layerName1"
+         ],
+         "format":"image/gif",
+         "styles":[
+            "wmsstyle"
+         ],
+         "singleTile":false,
+         "customParams":{
+            "CQL_FILTER":"ATTRIBUTE1=1",
+            "ENV": "mapstore_language:en",
+            "EXCEPTIONS": "application/vnd.ogc.se_inimage",
+            "TILED": true,
+            "TRANSPARENT": true,
+            "scaleMethod": "accurate"}
+      },
+      {
+         "baseURL":"@@baseURL@@",
+         "opacity":1,
+         "type":"WMS",
+         "layers":[
+            "layerName2"
+         ],
+         "format":"image/gif",
+         "styles":[
+            "wmsstyle"
+         ],
+         "singleTile":false,
+         "customParams":{
+            "CQL_FILTER":"ATTRIBUTE1=1",
+            "ENV": "mapstore_language:en",
+            "EXCEPTIONS": "application/vnd.ogc.se_inimage",
+            "TILED": true,
+            "TRANSPARENT": true,
+            "scaleMethod": "accurate"}
+      }
+   ]
+}
