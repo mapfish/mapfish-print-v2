@@ -25,7 +25,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -33,14 +35,12 @@ import java.util.Set;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.mapfish.print.InvalidJsonValueException;
 import org.mapfish.print.RenderingContext;
 import org.mapfish.print.Transformer;
 import org.mapfish.print.map.ParallelMapTileLoader;
 import org.mapfish.print.map.renderers.TileRenderer;
-import org.mapfish.print.utils.PJsonArray;
 import org.mapfish.print.utils.PJsonObject;
 import org.pvalsecc.misc.MatchAllSet;
 import org.pvalsecc.misc.StringUtils;
@@ -55,6 +55,13 @@ public abstract class HTTPMapReader extends MapReader {
     protected final Map<String, PJsonObject> mergeableParams;
     protected final URI baseUrl;
     public static final Set<String> OVERRIDE_ALL = new MatchAllSet<String>();
+    public static final Set<String> NOT_MERGEABLE_PARAMS;
+
+    static {
+        Set<String> temp = new HashSet<>();
+        temp.add("cql_filter");
+        NOT_MERGEABLE_PARAMS = Collections.unmodifiableSet(temp);
+    }
 
     protected HTTPMapReader(RenderingContext context, PJsonObject params) {
         super(params);
@@ -209,8 +216,23 @@ public abstract class HTTPMapReader extends MapReader {
             HTTPMapReader http = (HTTPMapReader) other;
             PJsonObject customParams = params.optJSONObject("customParams");
             PJsonObject customParamsOther = http.params.optJSONObject("customParams");
-            return baseUrl.equals(http.baseUrl) &&
-                    (customParams != null ? customParams.equals(customParamsOther) : customParamsOther == null);
+            if (!baseUrl.equals(http.baseUrl)) {
+                return false;
+            }
+            if (customParams != null) {
+                // Do not merge if CQL_FILTER is present because having request for 2 layers with 1 filter is invalid
+                boolean containsNonMergeableAttribute = false;
+                Iterator<String> iterator = customParams.keys();
+
+                while (iterator.hasNext() && !containsNonMergeableAttribute) {
+                    String next = iterator.next();
+                    if (NOT_MERGEABLE_PARAMS.contains(next.toLowerCase())) {
+                        containsNonMergeableAttribute = true;
+                    }
+                }
+                return customParams.equals(customParamsOther) && !containsNonMergeableAttribute;
+            }
+            return customParamsOther == null;
         } else {
             return false;
         }

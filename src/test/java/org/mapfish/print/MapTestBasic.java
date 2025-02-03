@@ -46,6 +46,8 @@ public abstract class MapTestBasic {
 
     protected RenderingContext context;
 
+    protected RenderingContext emptyContext;
+
     private ThreadResources threadResources;
 
     @Before
@@ -89,7 +91,9 @@ public abstract class MapTestBasic {
             hosts.add(HostMatcher.ACCEPT_ALL);
             config.setHosts(hosts);
             PJsonObject globalParams = createGlobalParams();
+            PJsonObject emptyParams = new PJsonObject(new JSONObject(), "globalParams");;
             context = new RenderingContext(doc, writer, config, globalParams, null, layout, Collections.<String, String>emptyMap());
+            emptyContext = new RenderingContext(doc, writer, config, emptyParams, null, layout, Collections.<String, String>emptyMap());
         } finally {
             config.close();
         }
