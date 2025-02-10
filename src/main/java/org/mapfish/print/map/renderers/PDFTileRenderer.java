@@ -20,11 +20,16 @@
 package org.mapfish.print.map.renderers;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URI;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.List;
+import java.util.Map;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.mapfish.print.InvalidValueException;
 import org.mapfish.print.RenderingContext;
 import org.mapfish.print.Transformer;
@@ -52,16 +57,28 @@ public class PDFTileRenderer extends TileRenderer {
 
             protected void readTile() throws IOException, DocumentException {
                 LOGGER.debug(uri);
-                PdfReader reader = new PdfReader(uri.toURL());
-                synchronized (context.getPdfLock()) {
-                    pdfMap = context.getWriter().getImportedPage(reader, 1);
 
-                    if (opacity < 1.0) {
-                        PdfGState gs = new PdfGState();
-                        gs.setFillOpacity(opacity);
-                        gs.setStrokeOpacity(opacity);
-                        //gs.setBlendMode(PdfGState.BM_SOFTLIGHT);
-                        pdfMap.setGState(gs);
+                URLConnection connection = uri.toURL().openConnection();
+
+                if (connection instanceof HttpURLConnection && context.getHeaders() != null) {
+                    for (Map.Entry<String, String> entry : context.getHeaders().entrySet()) {
+                        connection.setRequestProperty(entry.getKey(), entry.getValue());
+                    }
+                }
+
+                try (InputStream in = connection.getInputStream()) {
+
+                    PdfReader reader = new PdfReader(in);
+                    synchronized (context.getPdfLock()) {
+                        pdfMap = context.getWriter().getImportedPage(reader, 1);
+
+                        if (opacity < 1.0) {
+                            PdfGState gs = new PdfGState();
+                            gs.setFillOpacity(opacity);
+                            gs.setStrokeOpacity(opacity);
+                            // gs.setBlendMode(PdfGState.BM_SOFTLIGHT);
+                            pdfMap.setGState(gs);
+                        }
                     }
                 }
             }
