@@ -1,5 +1,17 @@
 # Mapfish Print 2 Release notes
 
+## Release 2.3.3
+
+Release notes:
+
+* Fix: HTTP headers not being passed when requesting a PDF map tile
+* Fix: Fix merging CQL filters for different layers
+* Bump GeoTools from 31.4 to 31.6
+* Bump spring-framework from 5.3.18 to 5.3.39
+* Update log4j from 2.19.0 to 2.24.3
+* Bump pdfbox from 2.0.26 to 2.0.33
+* Update jackson from 2.17.2 to 2 2.18.2
+
 ## Release 2.3.2
 
 Release notes:
