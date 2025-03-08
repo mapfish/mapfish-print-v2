@@ -13,3 +13,4 @@ mapfish-print.iws
 /.nb-gradle/private/
 .DS_Store
 .idea
+venv

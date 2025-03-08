@@ -112,9 +112,11 @@ See https://wiki.osgeo.org/wiki/SAC:Repo to obtain credentials:
 Uses Python3 environment for **sphinx-build** documentation:
 
 ```
-pip3 install -r docs/requirements.txt
+virtualenv venv
+source venv/bin/activate
+pip install -r docs/requirements.txt
 sphinx-build -b html -d docs/_build/doctrees docs docs/_build/html
-open _build/html/index.html
+open docs/_build/html/index.html 
 ```
 
 Docs are created in ``docs/_build/html`` folder.
