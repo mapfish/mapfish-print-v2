@@ -1,5 +1,11 @@
 # Mapfish Print 2 Release notes
 
+## Release 2.3.4
+
+Release notes:
+
+* TBD
+
 ## Release 2.3.3
 
 Release notes:
