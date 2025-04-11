@@ -18,6 +18,11 @@
         <listener-class>org.mapfish.print.metrics.MapfishPrintInstrumentedFilterContextListener</listener-class>
     </listener>
 
+    <!-- ImageIO service provider loader/unloader -->
+    <listener>
+        <listener-class>com.twelvemonkeys.servlet.image.IIOProviderContextListener</listener-class>
+    </listener>
+
     <context-param>
     <param-name>contextConfigLocation</param-name>
     <param-value>classpath:mapfish-spring-application-context.xml,classpath:*-mapfish-spring-application-context-override.xml</param-value>
@@ -26,7 +31,7 @@
 
     <filter>
         <filter-name>instrumentedFilter</filter-name>
-        <filter-class>com.codahale.metrics.servlet.InstrumentedFilter</filter-class>
+        <filter-class>io.dropwizard.metrics.servlet.InstrumentedFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>instrumentedFilter</filter-name>
@@ -35,7 +40,7 @@
 
     <servlet>
         <servlet-name>metrics-servlet</servlet-name>
-        <servlet-class>com.codahale.metrics.servlets.AdminServlet</servlet-class>
+        <servlet-class>io.dropwizard.metrics.servlets.AdminServlet</servlet-class>
     </servlet>
 
     <!-- single mapping to spring, this only works properly if the advanced dispatch filter is
