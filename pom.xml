@@ -44,6 +44,8 @@
     <pdfbox-version>2.0.33</pdfbox-version>
     <metrics-version>4.2.30</metrics-version>
     <jackson2.version>2.18.2</jackson2.version>
+    <fork.javac>true</fork.javac>
+    <javac.maxHeapSize>512m</javac.maxHeapSize>
   </properties>
   
   <dependencyManagement>
@@ -379,12 +381,31 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.11.0</version>
         <configuration>
-          <source>11</source>  <!-- The -source argument for the Java compiler. -->
-          <target>11</target>  <!-- The -target argument for the Java compiler. -->
+          <release>11</release> <!-- Java release version -->
           <debug>true</debug>   <!-- Whether to include debugging information.   -->
           <encoding>UTF-8</encoding> <!-- The -encoding argument for the Java compiler. -->
           <fork>${fork.javac}</fork> 
           <maxmem>${javac.maxHeapSize}</maxmem>
+        </configuration>
+      </plugin>
+      <!-- Surefire plugin for running tests -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.5.3</version>
+        <configuration>
+          <systemPropertyVariables>
+            <java.awt.headless>true</java.awt.headless>
+          </systemPropertyVariables>
+          <!-- These argLine options are needed for the forked test JVM,
+               .mvn/jvm.config only applies to the main Maven process -->
+          <argLine>
+            --add-opens java.base/java.lang=ALL-UNNAMED
+            --add-opens java.base/java.util=ALL-UNNAMED
+            --add-opens java.desktop/java.awt.image=ALL-UNNAMED
+            --add-opens java.desktop/javax.imageio.stream=ALL-UNNAMED
+            --add-opens java.desktop/javax.imageio=ALL-UNNAMED
+          </argLine>
         </configuration>
       </plugin>
     </plugins>
