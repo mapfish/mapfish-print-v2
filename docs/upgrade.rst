@@ -1,6 +1,14 @@
 Upgrade
 *******
 
+Version 2.3.3
+-------------
+
+Release notes:
+
+* Fix for an outline parameters not being properly applied while rendering labels
+* Add an `labelOutlineMode` parameter
+
 Version 2.3.2
 -------------
 
