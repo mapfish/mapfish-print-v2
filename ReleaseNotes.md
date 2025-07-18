@@ -1,10 +1,16 @@
 # Mapfish Print 2 Release notes
 
-## Release 2.3.4
+## Release 2.3.5
 
 Release notes:
 
 * TBD
+
+## Release 2.3.4
+
+Release notes:
+
+* Annotation text with halo - halo not printed
 
 ## Release 2.3.3
 
