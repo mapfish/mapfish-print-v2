@@ -4,7 +4,7 @@
 
 Release notes:
 
-* TBD
+* CVE-2023-5072
 
 ## Release 2.3.4
 
