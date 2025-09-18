@@ -92,6 +92,7 @@ public class PJsonArray extends PJsonElement {
     /**
      * @deprecated Use only if you know what you are doing!
      */
+    @Deprecated
     public JSONArray getInternalArray() {
         return array;
     }

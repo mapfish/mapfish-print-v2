@@ -19,9 +19,10 @@
 
 package apps;
 
-import javax.media.jai.JAI;
-import javax.media.jai.OperationRegistry;
-import javax.media.jai.RegistryMode;
+
+import org.eclipse.imagen.JAI;
+import org.eclipse.imagen.OperationRegistry;
+import org.eclipse.imagen.RegistryMode;
 
 public class ListJAIOperations {
   public ListJAIOperations() {
