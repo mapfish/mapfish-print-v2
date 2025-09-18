@@ -114,21 +114,23 @@ public class Layout {
     }
 
     /**
-     * Taken for compatibility, please use extraPages.
+     * Retained for compatibility, please use extraPages.
      * 
-     * @deprecated
+     * @deprecated Please use extraPages.
      * @return
      */
+    @Deprecated
     public DynamicImagesPage getDynamicImagesPage() {
         return dynamicImagesPage;
     }
 
     /**
-     * Taken for compatibility, please use extraPages.
+     * Retained for compatibility, please use extraPages.
      * 
-     * @deprecated
+     * @deprecated Please use extraPages.
      * @return
      */
+    @Deprecated
     public void setDynamicImagesPage(DynamicImagesPage dynamicImagesPage) {
         this.dynamicImagesPage = dynamicImagesPage;
     }
