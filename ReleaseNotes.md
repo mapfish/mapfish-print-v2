@@ -1,5 +1,13 @@
 # Mapfish Print 2 Release notes
 
+## Release 2.4-M0
+
+Release notes:
+
+* Java 17 minimum
+* ImageN 0.4.0
+* GeoTools 34-M0
+
 ## Release 2.3.5
 
 Release notes:
