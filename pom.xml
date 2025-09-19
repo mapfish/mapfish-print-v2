@@ -4,7 +4,7 @@
   
   <groupId>org.mapfish.print</groupId>
   <artifactId>print-lib</artifactId>
-  <version>2.4-SNAPSHOT</version>
+  <version>2.4-M0</version>
 
   <description>
     MapFish Print Version 2 has reached end-of-life and is no longer under active development.
@@ -177,6 +177,7 @@
         <groupId>org.eclipse.imagen</groupId>
         <artifactId>imagen-legacy-codec-core</artifactId>
         <version>${imagen.version}</version>
+        <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>xalan</groupId>
