@@ -6,7 +6,7 @@ Compilation
 
 To build this project, you need:
 
-* JDK >= 11, OpenJDK tested
+* JDK >= 17, OpenJDK tested
 * Download MapFish Print from GitHub
 
   * On systems with git installed::
