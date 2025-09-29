@@ -26,7 +26,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
-import org.eclipse.imagen.JAI;
+import org.eclipse.imagen.ImageN;
 import org.eclipse.imagen.RenderedOp;
 import org.eclipse.imagen.media.codec.FileSeekableStream;
 import org.mapfish.print.RenderingContext;
@@ -45,7 +45,7 @@ import java.util.List;
 
 /**
  * Similar to {@link InMemoryJaiMosaicOutputFactory} in that it uses pdf box to parse pdf.  However it writes
- * each page to disk as an image before combining them using JAI mosaic.
+ * each page to disk as an image before combining them using ImageN mosaic.
  *
  * @author jeichar
  */
@@ -115,7 +115,7 @@ public class FileCachingJaiMosaicOutputFactory extends InMemoryJaiMosaicOutputFa
                 pb.add(new FileSeekableStream(imageinfo.imageFile));
                 pb.add(null);
                 pb.add(null);
-                RenderedOp source = JAI.create("TIFF", pb);
+                RenderedOp source = ImageN.create("TIFF", pb);
                 i++;
                 LOGGER.debug("Adding page image " + i + " bounds: [" + 0 + "," + height + " " + source.getWidth() + "," + (height + source.getHeight()) + "]");
                 RenderedOp translated = translateImage(height, source);
@@ -126,7 +126,7 @@ public class FileCachingJaiMosaicOutputFactory extends InMemoryJaiMosaicOutputFa
                 if (width < imageinfo.width) width = imageinfo.width;
             }
 
-            RenderedOp mosaic = JAI.create("mosaic", pbMosaic);
+            RenderedOp mosaic = ImageN.create("mosaic", pbMosaic);
             ImageIO.write(mosaic, format, out);
         }
 
@@ -135,7 +135,7 @@ public class FileCachingJaiMosaicOutputFactory extends InMemoryJaiMosaicOutputFa
             pbTranslate.addSource(source);
             pbTranslate.add(0f);
             pbTranslate.add(height);
-            return JAI.create("translate", pbTranslate);
+            return ImageN.create("translate", pbTranslate);
         }
 
         private List<ImageInfo> createImages(PJsonObject jsonSpec, File tmpFile, RenderingContext context) throws IOException {

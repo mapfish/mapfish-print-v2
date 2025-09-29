@@ -20,13 +20,13 @@
 package apps;
 
 
-import org.eclipse.imagen.JAI;
+import org.eclipse.imagen.ImageN;
 import org.eclipse.imagen.OperationRegistry;
 import org.eclipse.imagen.RegistryMode;
 
 public class ListJAIOperations {
   public ListJAIOperations() {
-    or = JAI.getDefaultInstance().getOperationRegistry();
+    or = ImageN.getDefaultInstance().getOperationRegistry();
     String[] modeNames = RegistryMode.getModeNames();
     String[] descriptorNames;
 

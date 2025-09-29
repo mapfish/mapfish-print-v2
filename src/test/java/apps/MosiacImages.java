@@ -27,7 +27,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import org.eclipse.imagen.ImageLayout;
-import org.eclipse.imagen.JAI;
+import org.eclipse.imagen.ImageN;
 import org.eclipse.imagen.PlanarImage;
 import org.eclipse.imagen.RenderedOp;
 
@@ -55,19 +55,19 @@ public class MosiacImages {
         float height = 0;
 
         for (File imageFile : imageFiles) {
-            PlanarImage source = JAI.create("fileload", imageFile.getPath());
+            PlanarImage source = ImageN.create("fileload", imageFile.getPath());
             ParameterBlock pbTranslate=new ParameterBlock();
             pbTranslate.addSource(source);
             pbTranslate.add(0f);
             pbTranslate.add(height);
-            RenderedOp translated = JAI.create("translate", pbTranslate, new RenderingHints(JAI.KEY_IMAGE_LAYOUT,layout));
+            RenderedOp translated = ImageN.create("translate", pbTranslate, new RenderingHints(ImageN.KEY_IMAGE_LAYOUT,layout));
 
             pbMosaic.addSource(translated);
 
             height += source.getHeight() + MARGIN;
         }
 
-        RenderedOp mosaic = JAI.create("mosaic", pbMosaic, new RenderingHints(JAI.KEY_IMAGE_LAYOUT,layout));
+        RenderedOp mosaic = ImageN.create("mosaic", pbMosaic, new RenderingHints(ImageN.KEY_IMAGE_LAYOUT,layout));
 
         ImageIO.write(mosaic, "png",new File("/tmp/mosaic-img.png"));
     }
