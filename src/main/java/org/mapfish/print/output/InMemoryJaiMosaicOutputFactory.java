@@ -26,7 +26,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
-import org.eclipse.imagen.JAI;
+import org.eclipse.imagen.ImageN;
 import org.eclipse.imagen.RenderedOp;
 import org.eclipse.imagen.TileCache;
 import org.eclipse.imagen.media.mosaic.MosaicDescriptor;
@@ -49,7 +49,7 @@ import java.util.List;
 /**
  * An output factory that uses pdf box to parse the pdf and create a collection of BufferedImages.
  *
- * Then using JAI Mosaic operation the buffered images are combined into one RenderableImage (virtual image)
+ * Then using ImageN Mosaic operation the buffered images are combined into one RenderableImage (virtual image)
  * and that is written to a file using ImageIO
  *
  * User: jeichar
@@ -136,7 +136,7 @@ public class InMemoryJaiMosaicOutputFactory implements OutputFormatFactory {
                 pbTranslate.addSource(source);
                 pbTranslate.add(0f);
                 pbTranslate.add(height);
-                RenderedOp translated = JAI.create("translate", pbTranslate);
+                RenderedOp translated = ImageN.create("translate", pbTranslate);
 
                 pbMosaic.addSource(translated);
 
@@ -144,10 +144,10 @@ public class InMemoryJaiMosaicOutputFactory implements OutputFormatFactory {
                 if (width < source.getWidth()) width = source.getWidth();
             }
 
-            TileCache cache = JAI.createTileCache((long) (height * width * 400));
-            RenderingHints hints = new RenderingHints(JAI.KEY_TILE_CACHE, cache);
+            TileCache cache = ImageN.createTileCache((long) (height * width * 400));
+            RenderingHints hints = new RenderingHints(ImageN.KEY_TILE_CACHE, cache);
 
-            RenderedOp mosaic = JAI.create("mosaic", pbMosaic, hints);
+            RenderedOp mosaic = ImageN.create("mosaic", pbMosaic, hints);
             ImageIO.write(mosaic, format, out);
         }
 
