@@ -1,5 +1,17 @@
 # Mapfish Print 2 Release notes
 
+## Release 2.4.0
+
+Release notes:
+
+* Java 17 minium
+* GeoTools 34.0
+  * Use GeoTools bill-of-materials to manage dependencies
+  * ImageN 0.9.0
+  * jackson dataformat 2.19.0
+  * guava 33.4.8-jre
+* Xalan 2.7.3
+
 ## Release 2.4-M0
 
 Release notes:

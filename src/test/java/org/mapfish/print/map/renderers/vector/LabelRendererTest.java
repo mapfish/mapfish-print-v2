@@ -33,7 +33,7 @@ import org.mockito.Mockito;
 import java.awt.geom.AffineTransform;
 import java.io.FileNotFoundException;
 
-import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
