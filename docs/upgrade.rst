@@ -1,6 +1,15 @@
 Upgrade
 *******
 
+Version 2.4.0
+-------------
+
+Release notes:
+
+* Compiled for Java 17, making Java 17 the minimum version.
+* GeoTools 24.0 use bill-of-materials to manage GeoTools library and third party dependencies
+* Change from Java Advanced Imaging 1.1.3 to ImageN 0.9.0 image processing engine
+
 Version 2.3.4
 -------------
 

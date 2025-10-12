@@ -10,7 +10,6 @@ Release notes:
   * ImageN 0.9.0
   * jackson dataformat 2.19.0
   * guava 33.4.8-jre
-* Xalan 2.7.3
 
 ## Release 2.4-M0
 

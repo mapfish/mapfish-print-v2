@@ -136,18 +136,22 @@ To create a release:
    ```xml
    <groupId>org.mapfish.print</groupId>
    <artifactId>print-lib</artifactId>
-   <version>2.3.5</version>
+   <version>2.4.1</version>
    ```
 
 2. Double check `ReleaseNotes.md` change-log and update if ndded.
 
+   Double check the `docs/upgrade.rst` and update if needed.
+
 3. Build docs:
    
    ```bash
+   source venv/bin/activate
+   pip install -r docs/requirements.txt
    sphinx-build -b html -d docs/_build/doctrees docs docs/_build/html
    ```
    
-3. Build confirming creation of ``print-lib-2.3.5.jar``
+3. Build confirming creation of ``print-lib-2.4.1.jar``
 
    ```bash
    mvn clean install
