@@ -191,12 +191,12 @@ To create a release:
    ```xml
    <groupId>org.mapfish.print</groupId>
    <artifactId>print-lib</artifactId>
-   <version>2.3-SNAPSHOT</version>
+   <version>2.4-SNAPSHOT</version>
    ```
    
    And push up the change:
    ```bash
    git add pom.xml
-   git commit -m "Development 2.3-SNAPSHOT"
+   git commit -m "Development 2.4-SNAPSHOT"
    git push
    ```
