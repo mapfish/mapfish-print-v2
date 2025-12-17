@@ -831,4 +831,13 @@ public class PDFUtils {
         }
         return image;
     }
+
+    public static String clearMapProvidersPrivateKeys(String message) {
+        String logMessage = message;
+        if (message != null) {
+            logMessage = logMessage.replaceAll("([?&]key=)[^&:\\s]+", "$1*****");
+        }
+        return logMessage;
+    }
+
 }
