@@ -44,6 +44,8 @@ import com.lowagie.text.pdf.PdfPageEventHelper;
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfWriter;
 
+import static org.mapfish.print.PDFUtils.clearMapProvidersPrivateKeys;
+
 /**
  * Listen to events from the PDF document in order to render the
  * custom {@link org.mapfish.print.ChunkDrawer}s, the header/footer and the background.
@@ -205,9 +207,9 @@ public class PDFCustomBlocks extends PdfPageEventHelper {
     public void addError(Exception e) {
         errors.add(e);
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.error("Error while adding a PDF element", e);
+            LOGGER.error("Error while adding a PDF element: ", e);
         } else {
-            LOGGER.error("Error while adding a PDF element" + e.toString());
+            LOGGER.error("Error while adding a PDF element: " + clearMapProvidersPrivateKeys(e.toString()));
         }
     }
 

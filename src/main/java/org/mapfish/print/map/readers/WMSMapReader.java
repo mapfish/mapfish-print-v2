@@ -102,11 +102,21 @@ public class WMSMapReader extends TileableMapReader {
         }
         styles.add(style);
         format = params.getString("format");
-        version = WMSVersion.find(params.optString("version", DEFAULT_VERSION.code));
-        final PJsonObject customParams = params.optJSONObject("customParams");
+        if (params.optString("version", null) != null) {
+            version = WMSVersion.find(params.optString("version", DEFAULT_VERSION.code));
+        } else if (params.optString("VERSION", null) != null) {
+            version = WMSVersion.find(params.optString("VERSION", DEFAULT_VERSION.code));
+        } else {
+            version = DEFAULT_VERSION;
+        }
 
+        final PJsonObject customParams = params.optJSONObject("customParams");
         if (customParams != null) {
-            version = WMSVersion.find(customParams.optString("version", version.code));
+            if (customParams.optString("version", null) != null) {
+                version = WMSVersion.find(customParams.optString("version", version.code));
+            } else if (customParams.optString("VERSION", null) != null) {
+                version = WMSVersion.find(customParams.optString("VERSION", version.code));
+            }
         }
 
         if (version == WMSVersion.VERSION1_3_0 &&
