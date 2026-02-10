@@ -42,20 +42,20 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class PDFUtilsTest extends PdfTestCase {
-    private static final String FIVE_HUNDRED_ROUTE = "/500" ;
-    private static final String NOT_IMAGE_ROUTE = "/notImage" ;
+    private static final String FIVE_HUNDRED_ROUTE = "/500";
+    private static final String NOT_IMAGE_ROUTE = "/notImage";
     private FakeHttpd httpd;
 
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        Configurator.setLevel(LogManager.getLogger("org.apache.commons.httpclient"), Level.INFO);
+        Configurator.setLevel(LogManager.getLogger("org.apache.commons.httpclient"),Level.INFO);
         Configurator.setLevel(LogManager.getLogger("httpclient"), Level.INFO);
 
         httpd = new FakeHttpd(
                 FakeHttpd.Route.errorResponse(FIVE_HUNDRED_ROUTE, 500, "Server error"),
                 FakeHttpd.Route.textResponse(NOT_IMAGE_ROUTE, "Blahblah")
-        );
+                );
         httpd.start();
 
     }
@@ -133,6 +133,8 @@ public class PDFUtilsTest extends PdfTestCase {
                 config.getLayout("A4 portrait"), context.getHeaders());
         JSONObject internal = new JSONObject();
 
+
+
         internal.accumulate("scaleLbl", "Scale Label");
 
         JSONObject mainMap = new JSONObject();
@@ -152,6 +154,7 @@ public class PDFUtilsTest extends PdfTestCase {
         maps.accumulate("other", otherMap);
 
         internal.accumulate("maps", maps);
+
 
         PJsonObject params = new PJsonObject(internal, "params");
         Font font = new Font();
