@@ -43,7 +43,7 @@
     <gt.version>35-SNAPSHOT</gt.version>
     <imagen.version>0.9.1-SNAPSHOT</imagen.version> <!-- sync with gt-platform-dependences -->
     <pdfbox.version>2.0.36</pdfbox.version>
-    <metrics-version>4.2.37</metrics-version>
+    <metrics-version>4.2.38</metrics-version>
     <!--jackson2.version>2.18.2</jackson2.version-->
     <fork.javac>true</fork.javac>
     <javac.maxHeapSize>512m</javac.maxHeapSize>
