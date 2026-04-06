@@ -41,7 +41,7 @@
     <!--log4j-version>2.24.3</log4j-version-->
     <spring.version>7.0.6</spring.version>
     <gt.version>35-SNAPSHOT</gt.version>
-    <imagen.version>0.9.1-SNAPSHOT</imagen.version> <!-- sync with gt-platform-dependences -->
+    <imagen.version>0.9.1</imagen.version> <!-- sync with gt-platform-dependences -->
     <pdfbox.version>2.0.36</pdfbox.version>
     <metrics-version>4.2.37</metrics-version>
     <!--jackson2.version>2.18.2</jackson2.version-->
