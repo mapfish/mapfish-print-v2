@@ -138,6 +138,11 @@
         <version>2.7.3</version>
       </dependency>
       <dependency>
+        <groupId>xalan</groupId>
+        <artifactId>serializer</artifactId>
+        <version>2.7.3</version>
+      </dependency>
+      <dependency>
         <groupId>io.dropwizard.metrics</groupId>
         <artifactId>metrics-core</artifactId>
         <version>${metrics-version}</version>
@@ -276,6 +281,11 @@
     <dependency>
       <groupId>xalan</groupId>
       <artifactId>xalan</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>xalan</groupId>
+      <artifactId>serializer</artifactId>
       <scope>compile</scope>
     </dependency>
     <dependency>
