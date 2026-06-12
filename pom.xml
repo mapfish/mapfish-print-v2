@@ -260,11 +260,6 @@
       <artifactId>imagen-core</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.eclipse.imagen</groupId>
-      <artifactId>imagen-legacy-codec-core</artifactId>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-context</artifactId>
       <scope>compile</scope>
