@@ -26,16 +26,12 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
-import org.eclipse.imagen.ImageN;
-import org.eclipse.imagen.RenderedOp;
-import org.eclipse.imagen.media.codec.FileSeekableStream;
 import org.mapfish.print.RenderingContext;
 import org.mapfish.print.utils.PJsonObject;
-
 import javax.imageio.ImageIO;
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
-import java.awt.image.renderable.ParameterBlock;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -104,40 +100,63 @@ public class FileCachingJaiMosaicOutputFactory extends InMemoryJaiMosaicOutputFa
         }
 
         private void drawImage(OutputStream out, List<ImageInfo> images) throws IOException {
-
-            ParameterBlock pbMosaic = new ParameterBlock();
-            float height = 0;
-            float width = 0;
-
-            int i = 0;
-            for (ImageInfo imageinfo : images) {
-                ParameterBlock pb = new ParameterBlock();
-                pb.add(new FileSeekableStream(imageinfo.imageFile));
-                pb.add(null);
-                pb.add(null);
-                RenderedOp source = ImageN.create("TIFF", pb);
-                i++;
-                LOGGER.debug("Adding page image " + i + " bounds: [" + 0 + "," + height + " " + source.getWidth() + "," + (height + source.getHeight()) + "]");
-                RenderedOp translated = translateImage(height, source);
-
-                pbMosaic.addSource(translated);
-
-                height += imageinfo.height + MARGIN;
-                if (width < imageinfo.width) width = imageinfo.width;
+            if (images == null || images.isEmpty()) {
+                return;
             }
 
-            RenderedOp mosaic = ImageN.create("mosaic", pbMosaic);
+            // 1. Calculate the final mosaic dimensions
+            int totalHeight = 0;
+            int maxWidth = 0;
+
+            for (ImageInfo imageinfo : images) {
+                totalHeight += imageinfo.height + MARGIN;
+                if (maxWidth < imageinfo.width) {
+                    maxWidth = (int) imageinfo.width;
+                }
+            }
+
+            // 2. Create the blank canvas
+            // Handle JPEG specific color model to avoid incorrect colors on transparent pixels
+            boolean isJpeg = "jpg".equalsIgnoreCase(format) || "jpeg".equalsIgnoreCase(format);
+            int imageType = isJpeg ? BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
+
+            BufferedImage mosaic = new BufferedImage(maxWidth, totalHeight, imageType);
+            Graphics2D g2d = mosaic.createGraphics();
+
+            // Fill background with white for JPEGs
+            if (isJpeg) {
+                g2d.setColor(Color.WHITE);
+                g2d.fillRect(0, 0, maxWidth, totalHeight);
+            }
+
+            // Explicitly enable ImageIO disk caching. This honors the original intent 
+            // of the "FileCaching" class by preventing stream data from flooding the RAM.
+            ImageIO.setUseCache(true);
+
+            // 3. Draw each image onto the canvas
+            int currentY = 0;
+            int i = 0;
+
+            for (ImageInfo imageinfo : images) {
+                BufferedImage pageImage = ImageIO.read(imageinfo.imageFile);
+
+                if (pageImage == null) {
+                    g2d.dispose();
+                    throw new IllegalArgumentException("Cannot read image: " + imageinfo.imageFile.getAbsolutePath() + " - missing ImageIO plugin for this format.");
+                }
+
+                i++;
+                LOGGER.debug("Adding page image " + i + " bounds: [0," + currentY + " " + pageImage.getWidth() + "," + (currentY + pageImage.getHeight()) + "]");
+
+                g2d.drawImage(pageImage, 0, currentY, null);
+                currentY += imageinfo.height + MARGIN;
+            }
+
+            g2d.dispose();
+
             ImageIO.write(mosaic, format, out);
         }
-
-        private RenderedOp translateImage(float height, RenderedImage source) {
-            ParameterBlock pbTranslate = new ParameterBlock();
-            pbTranslate.addSource(source);
-            pbTranslate.add(0f);
-            pbTranslate.add(height);
-            return ImageN.create("translate", pbTranslate);
-        }
-
+        
         private List<ImageInfo> createImages(PJsonObject jsonSpec, File tmpFile, RenderingContext context) throws IOException {
             List<ImageInfo> images = new ArrayList<ImageInfo>();
             PDDocument pdf = PDDocument.load(tmpFile);
