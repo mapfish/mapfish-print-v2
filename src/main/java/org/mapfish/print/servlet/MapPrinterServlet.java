@@ -201,7 +201,7 @@ public class MapPrinterServlet extends BaseMapServlet {
                 return;
             }
         } catch (Throwable e) {
-            if(tempFileMetadata != null) {
+            if (tempFileMetadata != null) {
                 deleteFile(tempFileMetadata.tempFile);
             }
             error(httpServletResponse, e);
