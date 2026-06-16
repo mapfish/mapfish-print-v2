@@ -27,15 +27,14 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.eclipse.imagen.ImageN;
+import org.eclipse.imagen.ParameterBlockImageN;
 import org.eclipse.imagen.RenderedOp;
-import org.eclipse.imagen.media.codec.FileSeekableStream;
 import org.mapfish.print.RenderingContext;
 import org.mapfish.print.utils.PJsonObject;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
-import java.awt.image.renderable.ParameterBlock;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -104,26 +103,30 @@ public class FileCachingJaiMosaicOutputFactory extends InMemoryJaiMosaicOutputFa
         }
 
         private void drawImage(OutputStream out, List<ImageInfo> images) throws IOException {
+            ParameterBlockImageN pbMosaic = new ParameterBlockImageN("mosaic");
 
-            ParameterBlock pbMosaic = new ParameterBlock();
             float height = 0;
             float width = 0;
 
             int i = 0;
             for (ImageInfo imageinfo : images) {
-                ParameterBlock pb = new ParameterBlock();
-                pb.add(new FileSeekableStream(imageinfo.imageFile));
-                pb.add(null);
-                pb.add(null);
-                RenderedOp source = ImageN.create("TIFF", pb);
+                ParameterBlockImageN pb = new ParameterBlockImageN("ImageRead");
+                pb.setParameter("Input", imageinfo.imageFile);
+                RenderedOp source = ImageN.create("ImageRead", pb);
+
                 i++;
-                LOGGER.debug("Adding page image " + i + " bounds: [" + 0 + "," + height + " " + source.getWidth() + "," + (height + source.getHeight()) + "]");
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Adding page image " + i + " bounds: [" + 0 + "," + height + " " + source.getWidth() + "," + (height + source.getHeight()) + "]");
+                }
+
                 RenderedOp translated = translateImage(height, source);
 
                 pbMosaic.addSource(translated);
 
                 height += imageinfo.height + MARGIN;
-                if (width < imageinfo.width) width = imageinfo.width;
+                if (width < imageinfo.width) {
+                    width = imageinfo.width;
+                }
             }
 
             RenderedOp mosaic = ImageN.create("mosaic", pbMosaic);
@@ -131,10 +134,10 @@ public class FileCachingJaiMosaicOutputFactory extends InMemoryJaiMosaicOutputFa
         }
 
         private RenderedOp translateImage(float height, RenderedImage source) {
-            ParameterBlock pbTranslate = new ParameterBlock();
+            ParameterBlockImageN pbTranslate = new ParameterBlockImageN("translate");
             pbTranslate.addSource(source);
-            pbTranslate.add(0f);
-            pbTranslate.add(height);
+            pbTranslate.setParameter("xTrans", 0f);
+            pbTranslate.setParameter("yTrans", height);
             return ImageN.create("translate", pbTranslate);
         }
 
