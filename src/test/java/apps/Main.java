@@ -19,6 +19,7 @@
 
 package apps;
 
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
@@ -39,31 +40,17 @@ public class Main {
 
 
     public static void main(final String[] args) throws IOException {
-        PDDocument document = null;
-            try
-            {
-                document = PDDocument.load( new File("/tmp/print-out.pdf"));
+        try (PDDocument document = Loader.loadPDF(new File("/tmp/print-out.pdf"))) {
+            ImageType imageType = ImageType.ARGB;
 
-                ImageType imageType = ImageType.ARGB;
-
-                PDFRenderer pdfRenderer = new PDFRenderer(document);
-                int pageCounter = 0;
-                while (pageCounter < 3)
-                {
-                    BufferedImage bim = pdfRenderer.renderImageWithDPI(pageCounter, 56, imageType);
-                    ImageIOUtil.writeImage(bim, "/tmp/img--" + (pageCounter++) + ".png", 56);
-                }
+            PDFRenderer pdfRenderer = new PDFRenderer(document);
+            int pageCounter = 0;
+            while (pageCounter < 3) {
+                BufferedImage bim = pdfRenderer.renderImageWithDPI(pageCounter, 56, imageType);
+                ImageIOUtil.writeImage(bim, "/tmp/img--" + (pageCounter++) + ".png", 56);
             }
-            catch (Exception e)
-            {
-                System.err.println(e);
-            }
-            finally
-            {
-                if( document != null )
-                {
-                    document.close();
-                }
-            }
+        } catch (Exception e) {
+            System.err.println(e);
         }
+    }
 }
