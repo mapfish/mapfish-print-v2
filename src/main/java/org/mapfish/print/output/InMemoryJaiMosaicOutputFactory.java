@@ -22,6 +22,7 @@ package org.mapfish.print.output;
 import com.lowagie.text.DocumentException;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.rendering.ImageType;
@@ -153,8 +154,7 @@ public class InMemoryJaiMosaicOutputFactory implements OutputFormatFactory {
 
         private List<BufferedImage> createImages(PJsonObject jsonSpec, File tmpFile, RenderingContext context) throws IOException {
             List<BufferedImage> images = new ArrayList<BufferedImage>();
-            PDDocument pdf = PDDocument.load(tmpFile);
-            try {
+            try (PDDocument pdf = Loader.loadPDF(tmpFile)) {
                 @SuppressWarnings("unchecked")
                 PDFRenderer pdfRenderer = new PDFRenderer(pdf);
                 for (PDPage page : pdf.getPages())
@@ -162,8 +162,6 @@ public class InMemoryJaiMosaicOutputFactory implements OutputFormatFactory {
                     BufferedImage img = pdfRenderer.renderImageWithDPI(images.size(), calculateDPI(context, jsonSpec), ImageType.ARGB);
                     images.add(img);
                 }
-            } finally {
-                pdf.close();
             }
             return images;
         }
