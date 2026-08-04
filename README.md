@@ -21,57 +21,165 @@ Outdated documentation:
 
 - https://www.mapfish.org/doc/index.html
 
-## Build
+## Maven Build
 
 Standard maven build targets are available:
-```bash
-mvn clean
-mvn compile
-mvn package
-mvn install
-```
 
-The `package` phase invokes ``war:war`` goal building ``print-servlet-xxx.war``, and ``print-lib.jar``, ``print-standalone.jar``
+1. To clean the ``target/`` folder:
 
-## Run from commandline
+   ```bash
+   mvn clean
+   ```
 
-The following command will run the mapfish printer.  If you do no supply any -Dxxx args then all argument options will be listed.
+2. To compile:
 
-```bash
-mvn jetty:run
-```
-## Install
+   ```bash
+   mvn compile
+   ```
 
-To install SNAPSHOT into local maven repository for integration testing:
+3. To create a ``print-lib-2.x-SNAPSHOT.jar`` jar:
 
-```bash
-mvn install
-```
+   ```bash
+   mvn package
+   ```
+
+4. To install SNAPSHOT jar into ``~/.m2/repository`` local maven repository:
+  
+   ```bash
+   mvn install
+   ```
+  
+   The use of a local maven repository allows for integration testing with other builds.
+
+## IDE Build
+
+To build in IntelliJ:
+
+1. Open as a maven project.
+
+To build in Eclipse:
+
+1. Open as maven project.
+
+To build in Eclipse as a Java project:
+
+1. Create eclipse project ``.classpath`` and ``.project`` files:
+   ```bash
+   mvn eclipse:eclipse
+   ```
+   
+2. Import project into Eclipse as a Java project.
+
+When running in an IDE:
+
+1. Main class is ``org.mapfish.print.ShellMapPrinter``
+
+2. Program arguments: ``--config=samples/config.yaml --spec=samples/spec.json --output=$HOME/print.pdf``
 
 ## Deploy
 
-Deploy to repo.osgeo.org:
+To deploy SNAPSHOT to repo.osgeo.org:
 
 ```bash
 mvn deploy
 ```
 
-Your `~/.m2/settings.xml` requires credentials to access osgeo nexus server at repo.osgeo.org.
+Your `~/.m2/settings.xml` requires credentials to access osgeo ``nexus`` server at repo.osgeo.org.
+See https://wiki.osgeo.org/wiki/SAC:Repo to obtain credentials:
 
-## Eclipse
+```xml
+  <servers>
+    <server>
+      <username>OSGEO_ID</username>
+      <password>OSGEO_PASSWORD</password>
+      <id>nexus</id>
+    </server>
+  </servers>
+```
+## Docs
 
-To build in eclipse:
+Uses Python3 environment for **sphinx-build** documentation:
 
-1. Create eclipse project metadata:
+```
+virtualenv venv
+source venv/bin/activate
+pip install -r docs/requirements.txt
+sphinx-build -b html -d docs/_build/doctrees docs docs/_build/html
+open docs/_build/html/index.html 
+```
+
+Docs are created in ``docs/_build/html`` folder.
+
+## Release
+
+To create a release:
+
+1. Update version in ``pom.xml``:
+  
+   ```xml
+   <groupId>org.mapfish.print</groupId>
+   <artifactId>print-lib</artifactId>
+   <version>2.2.1</version>
+   ```
+
+2. Double check `ReleaseNotes.md` change-log and update if ndded.
+
+   Double check the `docs/upgrade.rst` and update if needed.
+
+3. Build docs:
+   
    ```bash
-   mvn eclipse:eclipse
+   source venv/bin/activate
+   pip install -r docs/requirements.txt
+   sphinx-build -b html -d docs/_build/doctrees docs docs/_build/html
    ```
    
-2. Import project into eclipse
+3. Build confirming creation of ``print-lib-2.2.1.jar``
 
+   ```bash
+   mvn clean install
+   ```
 
-To run in eclipse:
+3. Commit the change to ``pom.xml``
 
-1. Create new Java Run Configuration
-2. Main class is ``org.mapfish.print.ShellMapPrinter``
-3. Program arguments: ``--config=samples/config.yaml --spec=samples/spec.json --output=$HOME/print.pdf``
+   ```bash
+   git add pom.xml
+   git commit -m "Release 2.2.1"
+   ```
+
+4. Deploy to osgeo nexus
+
+   ```bash
+   mvn deploy -DskipTests
+   ```
+
+5. Push and tag the change:
+   
+   ```bash
+   git push
+   git tag -a release/2.3.5 -m "Release 2.2.1"
+   git push origin release/2.2.1
+   ```
+
+6. Check the release in github:
+   
+   * https://github.com/mapfish/mapfish-print-v2/tags
+   
+7. Add any release-notes to the tag in GitHub.
+
+   Upload jar and docs bundles from target folder.
+
+9. Update the ``pom.xml`` against to return to SNAPSHOT developmentt:
+   
+   ```xml
+   <groupId>org.mapfish.print</groupId>
+   <artifactId>print-lib</artifactId>
+   <version>2.2-SNAPSHOT</version>
+   ```
+   
+   And push up the change:
+   ```bash
+   git add pom.xml
+   git commit -m "Development 2.2-SNAPSHOT"
+   git push
+   ```
