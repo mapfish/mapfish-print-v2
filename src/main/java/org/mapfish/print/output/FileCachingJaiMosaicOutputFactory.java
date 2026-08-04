@@ -23,6 +23,7 @@ import com.lowagie.text.DocumentException;
 import com.sun.media.jai.codec.FileSeekableStream;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.rendering.ImageType;
@@ -140,8 +141,7 @@ public class FileCachingJaiMosaicOutputFactory extends InMemoryJaiMosaicOutputFa
 
         private List<ImageInfo> createImages(PJsonObject jsonSpec, File tmpFile, RenderingContext context) throws IOException {
             List<ImageInfo> images = new ArrayList<ImageInfo>();
-            PDDocument pdf = PDDocument.load(tmpFile);
-            try {
+            try (PDDocument pdf = Loader.loadPDF(tmpFile)) {
                 PDFRenderer pdfRenderer = new PDFRenderer(pdf);
                 for (PDPage page : pdf.getPages())
                 {
@@ -150,8 +150,6 @@ public class FileCachingJaiMosaicOutputFactory extends InMemoryJaiMosaicOutputFa
                     ImageIO.write(img, "TIFF", file);
                     images.add(new ImageInfo(file, img.getWidth(), img.getHeight()));
                 }
-            } finally {
-                pdf.close();
             }
             return images;
         }
