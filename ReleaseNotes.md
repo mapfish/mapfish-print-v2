@@ -1,5 +1,15 @@
 # Mapfish Print 2 Release notes
 
+## Release 2.4.1
+
+Release notes:
+
+* pdfbox 3.0.8
+* Reinstate tile reading via ImageN
+* Reinstate png, jpg support
+* GeoTools 34.4
+  * ImageN 0.9.1
+
 ## Release 2.4.0
 
 Release notes:

@@ -1,6 +1,13 @@
 Upgrade
 *******
 
+Version 2.4.1
+-------------
+
+Release Notes:
+
+* Support `version` parameter in upper and lower case
+
 Version 2.4.0
 -------------
 
