@@ -40,8 +40,8 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <!--log4j-version>2.24.3</log4j-version-->
     <spring.version>7.0.7</spring.version>
-    <gt.version>35-SNAPSHOT</gt.version>
-    <imagen.version>0.9.1-SNAPSHOT</imagen.version> <!-- sync with gt-platform-dependences -->
+    <gt.version>35.0</gt.version>
+    <imagen.version>0.9.2</imagen.version> <!-- sync with gt-platform-dependences -->
     <pdfbox.version>3.0.8</pdfbox.version>
     <metrics-version>4.2.37</metrics-version>
     <!--jackson2.version>2.18.2</jackson2.version-->
