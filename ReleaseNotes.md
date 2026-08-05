@@ -1,5 +1,13 @@
 # Mapfish Print 2 Release notes
 
+## Release 2.3.6
+
+Release notes:
+
+* Update to pdfbox 3.0.8
+* Update to GeoTools 31.7
+* Support version parameter in lower and upper case and hide map providers private keys (#42)
+
 ## Release 2.3.5
 
 Release notes:
