@@ -1,11 +1,11 @@
-# MapFish Print V2 
+# MapFish Print V2 2.3.x
 
 This project is no longer actively maintained by [camptocamp](https://www.camptocamp.com/en). New projects are strongly encouraged to use [mapfish-print](https://github.com/mapfish/mapfish-print) which is at Version 3 at the time of writing.
 
 This project is no longer fully functional, consisting of ``mapfish-print-lib.jar`` distribution used
 by downstream projects as described below.
 
-[MapFish Print 2.3 documentation](https://mapfish.github.io/mapfish-print-v2/) 
+[MapFish Print documentation](https://mapfish.github.io/mapfish-print-v2/) 
 
 ## Background
 
@@ -18,7 +18,7 @@ Downstream projects making use of this technology:
 
 GeoCat BV has mained this series as needed to support the core-geonetwork project:
 
-- Updated to migrate to OpenPDF
+- 2.3.x: Migrate to OpenPDF
 
 GeoSolutions created a fork of the project in 2013:
 
