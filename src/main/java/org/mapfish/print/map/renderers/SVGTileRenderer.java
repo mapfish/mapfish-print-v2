@@ -26,15 +26,18 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.StringWriter;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.batik.ext.awt.RenderingHintsKeyExt;
@@ -42,16 +45,12 @@ import org.apache.batik.transcoder.TranscoderInput;
 import org.apache.batik.transcoder.print.PrintTranscoder;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
-import org.apache.xerces.parsers.DOMParser;
-import org.apache.xml.serialize.OutputFormat;
-import org.apache.xml.serialize.XMLSerializer;
 import org.mapfish.print.InvalidValueException;
 import org.mapfish.print.RenderingContext;
 import org.mapfish.print.Transformer;
 import org.mapfish.print.map.MapTileTask;
 import org.mapfish.print.map.ParallelMapTileLoader;
 import org.w3c.dom.Document;
-import org.xml.sax.InputSource;
 
 import com.lowagie.text.pdf.PdfGraphics2D;
 import com.lowagie.text.DocumentException;
@@ -64,36 +63,27 @@ import javax.xml.XMLConstants;
 public class SVGTileRenderer extends TileRenderer {
     public static final Logger LOGGER = LogManager.getLogger(SVGTileRenderer.class);
 
-    private static Document svgZoomOut;
+    private static Document svgZoomOut = makeSvgZoomOut();
 
-    static {
-        makeSvgZoomOut();
-    }
-    private static void makeSvgZoomOut() {
-        DOMParser parser = new DOMParser();
+    private static Document makeSvgZoomOut() {
         String svgZoomFileName = "svgZoomOut.xsl";
-        final InputStream stream = SVGTileRenderer.class.getResourceAsStream(svgZoomFileName);
-        if (stream == null) {
-            String file = SVGTileRenderer.class.getResource(".").getPath() + svgZoomFileName;
-            throw new RuntimeException("Cannot find the SVG transformation XSLT: expected it to be in: "+file);
-        }
-        try {
-            final InputSource inputSource = new InputSource(stream);
-            inputSource.setSystemId(".");
-            parser.parse(inputSource);
+        try (InputStream stream = SVGTileRenderer.class.getResourceAsStream(svgZoomFileName)) {
+            if (stream == null) {
+                String path = SVGTileRenderer.class.getResource(".").getPath() + svgZoomFileName;
+                throw new RuntimeException("Cannot find the SVG transformation XSLT: expected it to be in: " + path);
+            }
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            dbf.setNamespaceAware(true);
+            dbf.setValidating(false);
+            dbf.setExpandEntityReferences(false);
 
-            svgZoomOut = parser.getDocument();
+            DocumentBuilder db = dbf.newDocumentBuilder();
+            org.w3c.dom.Document document = db.parse(stream);
 
+            return document;
         } catch (Exception e) {
             throw new RuntimeException("Cannot parse the SVG transformation XSLT", e);
-        } finally {
-            if(stream != null) {
-                try {
-                    stream.close();
-                } catch (IOException e2) {
-                    e2.printStackTrace();
-                }
-            }
         }
     }
 
@@ -212,18 +202,19 @@ public class SVGTileRenderer extends TileRenderer {
      * Just for debugging XML.
      */
     public static void printDom(Document doc) throws IOException {
-        OutputFormat format = new OutputFormat(doc);
-        format.setLineWidth(65);
-        format.setIndenting(true);
-        format.setIndent(2);
+        try (StringWriter writer = new StringWriter()) {
+            javax.xml.transform.Transformer serializer =
+                    TransformerFactory.newInstance().newTransformer();
+            serializer.setOutputProperty(OutputKeys.INDENT, "yes");
+            serializer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
+            // Xalan-specific indentation amount; ignored by transformers that don't support it.
+            serializer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
 
-        OutputStream out = new ByteArrayOutputStream();
-
-        XMLSerializer serializer = new XMLSerializer(out, format);
-        serializer.serialize(doc);
-
-        LOGGER.trace(out.toString());
-        out.close();
+            serializer.transform(new DOMSource(doc), new StreamResult(writer));
+            LOGGER.trace(writer.toString());
+        } catch (Exception e) {
+            throw new IOException("Failed to serialize DOM document", e);
+        }
     }
 
 }
