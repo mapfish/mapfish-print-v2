@@ -1,8 +1,8 @@
 # Mapfish Print 2 Release notes
 
-## Release 2.2.0
+## Release 2.2.1
 
-* TBD
+* Update to pdfbox 3.0.0
 
 ## Release 2.2.0
 
