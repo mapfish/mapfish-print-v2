@@ -2,7 +2,7 @@
 
 ## Release 2.2.1
 
-* Update to pdfbox 3.0.0
+* Update to pdfbox 3.0.8
 
 ## Release 2.2.0
 
