@@ -141,7 +141,7 @@ To create a release:
    ```xml
    <groupId>org.mapfish.print</groupId>
    <artifactId>print-lib</artifactId>
-   <version>2.4.1</version>
+   <version>2.5.1</version>
    ```
 
 2. Double check `ReleaseNotes.md` change-log and update if ndded.
@@ -156,7 +156,7 @@ To create a release:
    sphinx-build -b html -d docs/_build/doctrees docs docs/_build/html
    ```
    
-3. Build confirming creation of ``print-lib-2.4.1.jar``
+3. Build confirming creation of ``print-lib-2.5.1.jar``
 
    ```bash
    mvn clean install
@@ -166,7 +166,7 @@ To create a release:
 
    ```bash
    git add pom.xml
-   git commit -m "Release 2.3.5"
+   git commit -m "Release 2.5.1"
    ```
 
 4. Deploy to osgeo nexus
@@ -179,8 +179,8 @@ To create a release:
    
    ```bash
    git push
-   git tag -a release/2.3.5 -m "Release 2.3.5"
-   git push origin release/2.3.5
+   git tag -a release/2.5.1 -m "Release 2.5.1"
+   git push origin release/2.5.1
    ```
 
 6. Check the release in github:
@@ -196,12 +196,12 @@ To create a release:
    ```xml
    <groupId>org.mapfish.print</groupId>
    <artifactId>print-lib</artifactId>
-   <version>2.4-SNAPSHOT</version>
+   <version>2.5-SNAPSHOT</version>
    ```
    
    And push up the change:
    ```bash
    git add pom.xml
-   git commit -m "Development 2.4-SNAPSHOT"
+   git commit -m "Development 2.5.2-SNAPSHOT"
    git push
    ```
