@@ -82,7 +82,7 @@ public class MapChunkDrawer extends ChunkDrawer {
         Transformer mainTransformer = null;
         if (!Double.isNaN(overviewMap)) {
             //manage the overview map
-            mainTransformer = context.getLayout().getMainPage().getMap(name).createTransformer(context, params);
+            mainTransformer = context.getLayout().getMainPage().getMap(null).createTransformer(context, params);
             transformer.zoom(mainTransformer, (float) (1.0 / overviewMap));
             transformer.setRotation(0);   //overview always north up!
             context.setStyleFactor((float) (transformer.getPaperW() / mainTransformer.getPaperW() / overviewMap));
