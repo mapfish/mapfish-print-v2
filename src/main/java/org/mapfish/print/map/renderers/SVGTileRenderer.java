@@ -19,13 +19,10 @@
 
 package org.mapfish.print.map.renderers;
 
-import java.awt.Graphics2D;
 import java.awt.print.PageFormat;
 import java.awt.print.Paper;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.StringWriter;
 import java.net.URI;
 import java.net.URL;
@@ -38,7 +35,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
 
 import org.apache.batik.ext.awt.RenderingHintsKeyExt;
 import org.apache.batik.transcoder.TranscoderInput;
@@ -146,11 +142,11 @@ public class SVGTileRenderer extends TileRenderer {
                 DOMResult transformedSvg = new DOMResult();
                 final TransformerFactory factory = TransformerFactory.newInstance();
                 if (svgZoomOut.getTextContent() == null) {
-                    makeSvgZoomOut(); // a bit of a hack
+                    svgZoomOut = makeSvgZoomOut(); // a bit of a hack
                 }
                 xslt = factory.newTransformer(new DOMSource(svgZoomOut));
 
-                //TODO: may want a different zoom factor in function of the layer and the type (symbol, line or font)
+                // zoomFactory supplied to svgZoomOut.xsl CustomXPath templates to adjust line widths
                 xslt.setParameter("zoomFactor", zoomFactor);
 
                 final URLConnection urlConnection = url.openConnection();
