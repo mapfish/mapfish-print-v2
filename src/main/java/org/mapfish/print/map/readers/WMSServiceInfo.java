@@ -33,7 +33,6 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.xerces.util.DOMUtil;
 import org.mapfish.print.RenderingContext;
 import org.pvalsecc.misc.URIUtils;
 import org.w3c.dom.Document;
@@ -128,17 +127,20 @@ public class WMSServiceInfo extends ServiceInfo {
                 for (int i = 0; i < tileSets.getLength(); ++i) {
                     final Node tileSet = tileSets.item(i);
                     final Node layer = layers.item(i + 1);
-                    String resolutions = DOMUtil.getChildText(DOMUtil.getFirstChildElement(tileSet, "Resolutions"));
-                    int width = Integer.parseInt(DOMUtil.getChildText(DOMUtil.getFirstChildElement(tileSet, "Width")));
-                    int height = Integer.parseInt(DOMUtil.getChildText(DOMUtil.getFirstChildElement(tileSet, "Height")));
-                    Element bbox = DOMUtil.getFirstChildElement(layer, "BoundingBox");
-                    float minX = Float.parseFloat(DOMUtil.getAttrValue(bbox, "minx"));
-                    float minY = Float.parseFloat(DOMUtil.getAttrValue(bbox, "miny"));
-                    float maxX = Float.parseFloat(DOMUtil.getAttrValue(bbox, "maxx"));
-                    float maxY = Float.parseFloat(DOMUtil.getAttrValue(bbox, "maxy"));
-                    String format = DOMUtil.getChildText(DOMUtil.getFirstChildElement(tileSet, "Format"));
 
-                    String layerName = DOMUtil.getChildText(DOMUtil.getFirstChildElement(layer, "Name"));
+                    String resolutions = text(tileSet, "Resolutions");
+                    int width = Integer.parseInt(text(tileSet, "Width"));
+                    int height = Integer.parseInt(text(tileSet, "Height"));
+
+                    Element bbox = child(layer, "BoundingBox");
+                    float minX = Float.parseFloat(attr(bbox, "minx"));
+                    float minY = Float.parseFloat(attr(bbox, "miny"));
+                    float maxX = Float.parseFloat(attr(bbox, "maxx"));
+                    float maxY = Float.parseFloat(attr(bbox, "maxy"));
+
+                    String format = text(tileSet, "Format");
+                    String layerName = text(layer, "Name");
+
                     final TileCacheLayerInfo info = new TileCacheLayerInfo(resolutions, width, height, minX, minY, maxX, maxY, format);
                     result.tileCacheLayers.put(layerName, info);
                 }
@@ -146,4 +148,44 @@ public class WMSServiceInfo extends ServiceInfo {
 
             return result;        }
     }
+
+    /**
+     * Locate first child element with matching tag name.
+     * @param parent Node to traverse
+     * @param tagName Tag name of element to locate
+     * @return Child element if found with matching tag name, or {@code null}
+     */
+    private static Element child(Node parent, String tagName) {
+        if (parent == null) return null;
+        NodeList children = parent.getChildNodes();
+        for (int i = 0; i < children.getLength(); i++) {
+            Node child = children.item(i);
+            if (child.getNodeType() == Node.ELEMENT_NODE && tagName.equals(child.getNodeName())) {
+                return (Element) child;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Text of first child element with matching tag name.
+     * @param parent Node to traverse
+     * @param tagName Tag name of element to locate
+     * @return Text of matching element, or {@code null} if not found
+     */
+    private static String text(Node parent, String tagName) {
+        Element child = child(parent, tagName);
+        return child == null ? null : child.getTextContent();
+    }
+
+    /**
+     * Null safe attribute lookup.
+     * @param element Element, or {@code null} if not provided.
+     * @param name Attribute name
+     * @return Value of the attribute, or {@code null} if element is {@code null}
+     */
+    private static String attr(Element element, String name) {
+        return element == null ? null : element.getAttribute(name);
+    }
+    
 }
