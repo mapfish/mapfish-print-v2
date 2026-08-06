@@ -1,6 +1,17 @@
 Upgrade
 *******
 
+Version 2.5.0
+-------------
+
+Release notes:
+
+* Migrate to Spring Framework 7.0.2 and Jakarta Servlet 6.1
+* Update to GeoTools 35.0 and  ImageN 0.9.2
+* Update metrics to 4.2.37
+* Migrate to Apache HttpClient 5
+* Upgrade to pdfbox 3.0.8
+
 Version 2.4.0
 -------------
 

@@ -5,11 +5,11 @@
 Release notes:
 
 * GeoTools 35.0
-* ImageN 0.9.1
-* Migrate to Spring Framework 7.0.2
-* Migrate to Spring Framework 6.2.12 and Jakarta Servlet 6.0.0
+* ImageN 0.9.2
+* Migrate to Spring Framework 7.0.2 and Jakarta Servlet 6.1
 * Update metrics to 4.2.37
 * Migrate to Apache HttpClient 5
+* Upgrade to pdfbox 3.0.8
 
 ## Release 2.4.0
 
