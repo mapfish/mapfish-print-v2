@@ -30,6 +30,7 @@ import java.net.URLConnection;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMResult;
@@ -159,6 +160,13 @@ public class SVGTileRenderer extends TileRenderer {
                 try {
                     DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
                     dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+                    try {
+                        dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+                    } catch (ParserConfigurationException e) {
+                        dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
+                        dbf.setFeature("http://xml.org/sax/features/external-parameter-entities",false);
+                        dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+                    }
                     dbf.setValidating(false);
                     dbf.setExpandEntityReferences(false);
 
