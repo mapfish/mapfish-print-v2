@@ -10,8 +10,19 @@ updates:
       time: "05:00"
       timezone: "Europe/Rome"
     groups:
-      maven-deps:
-        group-by: dependency-name  
+      geotools:
+        patterns:
+          - "org.geotools:*"
+      dropwizard-metrics:
+        patterns:
+          - "io.dropwizard.metrics:*"
+      spring:
+        patterns:
+          - "org.springframework:*"
+          - "org.springframework.*:*"
+      pdfbox:
+        patterns:
+          - "org.apache.pdfbox:*"
     open-pull-requests-limit: 10
     labels:
       - "dependencies"
@@ -25,7 +36,7 @@ updates:
       - dependency-name: "org.apache.maven.plugins:*"
       - dependency-name: "org.codehaus.mojo:*"
       - dependency-name: "*:*maven-plugin*"
-      - dependency-name: "org.xmlunit:xmlunit-matchers
+      - dependency-name: "org.xmlunit:xmlunit-matchers"
       # Prevent API break
       - dependency-name: "org.apache.pdfbox:pdfbox"
         versions: ["[3.0,)"]
