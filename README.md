@@ -20,7 +20,7 @@ GeoCat BV has maintained this series as needed to support geoserver and core-geo
 
 | Release | Java | Notes |
 | ------- | ---- | ----- |
-| 2.5.x   | 17   | Migrate to JarkartaEE, for SpringFramework 7 compatibility |
+| 2.5.x   | 17   | Migrate to JakartaEE, for SpringFramework 7 compatibility |
 | 2.4.x   | 17   | Migrate to ImageN, for Java 17 compatibility |
 | 2.3.x   | 11   | Migrate to Log4j2, combine with geosolutions-it/mapfish-print fork |
 | 2.2.x   | 8    | Migrate to OpenPDF due to license conflicts |
