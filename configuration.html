@@ -71,12 +71,12 @@
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nv">HOST_WHITELIST_DEFINITION</span><span class="p p-Indicator">}</span>
 <span class="w">  </span><span class="p p-Indicator">{</span><span class="nv">...</span><span class="p p-Indicator">}</span>
 
-<span class="l l-Scalar l-Scalar-Plain">?localHostForward</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="c1"># For request on map.example.com we build an http request on localhost with the header Host=map.example.com, this is to don&#39;t pass throw the proxy.</span>
+<span class="l l-Scalar l-Scalar-Plain">?localHostForward</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="c1"># For request on map.example.com we build an http request on localhost with the header Host=map.example.com, this is to don't pass throw the proxy.</span>
 <span class="p p-Indicator">?</span><span class="w">  </span><span class="nt">from</span><span class="p">:</span>
 <span class="p p-Indicator">?</span><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">map.example.com</span>
 <span class="p p-Indicator">?</span><span class="w">  </span><span class="nt">https2http</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span><span class="w"> </span><span class="c1"># For above hosts on request on https we build a request on http</span>
 
-<span class="l l-Scalar l-Scalar-Plain">?headers</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&#39;Cookie&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;Referer&#39;</span><span class="p p-Indicator">]</span><span class="w"> </span><span class="c1"># The header that will be copyed to the tiles http requests</span>
+<span class="l l-Scalar l-Scalar-Plain">?headers</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">'Cookie'</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">'Referer'</span><span class="p p-Indicator">]</span><span class="w"> </span><span class="c1"># The header that will be copyed to the tiles http requests</span>
 
 <span class="l l-Scalar l-Scalar-Plain">?keys</span><span class="p p-Indicator">:</span>
 <span class="p p-Indicator">?</span><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="kt">!key</span>
@@ -291,11 +291,11 @@
 <p>Allow to add some metadata to the generated PDF. They are visible in acroread in the File-&gt;Properties menu.</p>
 <p>The structure is like that:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="w">    </span><span class="nt">metaData</span><span class="p">:</span>
-<span class="p p-Indicator">?</span><span class="w">     </span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
-<span class="p p-Indicator">?</span><span class="w">     </span><span class="nt">author</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
-<span class="p p-Indicator">?</span><span class="w">     </span><span class="nt">subject</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
-<span class="p p-Indicator">?</span><span class="w">     </span><span class="nt">keywords</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
-<span class="p p-Indicator">?</span><span class="w">     </span><span class="nt">creator</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
+<span class="p p-Indicator">?</span><span class="w">     </span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="s">''</span>
+<span class="p p-Indicator">?</span><span class="w">     </span><span class="nt">author</span><span class="p">:</span><span class="w"> </span><span class="s">''</span>
+<span class="p p-Indicator">?</span><span class="w">     </span><span class="nt">subject</span><span class="p">:</span><span class="w"> </span><span class="s">''</span>
+<span class="p p-Indicator">?</span><span class="w">     </span><span class="nt">keywords</span><span class="p">:</span><span class="w"> </span><span class="s">''</span>
+<span class="p p-Indicator">?</span><span class="w">     </span><span class="nt">creator</span><span class="p">:</span><span class="w"> </span><span class="s">''</span>
 <span class="p p-Indicator">?</span><span class="w">     </span><span class="nt">supportLegacyReader</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 </pre></div>
 </div>
@@ -387,7 +387,7 @@
 <h2>Block definition<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
 <p>The next sub-sections document the possible types of blocks.</p>
 <p>In general, text values or URLs can contain values taken from the <strong>spec</strong> structure coming with the client’s request. A syntax similar to shell is used: <cite>${variableName}</cite>. If the current page is a <strong>titlePage</strong>, only the root values are taken. If it’s a <strong>mainPage</strong>, the service will first look in the current <strong>page</strong> section then in the root values. Here is how to use this functionality:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">text</span><span class="p">:</span> <span class="s1">&#39;The value of mapTitle is: $</span><span class="si">{mapTitle}</span><span class="s1">&#39;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">text</span><span class="p">:</span> <span class="s1">'The value of mapTitle is: $</span><span class="si">{mapTitle}</span><span class="s1">'</span>
 </pre></div>
 </div>
 <p>Some virtual variables can be used:</p>
@@ -402,7 +402,7 @@
 <p>All the blocks can have a condition attribute that takes a spec attribute name. If the attribute name exists and is not equal to “false” or “0”, the block is drawn. Otherwise, it is ignored. An exclamation mark may precede the condition to invert it, exclamation mark is part of yaml syntax, than the expression should be in quotes.</p>
 <p>Example: show text block only if in the spec the attribute name “showText” is given, is not equal to “false” and not equal to “0”:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="kt">!text</span>
-<span class="w">  </span><span class="nt">text</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;mytext&#39;</span>
+<span class="w">  </span><span class="nt">text</span><span class="p">:</span><span class="w"> </span><span class="s">'mytext'</span>
 <span class="w">  </span><span class="nt">condition</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">showText</span>
 </pre></div>
 </div>
@@ -418,7 +418,7 @@
 <span class="p p-Indicator">?</span><span class="w">         </span><span class="nt">align</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">left</span>
 <span class="p p-Indicator">?</span><span class="w">         </span><span class="nt">vertAlign</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">middle</span>
 <span class="p p-Indicator">?</span><span class="w">         </span><span class="nt">backgroundColor</span><span class="p">:</span><span class="w"> </span><span class="c1">#FFFFFF</span>
-<span class="w">          </span><span class="nt">text</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;Blahblah&#39;</span>
+<span class="w">          </span><span class="nt">text</span><span class="p">:</span><span class="w"> </span><span class="s">'Blahblah'</span>
 <span class="p p-Indicator">?</span><span class="w">         </span><span class="nt">asHTML</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 </pre></div>
 </div>
@@ -477,14 +477,14 @@ You need to add a name into the image to manage:</p>
 <span class="w">        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">chart1</span>
 <span class="w">        </span><span class="nt">maxWidth</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">580</span>
 <span class="w">        </span><span class="nt">maxHeight</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">271</span>
-<span class="w">        </span><span class="nt">rotation</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;${rotation}&#39;</span>
+<span class="w">        </span><span class="nt">rotation</span><span class="p">:</span><span class="w"> </span><span class="s">'${rotation}'</span>
 </pre></div>
 </div>
 <p>Spec:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">{</span>
 <span class="nv">...</span>
 <span class="nv">chart1</span><span class="p p-Indicator">:{</span>
-<span class="nt">  content</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&lt;svg&gt;SVG</span><span class="nv"> </span><span class="s">content&lt;/svg&gt;&#39;</span>
+<span class="nt">  content</span><span class="p">:</span><span class="w"> </span><span class="s">'&lt;svg&gt;SVG</span><span class="nv"> </span><span class="s">content&lt;/svg&gt;'</span>
 <span class="p p-Indicator">},</span>
 <span class="nv">...</span>
 <span class="p p-Indicator">}</span>
@@ -640,10 +640,10 @@ preferredIntervalFractions: [0.2,0.5]</p>
 <span class="w">      </span><span class="nv">...</span>
 <span class="w">      </span><span class="nv">results</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="p p-Indicator">{</span>
 <span class="nt">        data</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span>
-<span class="w">          </span><span class="p p-Indicator">{</span><span class="nv">id</span><span class="p p-Indicator">:</span><span class="nv">1</span><span class="p p-Indicator">,</span><span class="nt"> name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;blah&#39;</span><span class="p p-Indicator">,</span><span class="nt"> icon</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;icon_pan&#39;</span><span class="p p-Indicator">},</span>
+<span class="w">          </span><span class="p p-Indicator">{</span><span class="nv">id</span><span class="p p-Indicator">:</span><span class="nv">1</span><span class="p p-Indicator">,</span><span class="nt"> name</span><span class="p">:</span><span class="w"> </span><span class="s">'blah'</span><span class="p p-Indicator">,</span><span class="nt"> icon</span><span class="p">:</span><span class="w"> </span><span class="s">'icon_pan'</span><span class="p p-Indicator">},</span>
 <span class="w">          </span><span class="nv">...</span>
 <span class="w">        </span><span class="p p-Indicator">],</span>
-<span class="nt">        columns</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&#39;id&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;name&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;icon&#39;</span><span class="p p-Indicator">]</span>
+<span class="nt">        columns</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">'id'</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">'name'</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">'icon'</span><span class="p p-Indicator">]</span>
 <span class="w">      </span><span class="p p-Indicator">}</span>
 <span class="w">    </span><span class="p p-Indicator">}</span>
 <span class="w">  </span><span class="p p-Indicator">]</span>
@@ -662,12 +662,12 @@ preferredIntervalFractions: [0.2,0.5]</p>
 <span class="w">    </span><span class="nt">cell</span><span class="p">:</span><span class="w"> </span><span class="kt">!columns</span>
 <span class="w">      </span><span class="nt">items</span><span class="p">:</span>
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="kt">!text</span>
-<span class="w">          </span><span class="nt">text</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;${icon}&#39;</span>
+<span class="w">          </span><span class="nt">text</span><span class="p">:</span><span class="w"> </span><span class="s">'${icon}'</span>
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="kt">!image</span>
 <span class="w">          </span><span class="nt">align</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">center</span>
 <span class="w">          </span><span class="nt">maxWidth</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">15</span>
 <span class="w">          </span><span class="nt">maxHeight</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">15</span>
-<span class="w">          </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;http://www.mapfish.org/svn/mapfish/trunk/MapFish/client/mfbase/mapfish/img/${icon}.png&#39;</span>
+<span class="w">          </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s">'http://www.mapfish.org/svn/mapfish/trunk/MapFish/client/mfbase/mapfish/img/${icon}.png'</span>
 </pre></div>
 </div>
 <p>A more complex example can be found in SVN: <a class="reference external" href="https://github.com/mapfish/mapfish-print-v2/tree/main/samples/config.yaml">config.yaml</a> <a class="reference external" href="https://github.com/mapfish/mapfish-print-v2/tree/main/samples/spec.json">spec.json</a></p>
@@ -836,7 +836,7 @@ more precisely the legends should be present in the print.pdf JSON request.</p>
 <span class="w">        </span><span class="nt">padding</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span>
 <span class="w">        </span><span class="nt">paddingTop</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
 <span class="w">      </span><span class="c1"># match every even cell (yellowish background)</span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">row</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;\d*[02468]&#39;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">row</span><span class="p">:</span><span class="w"> </span><span class="s">'\d*[02468]'</span>
 <span class="w">        </span><span class="nt">backgroundColor</span><span class="p">:</span><span class="w"> </span><span class="c1">#FFFFCC</span>
 <span class="w">      </span><span class="c1"># for the header</span>
 <span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">row</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
@@ -888,7 +888,7 @@ more precisely the legends should be present in the print.pdf JSON request.</p>
 <span class="w">       </span><span class="nt">items</span><span class="p">:</span>
 <span class="w">         </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="kt">!image</span>
 <span class="w">           </span><span class="nt">maxWidth</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">535</span>
-<span class="w">           </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;${configDir}/print_header.png&#39;</span>
+<span class="w">           </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s">'${configDir}/print_header.png'</span>
 <span class="w">     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="kt">!columns</span>
 <span class="w">       </span><span class="nt">absoluteX</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
 <span class="w">       </span><span class="nt">absoluteY</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">750</span>
@@ -899,7 +899,7 @@ more precisely the legends should be present in the print.pdf JSON request.</p>
 <span class="w">           </span><span class="nt">align</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">center</span>
 <span class="w">           </span><span class="nt">vertAlign</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">middle</span>
 <span class="w">           </span><span class="nt">fontSize</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">14</span>
-<span class="w">           </span><span class="nt">text</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;${meteorologicalPagesTitle}&#39;</span>
+<span class="w">           </span><span class="nt">text</span><span class="p">:</span><span class="w"> </span><span class="s">'${meteorologicalPagesTitle}'</span>
 <span class="w">     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="kt">!columns</span>
 <span class="w">       </span><span class="nt">width</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">580</span>
 <span class="w">       </span><span class="nt">height</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">271</span>
@@ -910,7 +910,7 @@ more precisely the legends should be present in the print.pdf JSON request.</p>
 <span class="w">           </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">chart1</span>
 <span class="w">           </span><span class="nt">maxWidth</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">580</span>
 <span class="w">           </span><span class="nt">maxHeight</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">271</span>
-<span class="w">           </span><span class="nt">rotation</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;${rotation}&#39;</span>
+<span class="w">           </span><span class="nt">rotation</span><span class="p">:</span><span class="w"> </span><span class="s">'${rotation}'</span>
 <span class="w">     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="kt">!columns</span>
 <span class="w">       </span><span class="nt">width</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">580</span>
 <span class="w">       </span><span class="nt">height</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">271</span>
@@ -921,7 +921,7 @@ more precisely the legends should be present in the print.pdf JSON request.</p>
 <span class="w">           </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">chart2</span>
 <span class="w">           </span><span class="nt">maxWidth</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">580</span>
 <span class="w">           </span><span class="nt">maxHeight</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">271</span>
-<span class="w">           </span><span class="nt">rotation</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;${rotation}&#39;</span>
+<span class="w">           </span><span class="nt">rotation</span><span class="p">:</span><span class="w"> </span><span class="s">'${rotation}'</span>
 </pre></div>
 </div>
 <p>spec:</p>
@@ -930,10 +930,10 @@ more precisely the legends should be present in the print.pdf JSON request.</p>
 <span class="nv">imagePages</span><span class="p p-Indicator">:[</span>
 <span class="w">    </span><span class="nv">images</span><span class="p p-Indicator">:{</span>
 <span class="w">        </span><span class="nv">chart1</span><span class="p p-Indicator">:{</span>
-<span class="nt">             content</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&lt;svg&gt;SVG</span><span class="nv"> </span><span class="s">content&lt;/svg&gt;&#39;</span>
+<span class="nt">             content</span><span class="p">:</span><span class="w"> </span><span class="s">'&lt;svg&gt;SVG</span><span class="nv"> </span><span class="s">content&lt;/svg&gt;'</span>
 <span class="w">        </span><span class="p p-Indicator">},</span>
 <span class="w">        </span><span class="nv">chart2</span><span class="p p-Indicator">:{</span>
-<span class="nt">             content</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&lt;svg&gt;SVG</span><span class="nv"> </span><span class="s">content&lt;/svg&gt;&#39;</span>
+<span class="nt">             content</span><span class="p">:</span><span class="w"> </span><span class="s">'&lt;svg&gt;SVG</span><span class="nv"> </span><span class="s">content&lt;/svg&gt;'</span>
 <span class="w">        </span><span class="p p-Indicator">}</span>
 <span class="w">    </span><span class="p p-Indicator">}</span>
 <span class="p p-Indicator">],</span>
