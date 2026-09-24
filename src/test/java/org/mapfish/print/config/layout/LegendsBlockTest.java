@@ -16,12 +16,17 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mapfish.print.Constants;
 import org.mapfish.print.FakeHttpd;
+import org.mapfish.print.InvalidValueException;
 import org.mapfish.print.RenderingContext;
 import org.mapfish.print.ThreadResources;
+import org.mapfish.print.PrintTestCase;
 import org.mapfish.print.config.Config;
 import org.mapfish.print.utils.PJsonObject;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.anyFloat;
 import static org.mockito.Mockito.mock;
@@ -139,5 +144,45 @@ public class LegendsBlockTest {
                 .DEFAULT_ERROR_IMAGE);
         config.setBrokenUrlPlaceholder(placeholder.toExternalForm());
         legendBlock.render(params, target, context);
+    }
+
+    @Test
+    public void testIconOutsideConfiguredHosts() throws Exception {
+        assertIconRejected("/legend.png", InvalidValueException.class);
+    }
+
+    @Test
+    public void testSvgIconOutsideConfiguredHosts() throws Exception {
+        assertIconRejected("/legend?FORMAT=image%2Fsvg%2Bxml", DocumentException.class);
+    }
+
+    private void assertIconRejected(String path, Class<? extends Exception> expected) throws Exception {
+        httpd.addRoutes(
+                new FakeHttpd.Route("/legend.png", FakeHttpd.pngAnswerer()),
+                new FakeHttpd.Route("/legend", new FakeHttpd.HttpAnswerer(200, "OK", "image/svg+xml",
+                        Files.readAllBytes(Path.of("samples/Arrow_North_CFCF.svg")))));
+        String icon = "http://localhost:" + httpd.getPort() + path;
+        PJsonObject params = new PJsonObject(new JSONObject("""
+                {"legends": [{"name": "roads", "classes": [{"name": "highway", "icon": "%s"}]}]}
+                """.formatted(icon)), "legend");
+        Config config = new Config();
+        config.setHosts(PrintTestCase.unrelatedHosts());
+        config.setThreadResources(this.threadResources);
+        config.setMetricRegistry(new MetricRegistry());
+        PdfContentByte dc = mock(PdfContentByte.class);
+        when(dc.createTemplate(anyFloat(), anyFloat())).thenReturn(mock(PdfTemplate.class));
+        RenderingContext context = mock(RenderingContext.class);
+        when(context.getGlobalParams()).thenReturn(params);
+        when(context.getConfig()).thenReturn(config);
+        when(context.getPdfLock()).thenReturn(new Object());
+        when(context.getDirectContent()).thenReturn(dc);
+
+        try {
+            new LegendsBlock().render(params, element -> {}, context);
+            fail("Expected a " + expected.getSimpleName());
+        } catch (Exception e) {
+            assertEquals(expected, e.getClass());
+            assertEquals("URL not accepted by the configured hosts: " + icon, e.getCause().getMessage());
+        }
     }
 }

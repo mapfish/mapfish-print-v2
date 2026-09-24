@@ -129,6 +129,9 @@ public abstract class MapTestBasic {
     }
 
 
+    /** Replaces the @@baseURL@@ placeholder with a WMS on the local host, accepted by the default hosts. */
+    protected final Replacement localBaseUrl = new Replacement("@@baseURL@@", "http://localhost/wms");
+
     protected PJsonObject loadJson(String fileName, Replacement... replacements) throws IOException {
         final String file = MapTestBasic.class.getClassLoader().getResource(fileName).getFile();
         String textFile = FileUtilities.readWholeTextFile(new File(file));

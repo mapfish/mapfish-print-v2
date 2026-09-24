@@ -1,5 +1,11 @@
 # Mapfish Print 2 Release notes
 
+## Release 2.5.1
+
+Release notes:
+
+* Legend icons, vector point graphics and capabilities documents are read with the same HTTP settings as maps, including the configured hosts.
+
 ## Release 2.5.0
 
 Release notes:

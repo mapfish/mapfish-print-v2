@@ -33,10 +33,20 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TestName;
+import org.mapfish.print.config.AddressHostMatcher;
+import org.mapfish.print.config.HostMatcher;
 
 import java.nio.charset.Charset;
+import java.util.List;
 
 public abstract class PrintTestCase {
+
+    /** Returns a hosts list that accepts only 192.0.2.1, an address reserved for documentation. */
+    public static List<HostMatcher> unrelatedHosts() {
+        AddressHostMatcher mapServer = new AddressHostMatcher();
+        mapServer.setIp("192.0.2.1");
+        return List.of(mapServer);
+    }
 
     @Rule
     public TestName name = new TestName();

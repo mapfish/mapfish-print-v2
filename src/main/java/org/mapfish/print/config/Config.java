@@ -21,7 +21,13 @@ package org.mapfish.print.config;
 
 import com.codahale.metrics.MetricRegistry;
 import org.apache.hc.client5.http.classic.methods.HttpUriRequestBase;
+import org.apache.hc.client5.http.RedirectException;
+import org.apache.hc.client5.http.impl.DefaultRedirectStrategy;
+import org.apache.hc.core5.http.HttpException;
 import org.apache.hc.core5.http.HttpHost;
+import org.apache.hc.core5.http.HttpRequest;
+import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.protocol.HttpContext;
 import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.protocol.HttpClientContext;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
@@ -38,6 +44,7 @@ import org.mapfish.print.Constants;
 import org.mapfish.print.InvalidValueException;
 import org.mapfish.print.PDFUtils;
 import org.mapfish.print.ThreadResources;
+import org.mapfish.print.UrlSource;
 import org.mapfish.print.config.layout.Layout;
 import org.mapfish.print.config.layout.Layouts;
 import org.mapfish.print.map.MapTileTask;
@@ -47,6 +54,7 @@ import org.mapfish.print.output.OutputFactory;
 import org.pvalsecc.concurrent.OrderedResultsExecutor;
 
 import java.io.Closeable;
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
 import java.net.Proxy;
@@ -66,6 +74,9 @@ import java.util.TreeSet;
  */
 public class Config implements Closeable {
     public static final Logger LOGGER = LogManager.getLogger(Config.class);
+
+    /** HTTP context attribute holding the {@link UrlSource} of a request. */
+    public static final String URL_SOURCE = UrlSource.class.getName();
 
     private Layouts layouts;
     private TreeSet<Integer> dpis;
@@ -257,9 +268,15 @@ public class Config implements Closeable {
     }
 
     /**
-     * Make sure an URI is authorized
+     * Returns true when the URI is http(s) with a host accepted by one of the configured hosts.
      */
     public boolean validateUri(URI uri) throws UnknownHostException, SocketException, MalformedURLException {
+        if (!"http".equalsIgnoreCase(uri.getScheme()) && !"https".equalsIgnoreCase(uri.getScheme())) {
+            return false;
+        }
+        if (uri.getHost() == null) {
+            return false;
+        }
         for (int i = 0; i < hosts.size(); i++) {
             HostMatcher matcher = hosts.get(i);
             if (matcher.validate(uri)) {
@@ -364,6 +381,7 @@ public class Config implements Closeable {
         CloseableHttpClient httpClient = HttpClients.custom()
                 .setConnectionManager(connectionManager)
                 .setDefaultRequestConfig(requestConfig)
+                .setRedirectStrategy(new ConfiguredHostsRedirectStrategy())
                 .build();
 
         // httpclient is a bit pesky about loading everything in memory...
@@ -372,6 +390,28 @@ public class Config implements Closeable {
         Configurator.setLevel(logger,Level.ERROR);
 
         return httpClient;
+    }
+
+    /** Checks each redirect location with {@link #checkUri}. */
+    private class ConfiguredHostsRedirectStrategy extends DefaultRedirectStrategy {
+        @Override
+        public URI getLocationURI(HttpRequest request, HttpResponse response, HttpContext context)
+                throws HttpException {
+            URI location = super.getLocationURI(request, response, context);
+            try {
+                checkUri(location, (UrlSource) context.getAttribute(URL_SOURCE));
+            } catch (IOException e) {
+                throw new RedirectException(e.getMessage(), e);
+            }
+            return location;
+        }
+    }
+
+    /** Checks that a URL can be read: a request URL must be a data URI or be accepted by {@link #validateUri}. */
+    public void checkUri(URI uri, UrlSource source) throws IOException {
+        if (source != UrlSource.CONFIGURED && !"data".equalsIgnoreCase(uri.getScheme()) && !validateUri(uri)) {
+            throw new IOException("URL not accepted by the configured hosts: " + uri);
+        }
     }
 
     public HttpClientContext getHttpClientContext(URI uri) {

@@ -1,21 +1,18 @@
 package org.mapfish.print.map.readers;
 
-import com.codahale.metrics.MetricRegistry;
 import org.apache.commons.logging.Log;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
-import org.apache.hc.core5.http.HttpEntity;
-import org.apache.hc.client5.http.classic.methods.HttpGet;
-import org.apache.hc.client5.http.protocol.HttpClientContext;
+import org.mapfish.print.PDFUtils;
 import org.mapfish.print.RenderingContext;
+import org.mapfish.print.UrlSource;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -73,57 +70,8 @@ public class ServerInfoCache<T extends ServiceInfo> {
 
     private T requestInfo(URI baseUrl, RenderingContext context) throws IOException, URISyntaxException, ParserConfigurationException, SAXException {
         URL url = loader.createURL(baseUrl, context);
-
-        HttpGet request;
-
-        MetricRegistry registry = context.getConfig().getMetricRegistry();
-        final com.codahale.metrics.Timer.Context timer = registry.timer("http_" + url.getAuthority()).time();
-        try {
-            final InputStream stream;
-
-            if ((url.getProtocol().equals("http") || url.getProtocol().equals("https")) &&
-                context.getConfig().localHostForwardIsFrom(url.getHost())) {
-                String scheme = url.getProtocol();
-                final String host = url.getHost();
-                if (url.getProtocol().equals("https") &&
-                    context.getConfig().localHostForwardIsHttps2http()) {
-                    scheme = "http";
-                }
-                URL localUrl = new URL(scheme, "localhost", url.getPort(),
-                        url.getFile());
-                HttpURLConnection connexion = (HttpURLConnection)localUrl.openConnection();
-                connexion.setRequestProperty("Host", host);
-                for (Map.Entry<String, String> entry : context.getHeaders().entrySet()) {
-                    connexion.setRequestProperty(entry.getKey(), entry.getValue());
-                }
-                stream = connexion.getInputStream();
-            }
-            else {
-                request = new HttpGet(url.toString());
-                for (Map.Entry<String, String> entry : context.getHeaders().entrySet()) {
-                    request.addHeader(entry.getKey(), entry.getValue());
-                }
-                HttpClientContext clientContext = context.getConfig().getHttpClientContext(baseUrl);
-                try(CloseableHttpResponse response = context.getConfig().getHttpClient(baseUrl).execute(request, clientContext)) {
-                    int code = response.getCode();
-                    String reason = response.getReasonPhrase();
-                    if (code < 200 || code >= 300) {
-                        throw new IOException("Error " + code + " while reading the Capabilities from " + url + ": " + reason);
-                    }
-                    stream = response.getEntity().getContent();
-                    return loader.parseInfo(stream);
-                }
-            }
-            final T result;
-            try {
-                result = loader.parseInfo(stream);
-            } finally {
-                stream.close();
-            }
-            return result;
-        } finally {
-            timer.stop();
-        }
+        byte[] capabilities = PDFUtils.readBytes(context, url.toURI(), UrlSource.REQUEST);
+        return loader.parseInfo(new ByteArrayInputStream(capabilities));
     }
     public static abstract class ServiceInfoLoader<T extends ServiceInfo> {
 

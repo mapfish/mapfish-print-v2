@@ -35,6 +35,7 @@ import org.mapfish.print.InvalidValueException;
 import org.mapfish.print.PDFCustomBlocks;
 import org.mapfish.print.PDFUtils;
 import org.mapfish.print.RenderingContext;
+import org.mapfish.print.UrlSource;
 import org.mapfish.print.utils.PJsonObject;
 
 import com.lowagie.text.DocumentException;
@@ -63,7 +64,8 @@ public class ImageBlock extends Block {
         if (url.getPath().endsWith(".svg")) {
             drawSVG(context, params, target, url);
         } else {
-            target.add(PDFUtils.createImageChunk(context, maxWidth, maxHeight, url, getRotationRadian(context, params)));
+            target.add(PDFUtils.createImageChunk(
+                    context, maxWidth, maxHeight, url, getRotationRadian(context, params), UrlSource.CONFIGURED));
         }
     }
 

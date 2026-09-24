@@ -54,6 +54,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class ConfigTest extends PrintTestCase {
 
@@ -227,6 +228,16 @@ public class ConfigTest extends PrintTestCase {
         final HttpClientContext ctx = config.getHttpClientContext(uri);
         assertNotNull(ctx);
         assertNull(ctx.getAuthCache());
+    }
+
+    @Test
+    public void testValidateUri() throws Exception {
+        // the default hosts list accepts the local network interfaces
+        Config config = new Config();
+        assertTrue(config.validateUri(new URI("http://localhost/wms")));
+        assertTrue(config.validateUri(new URI("https://localhost/wms")));
+        assertFalse(config.validateUri(new URI("http://192.0.2.1/wms")));
+        assertFalse(config.validateUri(new URI("ftp://localhost/tiles/0/0/0.png")));
     }
 
     public static Map<String, File> getSampleConfigFiles() {
