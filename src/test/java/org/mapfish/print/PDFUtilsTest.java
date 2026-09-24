@@ -21,21 +21,29 @@ package org.mapfish.print;
 
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Font;
+import com.lowagie.text.Image;
+import com.sun.net.httpserver.HttpExchange;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.json.JSONObject;
 import org.junit.Test;
+import org.mapfish.print.config.AddressHostMatcher;
 import org.mapfish.print.config.Config;
 import org.mapfish.print.config.ConfigFactory;
 import org.mapfish.print.config.ConfigTest;
+import org.mapfish.print.config.HostMatcher;
 import org.mapfish.print.utils.PJsonObject;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -44,6 +52,14 @@ import static org.junit.Assert.fail;
 public class PDFUtilsTest extends PdfTestCase {
     private static final String FIVE_HUNDRED_ROUTE = "/500";
     private static final String NOT_IMAGE_ROUTE = "/notImage";
+    private static final String SVG_LEGEND_ROUTE = "/legend";
+    private static final String TILE_ROUTE = "/tile.png";
+    private static final String SVG_LEGEND = """
+            <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="10px">
+              <rect width="20" height="10" fill="red"/>
+            </svg>""";
+    /** Batik renders SVG pixels at 96 DPI, PDF units are 1/72 inch. */
+    private static final float SVG_PIXEL_TO_PDF = 96f / 72f;
     private FakeHttpd httpd;
 
     @Override
@@ -71,7 +87,7 @@ public class PDFUtilsTest extends PdfTestCase {
         URI uri = new URI("http://localhost:" + httpd.getPort() + NOT_IMAGE_ROUTE);
         try {
             doc.newPage();
-            PDFUtils.getImageDirect(context, uri);
+            PDFUtils.getImage(context, uri, 0, 0);
             fail("Supposed to have thrown an IOException");
         } catch (IOException ex) {
             //expected
@@ -84,7 +100,7 @@ public class PDFUtilsTest extends PdfTestCase {
         URI uri = new URI("http://localhost:" + httpd.getPort() + FIVE_HUNDRED_ROUTE);
         try {
             doc.newPage();
-            PDFUtils.getImageDirect(context, uri);
+            PDFUtils.getImage(context, uri, 0, 0);
             fail("Supposed to have thrown an IOException");
         } catch (IOException ex) {
             //expected
@@ -97,12 +113,124 @@ public class PDFUtilsTest extends PdfTestCase {
         URI uri = new URI("http://localhost:" + httpd.getPort() + FIVE_HUNDRED_ROUTE);
         try {
             doc.newPage();
-            PDFUtils.getImageDirect(context, uri);
+            PDFUtils.getImage(context, uri, 0, 0);
             fail("Supposed to have thrown an IOException");
         } catch (IOException ex) {
             //expected
             assertEquals("Error (status=500) while reading the image from " + uri + ": Internal Server Error", ex.getMessage());
         }
+    }
+
+    @Test
+    public void testRequestUrlOutsideHosts() throws Exception {
+        assertRequestUrlRefused(new URI("http://192.0.2.1/legend.png"));
+        assertRequestUrlRefused(new File("src/main/resources/default_error.png").toURI());
+    }
+
+    private void assertRequestUrlRefused(URI uri) throws Exception {
+        try {
+            PDFUtils.getImage(context, uri, 0, 0);
+            fail("Supposed to have thrown an IOException");
+        } catch (IOException ex) {
+            assertEquals("URL not accepted by the configured hosts: " + uri, ex.getMessage());
+        }
+    }
+
+    @Test
+    public void testSvgIconFromServer() throws Exception {
+        List<String> languages = new CopyOnWriteArrayList<>();
+        httpd.addRoutes(new FakeHttpd.Route(SVG_LEGEND_ROUTE,
+                new FakeHttpd.HttpAnswerer(200, "OK", "image/svg+xml", SVG_LEGEND) {
+                    @Override
+                    public void handle(HttpExchange exchange) throws IOException {
+                        languages.add(exchange.getRequestHeaders().getFirst("Accept-Language"));
+                        super.handle(exchange);
+                    }
+                }));
+        RenderingContext withHeaders = new RenderingContext(doc, context.getWriter(), context.getConfig(),
+                context.getGlobalParams(), null, context.getLayout(), Map.of("Accept-Language", "it"));
+        String icon = "http://localhost:" + httpd.getPort() + SVG_LEGEND_ROUTE + "?FORMAT=image%2Fsvg%2Bxml";
+
+        Image image = PDFUtils.createImageFromSVG(withHeaders, icon, 100, 100, 1);
+
+        assertEquals(List.of("it"), languages);
+        assertEquals(20 * SVG_PIXEL_TO_PDF, image.getScaledWidth(), 0.001);
+        assertEquals(10 * SVG_PIXEL_TO_PDF, image.getScaledHeight(), 0.001);
+    }
+
+    @Test
+    public void testSvgIconHTTPError() throws Exception {
+        String icon = "http://localhost:" + httpd.getPort() + FIVE_HUNDRED_ROUTE + "?FORMAT=image%2Fsvg%2Bxml";
+        try {
+            PDFUtils.createImageFromSVG(context, icon, 100, 100, 1);
+            fail("Supposed to have thrown an IOException");
+        } catch (IOException ex) {
+            assertEquals("Error (status=500) while reading " + icon + ": Internal Server Error",
+                    ex.getMessage());
+        }
+    }
+
+    @Test
+    public void testMovedServer() throws Exception {
+        FakeHttpd.HttpAnswerer tile = FakeHttpd.pngAnswerer();
+        FakeHttpd newServer = moveTiles(tile);
+        try {
+            setHostPorts(httpd.getPort(), newServer.getPort());
+
+            Image image = PDFUtils.getImage(context, new URI("http://127.0.0.1:" + httpd.getPort() + TILE_ROUTE), 0, 0);
+
+            assertEquals(1, tile.getRequestCount());
+            // default_error.png is 64x64 pixels
+            assertEquals(64, image.getPlainWidth(), 0.001);
+            assertEquals(64, image.getPlainHeight(), 0.001);
+        } finally {
+            newServer.shutdown();
+        }
+    }
+
+    @Test
+    public void testMovedServerOutsideHosts() throws Exception {
+        FakeHttpd.HttpAnswerer tile = FakeHttpd.pngAnswerer();
+        FakeHttpd newServer = moveTiles(tile);
+        try {
+            setHostPorts(httpd.getPort());
+
+            PDFUtils.getImage(context, new URI("http://127.0.0.1:" + httpd.getPort() + TILE_ROUTE), 0, 0);
+            fail("Supposed to have thrown an IOException");
+        } catch (IOException ex) {
+            String location = "http://127.0.0.1:" + newServer.getPort() + TILE_ROUTE;
+            assertEquals("URL not accepted by the configured hosts: " + location, ex.getMessage());
+        } finally {
+            newServer.shutdown();
+        }
+        assertEquals(0, tile.getRequestCount());
+    }
+
+    /** Starts a server answering tile requests with {@code tile}, and moves the test server tiles to it. */
+    private FakeHttpd moveTiles(FakeHttpd.HttpAnswerer tile) {
+        FakeHttpd newServer = new FakeHttpd(new FakeHttpd.Route(TILE_ROUTE, tile));
+        newServer.start();
+        String location = "http://127.0.0.1:" + newServer.getPort() + TILE_ROUTE;
+        httpd.addRoutes(new FakeHttpd.Route(TILE_ROUTE,
+                new FakeHttpd.HttpAnswerer(301, "Moved Permanently", null, (byte[]) null) {
+                    @Override
+                    public void handle(HttpExchange exchange) throws IOException {
+                        exchange.getResponseHeaders().add("Location", location);
+                        super.handle(exchange);
+                    }
+                }));
+        return newServer;
+    }
+
+    private void setHostPorts(int... ports) {
+        List<HostMatcher> hosts = new ArrayList<>();
+        for (int port : ports) {
+            AddressHostMatcher host = new AddressHostMatcher();
+            host.setIp("127.0.0.1");
+            host.setPort(port);
+            hosts.add(host);
+        }
+        context.getConfig().setHosts(hosts);
     }
 
     @Test

@@ -45,7 +45,7 @@ public class WMSMapReaderTest extends MapTestBasic {
 
     @Override
     protected PJsonObject createGlobalParams() throws IOException {
-        return loadJson("mergeable/global.json");
+        return loadJson("mergeable/global.json", localBaseUrl);
     }
     
     @Test
@@ -139,7 +139,7 @@ public class WMSMapReaderTest extends MapTestBasic {
     
     @Test
     public void testMergeableParamsWithArrayCustomParams() throws Exception {
-        URI commonURI = createMergedUri(loadJson("mergeable/test5.json"));
+        URI commonURI = createMergedUri(loadJson("mergeable/test5.json", localBaseUrl));
         
         Map<String, List<String>> parameters = URIUtils.getParameters(commonURI.getRawQuery().toUpperCase());
         assertEquals(""+commonURI, "ATTRIBUTE1=1;ATTRIBUTE2=2", parameters.get("CQL_FILTER").get(0));        

@@ -44,7 +44,7 @@ public class HttpMapReaderTest extends MapTestBasic {
 	
     @Test
     public void testMergeAllLayersWithParam() throws Exception {    	
-        URI commonURI = createUri(loadJson("mergeable/test1.json"))[0];
+        URI commonURI = createUri(loadJson("mergeable/test1.json", localBaseUrl))[0];
         final Map<String, List<String>> parameters = URIUtils.getParameters(commonURI.getRawQuery().toUpperCase());
         assertEquals(""+commonURI, "ATTRIBUTE1=1;ATTRIBUTE1=1", parameters.get("CQL_FILTER").get(0));
         assertCommonParams(commonURI, parameters, "TRUE");
@@ -52,7 +52,7 @@ public class HttpMapReaderTest extends MapTestBasic {
     
     @Test
     public void testMergeSomeLayersWithParam() throws Exception {    	
-        URI commonURI = createUri(loadJson("mergeable/test2.json"))[0];
+        URI commonURI = createUri(loadJson("mergeable/test2.json", localBaseUrl))[0];
         final Map<String, List<String>> parameters = URIUtils.getParameters(commonURI.getRawQuery().toUpperCase());
         assertEquals(""+commonURI, "ATTRIBUTE1=1;INCLUDE", parameters.get("CQL_FILTER").get(0));        
         assertCommonParams(commonURI, parameters, "TRUE");
@@ -60,7 +60,7 @@ public class HttpMapReaderTest extends MapTestBasic {
     
     @Test
     public void testMergeNoLayersWithParam() throws Exception {    	
-        URI commonURI = createUri(loadJson("mergeable/test3.json"))[0];
+        URI commonURI = createUri(loadJson("mergeable/test3.json", localBaseUrl))[0];
         final Map<String, List<String>> parameters = URIUtils.getParameters(commonURI.getRawQuery().toUpperCase());
         assertNull(""+commonURI, parameters.get("CQL_FILTER"));        
         assertCommonParams(commonURI, parameters, "TRUE");
@@ -68,7 +68,7 @@ public class HttpMapReaderTest extends MapTestBasic {
     
     @Test
     public void testCantMergeIfDifferentCustomParam() throws Exception {    	
-        URI[] commonURIs = createUri(loadJson("mergeable/test4.json"));
+        URI[] commonURIs = createUri(loadJson("mergeable/test4.json", localBaseUrl));
         
         Map<String, List<String>> parameters = URIUtils.getParameters(commonURIs[0].getRawQuery().toUpperCase());
         assertEquals(""+commonURIs[0], "ATTRIBUTE1=1", parameters.get("CQL_FILTER").get(0));
@@ -81,7 +81,7 @@ public class HttpMapReaderTest extends MapTestBasic {
     
     @Test
     public void testCantMergeIfDifferentContexts() throws Exception {        
-        URI[] commonURIs = createUri(loadJson("mergeable/test6.json"));
+        URI[] commonURIs = createUri(loadJson("mergeable/test6.json", localBaseUrl, new Replacement("@@otherBaseURL@@", "http://localhost/other")));
         
         Map<String, List<String>> parameters = URIUtils.getParameters(commonURIs[0].getRawQuery().toUpperCase());
         assertEquals(""+commonURIs[0], "ATTRIBUTE1=1", parameters.get("OTHER_PARAM").get(0));
@@ -92,7 +92,7 @@ public class HttpMapReaderTest extends MapTestBasic {
     
     @Test
     public void testMergeIfSameContexts() throws Exception {        
-        URI[] commonURIs = createUri(loadJson("mergeable/test7.json"));
+        URI[] commonURIs = createUri(loadJson("mergeable/test7.json", localBaseUrl));
         
         Map<String, List<String>> parameters = URIUtils.getParameters(commonURIs[0].getRawQuery().toUpperCase());
         assertEquals(""+commonURIs[0], "ATTRIBUTE1=1,ATTRIBUTE1=1", parameters.get("OTHER_PARAM").get(0));        
@@ -105,7 +105,7 @@ public class HttpMapReaderTest extends MapTestBasic {
     
     @Override
     protected PJsonObject createGlobalParams() throws IOException {
-        return loadJson("mergeable/global.json");
+        return loadJson("mergeable/global.json", localBaseUrl);
     }
 
     private URI[] createUri(PJsonObject jsonParams, FakeHttpd.Route... routes)

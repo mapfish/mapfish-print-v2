@@ -28,6 +28,8 @@ import org.pvalsecc.misc.FileUtilities;
 
 import java.io.*;
 import java.net.InetSocketAddress;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -124,11 +126,18 @@ public class FakeHttpd {
         server.stop(1);
     }
 
+    /** Returns an answerer serving the 64x64 default_error.png image. */
+    public static HttpAnswerer pngAnswerer() throws IOException {
+        return new HttpAnswerer(200, "OK", "image/png",
+                Files.readAllBytes(Path.of("src/main/resources/default_error.png")));
+    }
+
     public static class HttpAnswerer implements HttpHandler {
         private final int status;
         private final String statusTxt;
         private final String contentType;
         private final byte[] body;
+        private final AtomicInteger requestCount = new AtomicInteger();
 
         public HttpAnswerer(int status, String statusTxt, String contentType, InputStream inputStream) {
             this(status, statusTxt, contentType, streamToBytes(inputStream));
@@ -163,10 +172,15 @@ public class FakeHttpd {
             }
         }
 
+        public int getRequestCount() {
+            return requestCount.get();
+        }
+
         @Override
         public void handle(HttpExchange httpExchange) throws IOException {
 
             LOGGER.debug("received a " + httpExchange.getRequestMethod() + " request: " + httpExchange.getRequestURI());
+            requestCount.incrementAndGet();
 
             if (contentType != null) {
                 httpExchange.getResponseHeaders().add("Content-Type", contentType);

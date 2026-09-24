@@ -122,7 +122,7 @@ In general, PDF dimensions and positions are specified in points. 72 points == 1
 Getting Maps
 ^^^^^^^^^^^^
 
-The list of {HOST_WHITELIST_DEFINITION} defines the allowed URLs for getting maps. Its format will be defined in `the next sub-section <configuration.html#host-whitelist-definition>`_.
+The list of {HOST_WHITELIST_DEFINITION} defines the allowed URLs for the images of a print request: maps, legend icons and vector point graphics (``externalGraphic``). Its format will be defined in `the next sub-section <configuration.html#host-whitelist-definition>`_.
 
 The formats element lists the values formats that the server permits.
 

@@ -47,7 +47,7 @@ import org.apache.batik.bridge.GVTBuilder;
 import org.apache.batik.bridge.UserAgent;
 import org.apache.batik.bridge.UserAgentAdapter;
 import org.apache.batik.dom.svg.SVGDocumentFactory;
-import java.io.ByteArrayOutputStream;
+import java.io.ByteArrayInputStream;
 import org.apache.batik.gvt.GraphicsNode;
 import java.io.File;
 import org.apache.batik.util.XMLResourceDescriptor;
@@ -69,12 +69,14 @@ import java.text.SimpleDateFormat;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import java.util.Date;
+import org.mapfish.print.config.Config;
 import org.mapfish.print.config.layout.Block;
 import java.util.HashMap;
 import org.mapfish.print.config.layout.HorizontalAlign;
 import java.util.List;
 import org.mapfish.print.config.layout.MapBlock;
 import java.util.Map;
+import java.util.Objects;
 import org.mapfish.print.config.layout.ScalebarBlock;
 import java.util.regex.Matcher;
 import org.mapfish.print.config.layout.TableConfig;
@@ -104,6 +106,11 @@ public class PDFUtils {
      * bitmap content multiple times in order to reduce the file size.
      */
     public static Image getImage(RenderingContext context, URI uri, float w, float h, float scale) throws IOException, DocumentException {
+        return getImage(context, uri, w, h, scale, UrlSource.REQUEST);
+    }
+
+    private static Image getImage(RenderingContext context, URI uri, float w, float h, float scale, UrlSource source)
+            throws IOException, DocumentException {
         //Check the image is not already used in the PDF file.
         //
         //This part is not protected against multi-threads... worst case, a single image can
@@ -112,7 +119,7 @@ public class PDFUtils {
         Map<URI, PdfTemplate> cache = context.getTemplateCache();
         PdfTemplate template = cache.get(uri);
         if (template == null) {
-            Image content = getImageDirect(context, uri);
+            Image content = loadImageFromUrl(context, uri, false, source);
             content.setAbsolutePosition(0, 0);
             final PdfContentByte dc = context.getDirectContent();
             synchronized (context.getPdfLock()) {  //protect against parallel writing on the PDF file
@@ -188,16 +195,11 @@ public class PDFUtils {
         return result;
     }
 
-    /**
-     * Gets an iText image. Avoids doing the query twice.
-     */
-    protected static Image getImageDirect(RenderingContext context, URI uri) throws IOException, DocumentException {
-            return loadImageFromUrl(context, uri, false);
-    }
-
-    private static Image loadImageFromUrl(final RenderingContext context, final URI uri, final boolean alwaysThrowExceptionOnError)
+    private static Image loadImageFromUrl(final RenderingContext context, final URI uri,
+            final boolean alwaysThrowExceptionOnError, final UrlSource source)
             throws
             IOException, DocumentException {
+        context.getConfig().checkUri(uri, source);
         File uriAsFile = null;
         try {
             uriAsFile = new File(uri.toString());
@@ -228,77 +230,11 @@ public class PDFUtils {
             byte[] image = Base64.decode(base64);
             return Image.getInstance(image);
         } else {
-
-            final String contentType;
-            final int statusCode;
-            final String statusText;
-            byte[] data = null;
             try {
-                //read the whole image content in memory, then give that to iText
-                if ((uri.getScheme().equals("http") || uri.getScheme().equals("https"))
-                        && context.getConfig().localHostForwardIsFrom(uri.getHost())) {
-                    String scheme = uri.getScheme();
-                    final String host = uri.getHost();
-                    if (uri.getScheme().equals("https")
-                            && context.getConfig().localHostForwardIsHttps2http()) {
-                        scheme = "http";
-                    }
-                    URL url = new URL(scheme, "localhost", uri.getPort(),
-                            uri.getPath() + "?" + uri.getQuery());
-
-                    HttpURLConnection connexion = (HttpURLConnection) url.openConnection();
-                    connexion.setRequestProperty("Host", host);
-                    for (Map.Entry<String, String> entry : context.getHeaders().entrySet()) {
-                        connexion.setRequestProperty(entry.getKey(), entry.getValue());
-                    }
-                    InputStream is = null;
-                    try {
-                        try {
-                            is = connexion.getInputStream();
-                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                            byte[] buffer = new byte[1024];
-                            int length;
-                            while ((length = is.read(buffer)) != -1) {
-                                baos.write(buffer, 0, length);
-                            }
-                            baos.flush();
-                            data = baos.toByteArray();
-                        } catch (IOException e) {
-                            LOGGER.warn(e);
-                        }
-                        statusCode = connexion.getResponseCode();
-                        statusText = connexion.getResponseMessage();
-                        contentType = connexion.getContentType();
-                    } finally {
-                        if (is != null) {
-                            is.close();
-                        }
-                    }
-                } else {
-                    HttpGet request;
-                    MetricRegistry registry = context.getConfig().getMetricRegistry();
-                    final Timer.Context timer = registry.timer("http_" + uri.getAuthority()).time();
-                    try {
-                        request = new HttpGet(uri.toString());
-                        for (Map.Entry<String, String> entry : context.getHeaders().entrySet()) {
-                            request.addHeader(entry.getKey(), entry.getValue());
-                        }
-                        if (LOGGER.isDebugEnabled())
-                            LOGGER.debug("loading image: " + uri);
-                        HttpClientContext clientContext = context.getConfig().getHttpClientContext(uri);
-                        try (CloseableHttpResponse response = context.getConfig().getHttpClient(uri).execute(request, clientContext)) {
-                            statusCode = response.getCode();
-                            statusText = response.getReasonPhrase();
-
-                            Header contentTypeHeader = response.getFirstHeader("Content-Type");
-                            contentType = contentTypeHeader != null ? contentTypeHeader.getValue() : "";
-                            HttpEntity entity = response.getEntity();
-                            data = entity != null ? EntityUtils.toByteArray(entity) : null;
-                        }
-                    } finally {
-                        timer.close();
-                    }
-                }
+                final HttpResponseData response = fetch(context, uri, source);
+                final int statusCode = response.statusCode();
+                final String contentType = response.contentType();
+                byte[] data = response.data();
 
                 if (statusCode == 204) {
                     // returns a transparent image
@@ -330,7 +266,7 @@ public class PDFUtils {
                     if (LOGGER.isDebugEnabled()) LOGGER.debug("Server returned an error for " + uri + ": " + new String(data));
                     String errorMessage;
                     if (statusCode < 200 || statusCode >= 300) {
-                        errorMessage = "Error (status=" + statusCode + ") while reading the image from " + uri + ": " + statusText;
+                        errorMessage = "Error (status=" + statusCode + ") while reading the image from " + uri + ": " + response.statusText();
                     } else {
                         errorMessage = "Didn't receive an image while reading: " + uri;
                     }
@@ -360,6 +296,76 @@ public class PDFUtils {
         }
     }
 
+    private record HttpResponseData(int statusCode, String statusText, String contentType, byte[] data) {}
+
+    /**
+     * Reads an http(s) resource with the headers of the print request, through the local host forward or the
+     * configured HTTP client.
+     */
+    private static HttpResponseData fetch(final RenderingContext context, final URI uri, final UrlSource source)
+            throws IOException {
+        if ((uri.getScheme().equals("http") || uri.getScheme().equals("https"))
+                && context.getConfig().localHostForwardIsFrom(uri.getHost())) {
+            String scheme = uri.getScheme();
+            final String host = uri.getHost();
+            if (uri.getScheme().equals("https")
+                    && context.getConfig().localHostForwardIsHttps2http()) {
+                scheme = "http";
+            }
+            URL url = new URL(scheme, "localhost", uri.getPort(),
+                    uri.getPath() + "?" + uri.getQuery());
+
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setInstanceFollowRedirects(false);
+            connection.setRequestProperty("Host", host);
+            for (Map.Entry<String, String> entry : context.getHeaders().entrySet()) {
+                connection.setRequestProperty(entry.getKey(), entry.getValue());
+            }
+            byte[] data = null;
+            try (InputStream is = connection.getInputStream()) {
+                data = is.readAllBytes();
+            } catch (IOException e) {
+                LOGGER.warn(e);
+            }
+            return new HttpResponseData(connection.getResponseCode(), connection.getResponseMessage(),
+                    connection.getContentType(), data);
+        }
+
+        MetricRegistry registry = context.getConfig().getMetricRegistry();
+        try (Timer.Context timer = registry.timer("http_" + uri.getAuthority()).time()) {
+            HttpGet request = new HttpGet(uri.toString());
+            for (Map.Entry<String, String> entry : context.getHeaders().entrySet()) {
+                request.addHeader(entry.getKey(), entry.getValue());
+            }
+            if (LOGGER.isDebugEnabled())
+                LOGGER.debug("loading image: " + uri);
+            HttpClientContext clientContext = Objects.requireNonNullElseGet(
+                    context.getConfig().getHttpClientContext(uri), HttpClientContext::create);
+            clientContext.setAttribute(Config.URL_SOURCE, source);
+            try (CloseableHttpResponse response = context.getConfig().getHttpClient(uri).execute(request, clientContext)) {
+                Header contentTypeHeader = response.getFirstHeader("Content-Type");
+                String contentType = contentTypeHeader != null ? contentTypeHeader.getValue() : "";
+                HttpEntity entity = response.getEntity();
+                byte[] data = entity != null ? EntityUtils.toByteArray(entity) : null;
+                return new HttpResponseData(response.getCode(), response.getReasonPhrase(), contentType, data);
+            }
+        }
+    }
+
+    /**
+     * Returns the body of a 2xx answer for a URL that {@code source} allows, and throws an {@link IOException}
+     * otherwise.
+     */
+    public static byte[] readBytes(RenderingContext context, URI uri, UrlSource source) throws IOException {
+        context.getConfig().checkUri(uri, source);
+        HttpResponseData response = fetch(context, uri, source);
+        if (response.statusCode() < 200 || response.statusCode() >= 300 || response.data() == null) {
+            throw new IOException("Error (status=" + response.statusCode() + ") while reading " + uri + ": "
+                    + response.statusText());
+        }
+        return response.data();
+    }
+
     /**
      * In the case url fails to load an image this method should be called to handle the issue.  If the configuration
      * has a default image for broken image urls then it will be returned otherwise an error will be thrown.
@@ -379,9 +385,9 @@ public class PDFUtils {
                 try {
                     if (placeholderString.equalsIgnoreCase(Constants.ImagePlaceHolderConstants.DEFAULT)) {
                         URL url = PDFUtils.class.getClassLoader().getResource(Constants.ImagePlaceHolderConstants.DEFAULT_ERROR_IMAGE);
-                        image = loadImageFromUrl(context, url.toURI(), true);
+                        image = loadImageFromUrl(context, url.toURI(), true, UrlSource.CONFIGURED);
                     } else {
-                        image = loadImageFromUrl(context, new URI(placeholderString), true);
+                        image = loadImageFromUrl(context, new URI(placeholderString), true, UrlSource.CONFIGURED);
                     }
                 } catch (URISyntaxException e) {
                     throw new RuntimeException(e);
@@ -696,13 +702,24 @@ public class PDFUtils {
         return new Chunk(image, 0f, 0f, true);
     }
 
+    /** Creates an image chunk for a URL from {@code source}. */
+    public static Chunk createImageChunk(RenderingContext context, double maxWidth, double maxHeight, URI url,
+            float rotation, UrlSource source) throws DocumentException {
+        return new Chunk(createImage(context, maxWidth, maxHeight, 0f, url, rotation, source), 0f, 0f, true);
+    }
+
     public static Image createImage(RenderingContext context, double maxWidth, double maxHeight, URI url, float rotation) throws DocumentException {
         return createImage(context, maxWidth, maxHeight, 0f, url, rotation);
     }
     public static Image createImage(RenderingContext context, double maxWidth, double maxHeight, float scale, URI url, float rotation) throws DocumentException {
+        return createImage(context, maxWidth, maxHeight, scale, url, rotation, UrlSource.REQUEST);
+    }
+
+    private static Image createImage(RenderingContext context, double maxWidth, double maxHeight, float scale, URI url,
+            float rotation, UrlSource source) throws DocumentException {
         final Image image;
         try {
-            image = getImage(context, url, (float) maxWidth, (float) maxHeight, scale);
+            image = getImage(context, url, (float) maxWidth, (float) maxHeight, scale, source);
         } catch (IOException e) {
             throw new InvalidValueException("url", url.toString(), e);
         }
@@ -794,14 +811,13 @@ public class PDFUtils {
         Image image = null;
         try {
             PdfContentByte dc = context.getDirectContent();
-            URI uri = URI.create(iconItem);
-            URL url = uri.toURL();
+            byte[] svg = readBytes(context, URI.create(iconItem), UrlSource.REQUEST);
             SVGDocumentFactory factory = new SAXSVGDocumentFactory(XMLResourceDescriptor.getXMLParserClassName());
             UserAgent userAgent = new UserAgentAdapter();
             DocumentLoader loader = new DocumentLoader(userAgent);
             BridgeContext ctx = new BridgeContext(userAgent, loader);
             ctx.setDynamicState(BridgeContext.DYNAMIC);
-            SVGDocument svgDoc = factory.createSVGDocument(null, url.openStream());
+            SVGDocument svgDoc = factory.createSVGDocument(null, new ByteArrayInputStream(svg));
             GVTBuilder builder = new GVTBuilder();
             GraphicsNode graphics = builder.build(ctx, svgDoc);
             String svgWidthString = svgDoc.getDocumentElement().getAttribute("width");

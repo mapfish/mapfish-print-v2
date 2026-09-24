@@ -1,7 +1,7 @@
 {      
    "layers":[
       {
-         "baseURL":"sampleContext",
+         "baseURL":"@@baseURL@@",
          "opacity":1,
          "type":"WMS",
          "layers":[
@@ -15,7 +15,7 @@
          "customParams":{"TRANSPARENT":"true","EXCEPTIONS":"INIMAGE", "OTHER_PARAM":"ATTRIBUTE1=1"}
       },
       {
-         "baseURL":"otherContext",
+         "baseURL":"@@otherBaseURL@@",
          "opacity":1,
          "type":"WMS",
          "layers":[
