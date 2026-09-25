@@ -34,6 +34,7 @@ import org.mapfish.print.Constants;
 import org.mapfish.print.InvalidValueException;
 import org.mapfish.print.PDFUtils;
 import org.mapfish.print.ThreadResources;
+import org.mapfish.print.UrlSource;
 import org.mapfish.print.config.layout.Layout;
 import org.mapfish.print.config.layout.Layouts;
 import org.mapfish.print.map.MapTileTask;
@@ -43,6 +44,7 @@ import org.mapfish.print.output.OutputFactory;
 import org.pvalsecc.concurrent.OrderedResultsExecutor;
 
 import java.io.Closeable;
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
 import java.net.Proxy;
@@ -254,9 +256,15 @@ public class Config implements Closeable {
     }
 
     /**
-     * Make sure an URI is authorized
+     * Returns true when the URI is http(s) with a host accepted by one of the configured hosts.
      */
     public boolean validateUri(URI uri) throws UnknownHostException, SocketException, MalformedURLException {
+        if (!"http".equalsIgnoreCase(uri.getScheme()) && !"https".equalsIgnoreCase(uri.getScheme())) {
+            return false;
+        }
+        if (uri.getHost() == null) {
+            return false;
+        }
         for (int i = 0; i < hosts.size(); i++) {
             HostMatcher matcher = hosts.get(i);
             if (matcher.validate(uri)) {
@@ -267,6 +275,13 @@ public class Config implements Closeable {
             }
         }
         return false;
+    }
+
+    /** Checks that a URL can be read: a request URL must be a data URI or be accepted by {@link #validateUri}. */
+    public void checkUri(URI uri, UrlSource source) throws IOException {
+        if (source != UrlSource.CONFIGURED && !"data".equalsIgnoreCase(uri.getScheme()) && !validateUri(uri)) {
+            throw new IOException("URL not accepted by the configured hosts: " + uri);
+        }
     }
 
     /**

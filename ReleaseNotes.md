@@ -4,6 +4,7 @@
 
 Release notes:
 
+* Legend icons, vector point graphics and capabilities documents are read with the same HTTP settings as maps, including the configured hosts.
 * Update to pdfbox 3.0.8
 * Update to GeoTools 31.7
 * Support version parameter in lower and upper case and hide map providers private keys (#42)
