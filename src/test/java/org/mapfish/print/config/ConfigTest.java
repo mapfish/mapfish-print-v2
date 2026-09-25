@@ -24,12 +24,15 @@ import org.junit.Test;
 import org.mapfish.print.PrintTestCase;
 import org.mapfish.print.ShellMapPrinter;
 import org.mapfish.print.ThreadResources;
+import org.mapfish.print.UrlSource;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -38,6 +41,8 @@ import java.util.TreeSet;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class ConfigTest extends PrintTestCase {
 
@@ -140,6 +145,36 @@ public class ConfigTest extends PrintTestCase {
     }
 
 
+
+    @Test
+    public void testValidateUri() throws Exception {
+        // the default hosts list accepts the local network interfaces
+        Config config = new Config();
+        assertTrue(config.validateUri(new URI("http://localhost/wms")));
+        assertTrue(config.validateUri(new URI("https://localhost/wms")));
+        assertFalse(config.validateUri(new URI("http://192.0.2.1/wms")));
+        assertFalse(config.validateUri(new URI("ftp://localhost/tiles/0/0/0.png")));
+    }
+
+    @Test
+    public void testCheckUri() throws Exception {
+        Config config = new Config();
+        config.setHosts(PrintTestCase.unrelatedHosts()); // accepts only 192.0.2.1
+        URI outside = new URI("http://localhost/legend.png");
+
+        // a request URL outside the configured hosts is refused
+        try {
+            config.checkUri(outside, UrlSource.REQUEST);
+            fail("expected an IOException");
+        } catch (IOException e) {
+            assertEquals("URL not accepted by the configured hosts: " + outside, e.getMessage());
+        }
+
+        // a configured URL is trusted, a data URL and an allowed host pass
+        config.checkUri(outside, UrlSource.CONFIGURED);
+        config.checkUri(new URI("data:image/png;base64,AAAA"), UrlSource.REQUEST);
+        config.checkUri(new URI("http://192.0.2.1/legend.png"), UrlSource.REQUEST);
+    }
 
     public static Map<String, File> getSampleConfigFiles() {
         final String configTestClassFile = ConfigTest.class.getResource(ConfigTest.class.getSimpleName() + ".class").getFile();

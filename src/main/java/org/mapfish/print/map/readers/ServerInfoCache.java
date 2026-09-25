@@ -1,18 +1,18 @@
 package org.mapfish.print.map.readers;
 
-import com.codahale.metrics.MetricRegistry;
-import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.logging.Log;
+import org.mapfish.print.PDFUtils;
 import org.mapfish.print.RenderingContext;
+import org.mapfish.print.UrlSource;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -70,55 +70,9 @@ public class ServerInfoCache<T extends ServiceInfo> {
 
     private T requestInfo(URI baseUrl, RenderingContext context) throws IOException, URISyntaxException, ParserConfigurationException, SAXException {
         URL url = loader.createURL(baseUrl, context);
-
-        GetMethod method = null;
-
-        MetricRegistry registry = context.getConfig().getMetricRegistry();
-        final com.codahale.metrics.Timer.Context timer = registry.timer("http_" + url.getAuthority()).time();
-        try {
-            final InputStream stream;
-
-            if ((url.getProtocol().equals("http") || url.getProtocol().equals("https")) &&
-                context.getConfig().localHostForwardIsFrom(url.getHost())) {
-                String scheme = url.getProtocol();
-                final String host = url.getHost();
-                if (url.getProtocol().equals("https") &&
-                    context.getConfig().localHostForwardIsHttps2http()) {
-                    scheme = "http";
-                }
-                URL localUrl = new URL(scheme, "localhost", url.getPort(),
-                        url.getFile());
-                HttpURLConnection connexion = (HttpURLConnection)localUrl.openConnection();
-                connexion.setRequestProperty("Host", host);
-                for (Map.Entry<String, String> entry : context.getHeaders().entrySet()) {
-                    connexion.setRequestProperty(entry.getKey(), entry.getValue());
-                }
-                stream = connexion.getInputStream();
-            }
-            else {
-                method = new GetMethod(url.toString());
-                for (Map.Entry<String, String> entry : context.getHeaders().entrySet()) {
-                    method.setRequestHeader(entry.getKey(), entry.getValue());
-                }
-                context.getConfig().getHttpClient(baseUrl).executeMethod(method);
-                int code = method.getStatusCode();
-                if (code < 200 || code >= 300) {
-                    throw new IOException("Error " + code + " while reading the Capabilities from " + url + ": " + method.getStatusText());
-                }
-                stream = method.getResponseBodyAsStream();
-            }
-            final T result;
-            try {
-                result = loader.parseInfo(stream);
-            } finally {
-                stream.close();
-            }
-            return result;
-        } finally {
-            timer.stop();
-            if (method != null) {
-                method.releaseConnection();
-            }
+        byte[] capabilities = PDFUtils.readBytes(context, url.toURI(), UrlSource.REQUEST);
+        try (InputStream stream = new ByteArrayInputStream(capabilities)) {
+            return loader.parseInfo(stream);
         }
     }
     public static abstract class ServiceInfoLoader<T extends ServiceInfo> {

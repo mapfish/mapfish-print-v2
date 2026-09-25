@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mapfish.print.FakeHttpd;
 import org.mapfish.print.MapTestBasic;
+import org.mapfish.print.PrintTestCase;
 
 import java.io.IOException;
 import java.net.URI;
@@ -46,6 +47,21 @@ public class WMTSServiceInfoTest extends MapTestBasic {
         if (server != null) {
             server.shutdown();
         }
+    }
+
+    @Test
+    public void testCapabilitiesOutsideHosts() throws Exception {
+        FakeHttpd.HttpAnswerer capabilities = new FakeHttpd.HttpAnswerer(200, "OK", "application/xml",
+                capabilitiesDocument);
+        server.addRoutes(new FakeHttpd.Route("/outside", capabilities));
+        context.getConfig().setHosts(PrintTestCase.unrelatedHosts());
+
+        URI outside = new URI("http://localhost:" + server.getPort() + "/outside");
+
+        WMTSServiceInfo info = WMTSServiceInfo.getInfo(outside, context);
+
+        assertEquals(0, capabilities.getRequestCount());
+        assertEquals(0, info.tileCacheLayers.size());
     }
 
     @Test
