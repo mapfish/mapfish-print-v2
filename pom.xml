@@ -4,7 +4,7 @@
   
   <groupId>org.mapfish.print</groupId>
   <artifactId>print-lib</artifactId>
-  <version>2.5.1-SNAPSHOT</version>
+  <version>2.5.1</version>
 
   <description>
     MapFish Print Version 2 has reached end-of-life and is no longer under active development.
@@ -41,7 +41,7 @@
     <!--log4j-version>2.24.3</log4j-version-->
     <spring.version>7.0.9</spring.version>
     <gt.version>35.1</gt.version>
-    <imagen.version>0.9.3-SNAPSHOT</imagen.version> <!-- sync with gt-platform-dependences -->
+    <imagen.version>0.9.2</imagen.version> <!-- sync with gt-platform-dependences -->
     <pdfbox.version>3.0.8</pdfbox.version>
     <metrics-version>4.2.40</metrics-version>
     <!--jackson2.version>2.18.2</jackson2.version-->

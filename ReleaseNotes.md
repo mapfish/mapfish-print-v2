@@ -5,6 +5,9 @@
 Release notes:
 
 * Legend icons, vector point graphics and capabilities documents are read with the same HTTP settings as maps, including the configured hosts.
+* Overview map scale is calculated starting from the default map transform.
+* Xerces and Xalan are no longer used directly: XML parsing and XSLT use the JDK implementations, and the Xalan dependency is removed.
+* Library upgrades: GeoTools 35.1, Spring Framework 7.0.9, OpenPDF 2.0.5, HttpClient 5.6.4, metrics 4.2.40, org.json 20260814.
 
 ## Release 2.5.0
 
