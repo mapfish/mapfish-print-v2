@@ -144,7 +144,7 @@ To create a release:
    <version>2.5.1</version>
    ```
 
-2. Double check `ReleaseNotes.md` change-log and update if ndded.
+2. Double check `ReleaseNotes.md` change-log and update if needed.
 
    Double check the `docs/upgrade.rst` and update if needed.
 
@@ -156,26 +156,26 @@ To create a release:
    sphinx-build -b html -d docs/_build/doctrees docs docs/_build/html
    ```
    
-3. Build confirming creation of ``print-lib-2.5.1.jar``
+4. Build confirming creation of ``print-lib-2.5.1.jar``
 
    ```bash
    mvn clean install
    ```
 
-3. Commit the change to ``pom.xml``
+5. Commit the change to ``pom.xml``
 
    ```bash
    git add pom.xml
    git commit -m "Release 2.5.1"
    ```
 
-4. Deploy to osgeo nexus
+6. Deploy to osgeo nexus
 
    ```bash
    mvn deploy -DskipTests
    ```
 
-5. Push and tag the change:
+7. Push and tag the change:
    
    ```bash
    git push
@@ -183,20 +183,20 @@ To create a release:
    git push origin release/2.5.1
    ```
 
-6. Check the release in github:
+8. Check the release in github:
    
    * https://github.com/mapfish/mapfish-print-v2/tags
    
-7. Add any release-notes to the tag in GitHub.
+9. Create a GitHub release from the tag, named with the version only (``2.5.1``), and add the release notes.
 
    Upload jar and docs bundles from target folder.
 
-9. Update the ``pom.xml`` against to return to SNAPSHOT developmentt:
+10. Update the ``pom.xml`` again to return to SNAPSHOT development, using the next patch version:
    
    ```xml
    <groupId>org.mapfish.print</groupId>
    <artifactId>print-lib</artifactId>
-   <version>2.5-SNAPSHOT</version>
+   <version>2.5.2-SNAPSHOT</version>
    ```
    
    And push up the change:
