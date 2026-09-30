@@ -1,10 +1,13 @@
 # Mapfish Print 2 Release notes
 
+## Release 2.3.7
+
+* Legend icons, vector point graphics and capabilities documents are read with the same HTTP settings as maps, including the configured hosts.
+
 ## Release 2.3.6
 
 Release notes:
 
-* Legend icons, vector point graphics and capabilities documents are read with the same HTTP settings as maps, including the configured hosts.
 * Update to pdfbox 3.0.8
 * Update to GeoTools 31.7
 * Support version parameter in lower and upper case and hide map providers private keys (#42)

@@ -182,7 +182,9 @@ public class MapPrinterServlet extends BaseMapServlet {
         } catch (Throwable e) {
             error(httpServletResponse, e);
         } finally {
-            deleteFile(tempFileMetadata.tempFile);
+            if (tempFileMetadata != null) {
+                deleteFile(tempFileMetadata.tempFile);
+            }
         }
     }
 
@@ -201,7 +203,9 @@ public class MapPrinterServlet extends BaseMapServlet {
                 return;
             }
         } catch (Throwable e) {
-            deleteFile(tempFileMetadata.tempFile);
+            if (tempFileMetadata != null) {
+                deleteFile(tempFileMetadata.tempFile);
+            }
             error(httpServletResponse, e);
             return;
         }
