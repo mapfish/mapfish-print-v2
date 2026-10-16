@@ -1,5 +1,11 @@
 # Mapfish Print 2 Release notes
 
+## Release 2.5.2
+
+Release notes:
+
+* Library upgrades: GeoTools 35.2, ImageN 0.9.3, HttpClient 5.6.5.
+
 ## Release 2.5.1
 
 Release notes:
