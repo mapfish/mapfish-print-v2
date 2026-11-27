@@ -188,7 +188,7 @@ public class RenderingContext {
         return layout;
     }
 
-    public void addError(Exception e) {
+    public void addError(Throwable e) {
         customBlocks.addError(e);
     }
 

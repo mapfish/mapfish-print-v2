@@ -61,7 +61,7 @@ public class PDFCustomBlocks extends PdfPageEventHelper {
     private HeaderFooter footer;
     private PJsonObject footerParams;
     private String backgroundPdf;
-    private final List<Exception> errors = Collections.synchronizedList(new ArrayList<Exception>());
+    private final List<Throwable> errors = Collections.synchronizedList(new ArrayList());
     private final List<PdfReader> readers;
 
     /**
@@ -145,7 +145,7 @@ public class PDFCustomBlocks extends PdfPageEventHelper {
         if (errors.size() > 0) {
             StringBuilder errorTxt = new StringBuilder();
             for (int i = 0; i < errors.size(); i++) {
-                Exception exception = errors.get(i);
+                Throwable exception = errors.get(i);
                 errorTxt.append(exception).append("\n");
             }
             errors.clear();
@@ -204,7 +204,7 @@ public class PDFCustomBlocks extends PdfPageEventHelper {
         this.backgroundPdf = backgroundPdf;
     }
 
-    public void addError(Exception e) {
+    public void addError(Throwable e) {
         errors.add(e);
         if (LOGGER.isDebugEnabled()) {
             LOGGER.error("Error while adding a PDF element: ", e);

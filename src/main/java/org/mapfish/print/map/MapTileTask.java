@@ -34,12 +34,12 @@ public abstract class MapTileTask implements OrderedResultsExecutor.Task<MapTile
     /**
      * When not null, we had an exception in the reading.
      */
-    private Exception readException;
+    private Throwable readException;
 
     public MapTileTask process() {
         try {
             readTile();
-        } catch (Exception e) {
+        } catch (Throwable e) {
             readException = e;
         }
         return this;
